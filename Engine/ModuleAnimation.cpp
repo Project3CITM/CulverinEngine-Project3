@@ -7,6 +7,10 @@
 #include "Component.h"
 #include "CompUIAnimation.h"
 #include "ModuleFS.h"
+#include "ModuleResourceManager.h"
+#include "ModuleImporter.h"
+#include "ImportMaterial.h"
+
 ModuleAnimation::ModuleAnimation()
 {
 	name = "UI Animation";
@@ -141,7 +145,7 @@ void ModuleAnimation::ShowAnimationWindow(bool & active)
 					}
 					else
 					{
-						animation_json->name += "anim.json";
+						animation_json->name += ".anim.json";
 
 					}
 					ImGui::CloseCurrentPopup();
@@ -159,7 +163,7 @@ void ModuleAnimation::ShowAnimationWindow(bool & active)
 					}
 					else
 					{
-						animation_json->name += "anim.json";
+						animation_json->name += ".anim.json";
 
 					}
 					ImGui::CloseCurrentPopup();
@@ -188,7 +192,7 @@ void ModuleAnimation::ShowAnimationWindow(bool & active)
 
 			if (new_animation_window)
 			{
-				ShowNewAnimationWindow();
+				ShowNewAnimationWindow();//CHECK
 			}
 
 
@@ -489,6 +493,7 @@ bool ModuleAnimation::LoadAnimation(AnimationJson ** animation, const char * pat
 				{
 					std::string key_data = std::to_string(k);
 					KeyData key_data_item;
+					uint id;
 					key_data_item.key_on_time = json_object_dotget_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Key on time " + key_data);
 
 					key_data_item.key_frame = json_object_dotget_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Keyframe " + key_data);
@@ -512,6 +517,26 @@ bool ModuleAnimation::LoadAnimation(AnimationJson ** animation, const char * pat
 						break;
 					case ParameterValue::RECT_TRANSFORM_HEIGHT:
 						key_data_item.key_values.f_value = json_object_dotget_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Key on time " + key_data);
+						break;
+					case ParameterValue::IMAGE_ALPHA_VALUE:
+						key_data_item.key_values.i_value = json_object_dotget_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Alpha on time " + key_data);
+						break;
+					case ParameterValue::IMAGE_SPRITE_ANIM:
+						id = json_object_dotget_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "UUID Sprite on time " + key_data);
+						key_data_item.key_values.sprite = (ResourceMaterial*)App->resource_manager->GetResource(id);
+						if (id > 0)
+						{
+							key_data_item.key_values.sprite = (ResourceMaterial*)App->resource_manager->GetResource(id);
+							if (key_data_item.key_values.sprite != nullptr)
+							{
+								key_data_item.key_values.sprite->num_game_objects_use_me++;
+								if (key_data_item.key_values.sprite->IsLoadedToMemory() == Resource::State::UNLOADED)
+								{
+									App->importer->iMaterial->LoadResource(std::to_string(key_data_item.key_values.sprite->GetUUID()).c_str(), key_data_item.key_values.sprite);
+								}
+							}
+						}
+						
 						break;
 					default:
 						break;
@@ -638,25 +663,21 @@ bool KeyFrameData::ShowKeyValue(int i)
 	switch (parameter)
 	{
 	case ParameterValue::RECT_TRANSFORM_POSITION:
-
 		ImGui::Text("Position");
 		paramter_name = "##transform_pos";
 		paramter_name += std::to_string(i);
-
 		ImGui::DragFloat3(paramter_name.c_str(), key_data[i].key_values.f3_value.ptr());
 		break;
 	case ParameterValue::RECT_TRANSFORM_ROTATION:
 		ImGui::Text("Rotation");
 		paramter_name = "##transform_rot";
 		paramter_name += std::to_string(i);
-
 		ImGui::DragFloat3(paramter_name.c_str(), key_data[i].key_values.f3_value.ptr());	
 		break;
 	case ParameterValue::RECT_TRANSFORM_SCALE:
 		ImGui::Text("Scale");
 		paramter_name = "##transform_sca";
 		paramter_name += std::to_string(i);
-
 		ImGui::DragFloat3(paramter_name.c_str(), key_data[i].key_values.f3_value.ptr());	
 		break;
 	case ParameterValue::RECT_TRANSFORM_WIDTH:
@@ -664,7 +685,6 @@ bool KeyFrameData::ShowKeyValue(int i)
 		paramter_name = "##transform_w";
 		paramter_name += std::to_string(i);
 		ImGui::DragFloat(paramter_name.c_str(), &key_data[i].key_values.f_value);
-
 		break;
 	case ParameterValue::RECT_TRANSFORM_HEIGHT:
 		ImGui::Text("Height");
@@ -672,11 +692,38 @@ bool KeyFrameData::ShowKeyValue(int i)
 		paramter_name += std::to_string(i);
 		ImGui::DragFloat(paramter_name.c_str(), &key_data[i].key_values.f_value);
 		break;
+	case ParameterValue::IMAGE_ALPHA_VALUE:
+		ImGui::Text("Alpha");
+		paramter_name = "##image_alpha";
+		paramter_name += std::to_string(i);
+		ImGui::DragFloat(paramter_name.c_str(), &key_data[i].key_values.f_value,0.01f,0.0f,1.0f);
+		break;
+	case ParameterValue::IMAGE_SPRITE_ANIM:
+		ImGui::Text("Sprite");
+		paramter_name = "##image_sprite";
+		paramter_name += std::to_string(i);
+		if(ImGui::Button("Select sprite..."))
+		{
+			show_materials = true;
+		}
+		if (show_materials)
+		{
+			key_data[i].key_values.sprite = SelectSprite();
+		}
+		if (key_data[i].key_values.sprite != nullptr)
+		{
+			ImGui::Image((ImTextureID*)key_data[i].key_values.sprite->GetTextureID(), ImVec2(170, 170), ImVec2(-1, 1), ImVec2(0, 0));
+		}
+		
+		
+		break;
 	default:
 		break;
 	}
+
+
 	std::string capture_name;
-	capture_name = "Camputure value##campture_value";
+	capture_name = "Capture value##campture_value";
 	capture_name += std::to_string(i);
 	if (ImGui::Button(capture_name.c_str()))
 	{
@@ -690,6 +737,7 @@ bool KeyFrameData::ShowKeyValue(int i)
 	{
 		SetKeyValue(i);
 	}
+
 	std::string erase_name;
 	erase_name = "Erase Keyframe##erase_key";
 	erase_name += std::to_string(i);
@@ -700,6 +748,29 @@ bool KeyFrameData::ShowKeyValue(int i)
 	ImGui::PopItemWidth();
 	return true;
 
+}
+
+ResourceMaterial* KeyFrameData::SelectSprite()
+{
+	ResourceMaterial* temp = (ResourceMaterial*)App->resource_manager->ShowResources(show_materials, Resource::Type::MATERIAL);
+	if (temp != nullptr)
+	{
+		if (temp != nullptr)
+		{
+			if (temp->num_game_objects_use_me > 0)
+			{
+				temp->num_game_objects_use_me--;
+			}
+		}
+		temp->num_game_objects_use_me++;
+		if (temp->IsLoadedToMemory() == Resource::State::UNLOADED)
+		{
+			App->importer->iMaterial->LoadResource(std::to_string(temp->GetUUID()).c_str(), temp);
+		}
+		/*SetTextureID(source_image->GetTextureID());
+		Enable();*/
+		return temp;
+	}
 }
 
 void KeyFrameData::CaptureKeyValue(int i)
@@ -831,8 +902,17 @@ AnimationValue KeyFrameData::Interpolate(float current_time, int frame)
 			ret.f_value = key_data[destination].key_values.f_value;
 		else
 			ret.f_value = key_data[initial].key_values.f_value + current_interpolation*(key_data[destination].key_values.f_value - key_data[initial].key_values.f_value);
-
 		break;
+	case ParameterValue::IMAGE_ALPHA_VALUE:
+		if (key_data[destination].key_frame <= frame && current_interpolation >= 1.0f)
+			ret.f_value = key_data[destination].key_values.f_value;
+		else
+			ret.f_value = key_data[initial].key_values.f_value + current_interpolation * (key_data[destination].key_values.f_value - key_data[initial].key_values.f_value);
+		break;
+	case ParameterValue::IMAGE_SPRITE_ANIM:
+		ret.sprite = nullptr;
+		if (key_data[destination].key_frame <= frame && current_interpolation >= 1.0f)
+			ret.sprite = key_data[destination].key_values.sprite;
 	default:
 		break;
 	}

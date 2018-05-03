@@ -1,12 +1,13 @@
 #ifndef COMPONENT_CHECK_BOX_H
 #define COMPONENT_CHECK_BOX_H
 #include "CompInteractive.h"
+#include "ClickAction.h"
 
 #include <vector>
 
 class CompScript;
 
-class CompCheckBox:public CompInteractive
+class CompCheckBox:public CompInteractive, public ClickAction
 {
 public:
 	CompCheckBox(Comp_Type t, GameObject* parent);
@@ -17,16 +18,21 @@ public:
 	void CopyValues(const CompCheckBox * component);
 	void Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const;
 	void Load(const JSON_Object * object, std::string name);
+	void SyncComponent(GameObject * sync_parent);
+	void SyncScript();
 	void OnPointDown(Event event_input);
 	void OnClick();
 	void ClearLinkedScripts();
+	void SetTick(CompImage* tick);
+	void OnSubmit(Event event_input);
 
-public:
-	CompImage* Tick = nullptr;
+	void HideTick();
+
 private:
-private:
+	CompImage * tick = nullptr;
 	std::vector<CompScript*> linked_scripts;
 	bool active = false;
+	uint tick_uid;
 };
 
 #endif//COMPONENT_CHECK_BOX_H

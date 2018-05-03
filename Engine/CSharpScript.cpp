@@ -229,6 +229,200 @@ void ScriptVariable::Load(const JSON_Object * object, const std::string& title, 
 	}
 }
 
+void ScriptVariable::GetOwnBufferSize(uint & buffer_size)
+{
+	const char* type_name = nullptr;
+
+	//SET VAR NAME --------------------
+	//json_object_dotset_string_with_std(object, title + "Name: ", name);
+	buffer_size += sizeof(int);
+	buffer_size += strlen(name);
+
+	buffer_size += sizeof(int);		//type
+
+	//SAVE VAR TYPE -------------------
+	switch (type)
+	{
+	case Var_UNKNOWN:
+		type_name = "unknown";
+		//buffer_size += sizeof(int);
+		//buffer_size += strlen(type_name);
+		break;
+
+	case Var_INT:
+		type_name = "int";
+		//buffer_size += sizeof(int);
+		//buffer_size += strlen(type_name);
+		buffer_size += sizeof(int);				//*(int*)value
+		break;
+
+	case Var_FLOAT:
+		type_name = "float";
+		//buffer_size += sizeof(int);
+		//buffer_size += strlen(type_name);
+		buffer_size += sizeof(float);
+		break;
+
+	case Var_BOOL:
+		type_name = "bool";
+		//buffer_size += sizeof(int);
+		//buffer_size += strlen(type_name);
+		buffer_size += sizeof(bool);
+		break;
+
+	case Var_STRING:
+		type_name = "string";
+		//buffer_size += sizeof(int);
+		//buffer_size += strlen(type_name);
+
+		//buffer_size += sizeof(int);
+		//buffer_size += str_value.size();
+		break;
+
+	case Var_CLASS:
+		type_name = "class";
+		//buffer_size += sizeof(int);
+		//buffer_size += strlen(type_name);
+		break;
+
+	case Var_GAMEOBJECT:
+		type_name = "GameObject";
+		//buffer_size += sizeof(int);
+		//buffer_size += strlen(type_name);
+		if (game_object != nullptr)
+		{
+			buffer_size += sizeof(int);
+			//json_object_dotset_number_with_std(object, title + "GameObject UUID: ", game_object->GetUUID());
+		}
+		else
+		{
+			//-1 Any GameObject is assigned
+			buffer_size += sizeof(int);
+			//json_object_dotset_number_with_std(object, title + "GameObject UUID: ", -1);
+		}
+		break;
+
+	default:
+		break;
+	}
+}
+
+void ScriptVariable::Save(char ** cursor) const
+{
+	const char* type_name = nullptr;
+
+	//SET VAR NAME --------------------
+	//json_object_dotset_string_with_std(object, title + "Name: ", name);
+	App->json_seria->SaveStringBinary(cursor, name);
+	App->json_seria->SaveIntBinary(cursor, type);
+
+	//SAVE VAR TYPE -------------------
+	switch (type)
+	{
+	case Var_UNKNOWN:
+		type_name = "unknown";
+		//App->json_seria->SaveStringBinary(cursor, type_name);
+		break;
+
+	case Var_INT:
+		type_name = "int";
+		//App->json_seria->SaveStringBinary(cursor, type_name);
+		App->json_seria->SaveIntBinary(cursor, *(int*)value);
+		break;
+
+	case Var_FLOAT:
+		type_name = "float";
+		//App->json_seria->SaveStringBinary(cursor, type_name);
+		App->json_seria->SaveFloatBinary(cursor, *(float*)value);
+		break;
+
+	case Var_BOOL:
+		type_name = "bool";
+		//App->json_seria->SaveStringBinary(cursor, type_name);
+		App->json_seria->SaveBooleanBinary(cursor, *(bool*)value);
+		break;
+
+	case Var_STRING:
+		type_name = "string";
+		//App->json_seria->SaveStringBinary(cursor, type_name);
+		//App->json_seria->SaveStringBinary(cursor, str_value);
+		break;
+
+	case Var_CLASS:
+		type_name = "class";
+		//App->json_seria->SaveStringBinary(cursor, type_name);
+		break;
+
+	case Var_GAMEOBJECT:
+		type_name = "GameObject";
+		//App->json_seria->SaveStringBinary(cursor, type_name);
+		if (game_object != nullptr)
+		{
+			App->json_seria->SaveIntBinary(cursor, game_object->GetUUID());
+		}
+		else
+		{
+			//-1 Any GameObject is assigned
+			App->json_seria->SaveIntBinary(cursor, -1);
+		}
+		break;
+
+	default:
+		break;
+	}
+}
+
+void ScriptVariable::Load(char ** cursor, std::vector<uint>& re_load_values)
+{
+	// Load values from inspector previously saved
+	switch (type)
+	{
+	case Var_UNKNOWN:
+	{
+		break;
+	}
+	case Var_INT:
+	{
+		int ival = App->json_seria->LoadIntBinary(cursor);
+		*(int*)value = ival;
+		SetMonoValue((int*)value);
+		break;
+	}
+	case Var_FLOAT:
+	{
+		float fval = App->json_seria->LoadFloatBinary(cursor);
+		*(float*)value = fval;
+		SetMonoValue((float*)value);
+		break;
+	}
+	case Var_BOOL:
+	{
+		bool bval = App->json_seria->LoadBooleanBinary(cursor);
+		*(bool*)value = bval;
+		SetMonoValue((bool*)value);
+		break;
+	}
+	case Var_STRING:
+	{
+		break;
+	}
+	case Var_CLASS:
+	{
+		break;
+	}
+	case Var_GAMEOBJECT:
+	{
+		uint obj_uid = App->json_seria->LoadIntBinary(cursor);
+		re_load_values.push_back(obj_uid);
+		break;
+	}
+	default:
+	{
+		break;
+	}
+	}
+}
+
 //CSHARP SCRIPT FUNCTIONS ---------------
 CSharpScript::CSharpScript()
 {
@@ -1082,9 +1276,88 @@ MonoObject*	CSharpScript::Instantiate(MonoObject* object, MonoString* prefab_)
 	{
 		App->scene->root->AddChildGameObject(gameobject);
 		App->importer->iScript->UpdateMonoMap(gameobject);
+
+
 		return App->importer->iScript->GetMonoObject(gameobject);
 	}
 	LOG("[error] with load prefab");
+	return nullptr;
+}
+
+MonoObject * CSharpScript::SpawnPrefabFromPos(MonoObject * object, MonoString * prefab_name, MonoObject * realposition, MonoObject * realrotation, MonoObject * prefabpos)
+{
+	const char* prefab = mono_string_to_utf8(prefab_name);
+
+	std::string directory_prebaf = App->fs->GetMainDirectory();
+	directory_prebaf += "/";
+	directory_prebaf += prefab;
+	directory_prebaf += ".prefab.json";
+	GameObject* gameobject = App->json_seria->GetLoadPrefab(directory_prebaf.c_str(), true);
+
+	if (gameobject != nullptr)
+	{
+		App->scene->root->AddChildGameObject(gameobject);
+		App->importer->iScript->UpdateMonoMap(gameobject);
+
+		MonoClass* classT = mono_object_get_class(realposition);
+		MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
+		MonoClassField* y_field = mono_class_get_field_from_name(classT, "y");
+		MonoClassField* z_field = mono_class_get_field_from_name(classT, "z");
+
+		float3 real_position_object;
+
+		if (x_field) mono_field_get_value(realposition, x_field, &real_position_object.x);
+		if (y_field) mono_field_get_value(realposition, y_field, &real_position_object.y);
+		if (z_field) mono_field_get_value(realposition, z_field, &real_position_object.z);
+
+		MonoClass* classT2 = mono_object_get_class(realrotation);
+		MonoClassField* x_field2 = mono_class_get_field_from_name(classT2, "x");
+		MonoClassField* y_field2 = mono_class_get_field_from_name(classT2, "y");
+		MonoClassField* z_field2 = mono_class_get_field_from_name(classT2, "z");
+
+		float3 real_rotation_object;
+
+		if (x_field2) mono_field_get_value(realrotation, x_field2, &real_rotation_object.x);
+		if (y_field2) mono_field_get_value(realrotation, y_field2, &real_rotation_object.y);
+		if (z_field2) mono_field_get_value(realrotation, z_field2, &real_rotation_object.z);
+
+		MonoClass* classT3 = mono_object_get_class(prefabpos);
+		MonoClassField* x_field3 = mono_class_get_field_from_name(classT3, "x");
+		MonoClassField* y_field3 = mono_class_get_field_from_name(classT3, "y");
+		MonoClassField* z_field3 = mono_class_get_field_from_name(classT3, "z");
+
+		float3 prefab_position_object;
+
+		if (x_field3) mono_field_get_value(prefabpos, x_field3, &prefab_position_object.x);
+		if (y_field3) mono_field_get_value(prefabpos, y_field3, &prefab_position_object.y);
+		if (z_field3) mono_field_get_value(prefabpos, z_field3, &prefab_position_object.z);
+
+		CompTransform* trans = gameobject->GetComponentTransform();
+
+		if (trans != nullptr)
+		{
+			float3 final_pos = real_position_object;
+			if (real_rotation_object.x < 1 && real_rotation_object.x > -1) real_rotation_object.x = 0;
+			if (real_rotation_object.z < 1 && real_rotation_object.z > -1) real_rotation_object.z = 0;
+			float3 globalrot = real_rotation_object;
+			Quat global_rot_quat = Quat::FromEulerXYZ(globalrot.x * DEGTORAD, globalrot.y * DEGTORAD, globalrot.z * DEGTORAD);
+			float3x3 mat;
+			mat = mat.identity;
+			mat = mat.FromQuat(global_rot_quat);
+
+			float3 rotatedpos = mat * prefab_position_object;
+			final_pos = final_pos + rotatedpos;
+			trans->SetPos(final_pos);
+
+			float3 prefabrot = ((trans->GetRotGlobal()).ToEulerXYZ()) * RADTODEG;
+
+			globalrot = globalrot + prefabrot;
+			trans->SetRot(globalrot);
+			gameobject->UpdateChildsMatrices();
+
+			return App->importer->iScript->GetMonoObject(gameobject);
+		}
+	}
 	return nullptr;
 }
 
@@ -1208,6 +1481,14 @@ MonoObject* CSharpScript::GetComponent(MonoObject* object, MonoReflectionType* t
 	else if (name_class == "CompCanvas")
 	{
 		comp_name = "CompCanvas";
+	}
+	else if (name_class == "CompCheckBox")
+	{
+		comp_name = "CompCheckBox";
+	}
+	else if (name_class == "CompSlider")
+	{
+		comp_name = "CompSlider";
 	}
 	/* Scripts */
 	if (comp_name == "")
@@ -1417,6 +1698,80 @@ void CSharpScript::Load(const JSON_Object* object, std::string name)
 			if (strcmp(variables[j]->name, name_variable_temp.c_str()) == 0)
 			{
 				variables[j]->Load(object, temp_var, re_load_values);
+			}
+		}
+	}
+}
+
+void CSharpScript::GetOwnBufferSize(uint &buffer_size)
+{
+	buffer_size += sizeof(int);			//variables.size()
+
+	for (int i = 0; i < variables.size(); i++)
+	{
+		variables[i]->GetOwnBufferSize(buffer_size);
+	}
+}
+
+void CSharpScript::Save(char** cursor) const
+{
+	App->json_seria->SaveIntBinary(cursor, variables.size());
+
+	for (int i = 0; i < variables.size(); i++)
+	{
+		variables[i]->Save(cursor);
+	}
+}
+
+void CSharpScript::Load(char** cursor)
+{
+	if (re_load_values.size() > 0)
+		re_load_values.clear();
+	//Once set the default values for the variables, update them to the inspector values saved previously
+	int num_variables = App->json_seria->LoadIntBinary(cursor);
+	for (int i = 0; i < num_variables; i++)
+	{
+		std::string name_variable_temp = App->json_seria->LoadStringBinary(cursor);
+		bool loaded = false; bool stop = false;
+		for (int j = 0; j < variables.size() && stop == false; j++)
+		{
+			if (strcmp(variables[j]->name, name_variable_temp.c_str()) == 0)
+			{
+				loaded = true;
+				stop = true;
+				VarType type_usless = (VarType)App->json_seria->LoadIntBinary(cursor);
+				variables[j]->Load(cursor, re_load_values);
+			}
+		}
+		if (!loaded)
+		{
+			VarType type_ = (VarType)App->json_seria->LoadIntBinary(cursor);
+			switch (type_)
+			{
+			case Var_INT:
+			{
+				int ival = App->json_seria->LoadIntBinary(cursor);
+				break;
+			}
+			case Var_FLOAT:
+			{
+				float fval = App->json_seria->LoadFloatBinary(cursor);
+				break;
+			}
+			case Var_BOOL:
+			{
+				bool bval = App->json_seria->LoadBooleanBinary(cursor);
+				break;
+			}
+			case Var_GAMEOBJECT:
+			{
+				uint obj_uid = App->json_seria->LoadIntBinary(cursor);
+				break;
+			}
+			default:
+			{
+				break;
+			}
 			}
 		}
 	}

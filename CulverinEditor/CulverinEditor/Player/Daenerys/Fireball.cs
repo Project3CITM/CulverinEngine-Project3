@@ -20,13 +20,43 @@ public class Fireball : CulverinBehaviour
 
     private bool destroyed = false;
 
+    private float final_pos = 0.0f;
+    private int distance = 0;
+
+    public void SetDamage(float set_damage)
+    {
+        damage = set_damage;
+    }
+
     void Start()
     {
+        Debug.Log("Vfront" + vfront, Department.PLAYER, Color.ORANGE);
         rb = GetComponent<CompRigidBody>();
         Shoot();
         timer = 0.0f;
 
-        GetComponent<CompAudio>().PlayEvent("DaenerysFire"); //Change This!!
+        GetComponent<CompAudio>().PlayEvent("DaenerysFireballImpact");
+
+        if (fireball == false)
+        {
+            if (vfront.x >= 2)
+            {
+                final_pos = transform.GetPosition().x + 25.4f * distance;
+            }
+            else if (vfront.x <= -2)
+            {
+                final_pos = transform.GetPosition().x - 25.4f * distance;
+            }
+            else if (vfront.z >= 2)
+            {
+                final_pos = transform.GetPosition().z + 25.4f * distance;
+            }
+            else if (vfront.z <= -2)
+            {
+                final_pos = transform.GetPosition().z - 25.4f * distance;
+            }
+        }
+
     }
 
     public void Shoot()
@@ -38,6 +68,25 @@ public class Fireball : CulverinBehaviour
 
     void Update()
     {
+        if (fireball == false)
+        {
+            if (vfront.x >= 2 && transform.GetPosition().x > final_pos)
+            {
+                Destroy(gameObject);
+            }
+            else if (vfront.x <= -2 && transform.GetPosition().x < final_pos)
+            {
+                Destroy(gameObject);
+            }
+            else if (vfront.z >= 2 && transform.GetPosition().z > final_pos)
+            {
+                Destroy(gameObject);
+            }
+            else if (vfront.z <= -2 && transform.GetPosition().z < final_pos)
+            {
+                Destroy(gameObject);
+            }
+        }
     }
 
     void OnContact()
@@ -74,17 +123,17 @@ public class Fireball : CulverinBehaviour
         }
 
         GameObject collided_obj = GetComponent<CompCollider>().GetCollidedObject();
+        GetComponent<CompAudio>().PlayEvent("DaenerysFireballImpact");       
         // DAMAGE ---
         if (collided_obj != null)
         {
-
             // Check the specific enemy in front of you and apply dmg or call object OnContact
             EnemiesManager enemy_manager = GetLinkedObject("player_enemies_manager").GetComponent<EnemiesManager>();
             if (!destroyed)
             {
                 if (enemy_manager.IsEnemy(collided_obj))
                 {
-                    enemy_manager.ApplyDamage(collided_obj, damage, Enemy_BT.ENEMY_GET_DAMAGE_TYPE.DEFAULT);
+                    enemy_manager.ApplyDamage(collided_obj, damage, Enemy_BT.ENEMY_GET_DAMAGE_TYPE.FIREBALL);
                 }
                 else
                 {
@@ -96,8 +145,6 @@ public class Fireball : CulverinBehaviour
             }
         }
 
-        GetComponent<CompAudio>().PlayEvent("DaenerysFireballImpact");
-        GetComponent<CompAudio>().StopEvent("DaenerysFire");
 
         if (fireball && destroyed == false)
         {
@@ -107,5 +154,10 @@ public class Fireball : CulverinBehaviour
             destroyed = true;
             return;
         }
+    }
+
+    public void SetDistance(int distance)
+    {
+        this.distance = distance;
     }
 }

@@ -97,7 +97,7 @@ update_status ModuleImporter::PreUpdate(float dt)
 	return UPDATE_CONTINUE;
 }
 
-GameObject* ModuleImporter::ProcessNode(aiNode* node, const aiScene* scene, GameObject* obj, const char* file)
+GameObject* ModuleImporter::ProcessNode(const aiNode* node, const aiScene* scene, GameObject* obj, const char* file)
 {	
 	static int count = 0;
 	GameObject* objChild = new GameObject(obj);
@@ -137,7 +137,7 @@ GameObject* ModuleImporter::ProcessNode(aiNode* node, const aiScene* scene, Game
 	return objChild;
 }
 
-GameObject* ModuleImporter::ProcessNode(aiNode* node, const aiScene* scene, GameObject* obj, std::vector<ReImport>& resourcesToReimport, std::string path)
+GameObject* ModuleImporter::ProcessNode(const aiNode* node, const aiScene* scene, GameObject* obj, std::vector<ReImport>& resourcesToReimport, std::string path)
 {
 	static int count = 0;
 	GameObject* objChild = new GameObject(obj);
@@ -165,18 +165,24 @@ GameObject* ModuleImporter::ProcessNode(aiNode* node, const aiScene* scene, Game
 		}
 
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-		bool isReimported = false;
-		for (int i = 0; i < resourcesToReimport.size(); i++)
+		bool isReimported = false; bool stop = false;
+		for (std::vector<ReImport>::iterator it = resourcesToReimport.begin(); it != resourcesToReimport.cend() && stop == false;)
 		{
-			if (strcmp(node->mName.C_Str(), resourcesToReimport[i].name_mesh) == 0 && strcmp(path.c_str(), resourcesToReimport[i].directory_obj) == 0)
+			if (strcmp(node->mName.C_Str(), it->name_mesh) == 0 && strcmp(path.c_str(), it->directory_obj) == 0)
 			{
-				iMesh->Import(scene, mesh, newObj, node->mName.C_Str(), resourcesToReimport[i].directory_obj, resourcesToReimport[i].uuid);
+				iMesh->Import(scene, mesh, newObj, node->mName.C_Str(), it->directory_obj, it->uuid);
 				isReimported = true;
+				stop = true;
+				it = resourcesToReimport.erase(it);
+			}
+			else
+			{
+				it++;
 			}
 		}
 		if (isReimported == false)
 		{
-			iMesh->Import(scene, mesh, newObj, node->mName.C_Str(), path.c_str());
+			iMesh->Import(scene, mesh, newObj, node->mName.C_Str(), path.c_str()); //TODO ELLIOT
 		}
 	}
 
@@ -189,7 +195,7 @@ GameObject* ModuleImporter::ProcessNode(aiNode* node, const aiScene* scene, Game
 	return objChild;
 }
 
-void ModuleImporter::ProcessTransform(aiNode* node, CompTransform* trans)
+void ModuleImporter::ProcessTransform(const aiNode* node, CompTransform* trans)
 {
 	aiVector3D aiPos;
 	aiQuaternion aiRot;

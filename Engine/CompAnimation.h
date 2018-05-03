@@ -41,6 +41,7 @@ class BlendingClip
 {
 public:
 	std::string name = "Blending Clip";
+	std::string name_clip;
 	AnimationClip* clip = nullptr;
 	bool first_active = false;
 	bool second_active = false;
@@ -88,7 +89,7 @@ class AnimationTransition
 {
 public:
 	std::string name = "Transition ";
-
+	std::string destination_name;
 	AnimationNode* destination = nullptr;
 
 	bool condition = false;
@@ -139,6 +140,12 @@ public:
 	// SAVE - LOAD METHODS ----------------
 	void Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const;
 	void Load(const JSON_Object* object, std::string name);
+
+	//Binary
+	 void GetOwnBufferSize(uint& buffer_size);
+	 void SaveBinary(char** cursor, int position) const;
+	 void LoadBinary(char** cursor);
+	 void SyncComponent(GameObject* sync_parent);
 	// -------------------------------------
 
 	void CreateAnimationClip();
@@ -150,6 +157,9 @@ public:
 	void SetClipsSpeed(float speed_value);
 
 	void SetActiveAnimationNode(AnimationNode * active);
+
+	void SpawnPrefabFromPos(std::string prefab_name,float3 realposition, float3 rotation, float3 prefabpos, float3 prefabrot);
+
 public:
 
 	ResourceAnimation* animation_resource = nullptr;

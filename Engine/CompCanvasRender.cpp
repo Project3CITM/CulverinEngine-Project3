@@ -5,6 +5,7 @@
 #include "GameObject.h"
 #include "Scene.h"
 #include "CompImage.h"
+#include "JSONSerialization.h"
 #include "CompText.h"
 #include "CompRectTransform.h"
 #include "CompCanvas.h"
@@ -143,6 +144,24 @@ void CompCanvasRender::Load(const JSON_Object* object, std::string name)
 	uid = json_object_dotget_number_with_std(object, name + "UUID");
 
 	//...
+	Enable();
+}
+
+void CompCanvasRender::GetOwnBufferSize(uint & buffer_size)
+{
+	Component::GetOwnBufferSize(buffer_size);
+	buffer_size += sizeof(int);				//UID
+}
+
+void CompCanvasRender::SaveBinary(char ** cursor, int position) const
+{
+	Component::SaveBinary(cursor, position);
+	App->json_seria->SaveIntBinary(cursor, uid);
+}
+
+void CompCanvasRender::LoadBinary(char ** cursor)
+{
+	uid = App->json_seria->LoadIntBinary(cursor);
 	Enable();
 }
 

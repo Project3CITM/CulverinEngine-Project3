@@ -20,6 +20,8 @@ public class PauseMenuButtons : CulverinBehaviour
         return_button = GetLinkedObject("return_button");
 
         pop_up_menu.SetActive(false);
+        menu_button.GetComponent<CompButton>().SetInteractivity(true);
+        return_button.GetComponent<CompButton>().SetInteractivity(true);
     }
     void Update()
     {
@@ -30,6 +32,27 @@ public class PauseMenuButtons : CulverinBehaviour
                 EventSystem.SendInteractiveSelected(menu_button);
             }
         }
+
+        if (Input.GetInput_KeyDown("Menu", "Player"))
+        {
+            if(pop_up_menu.IsActive())
+            {
+                menu_button.GetComponent<CompButton>().SetInteractivity(true);
+                return_button.GetComponent<CompButton>().SetInteractivity(true);
+                pop_up_menu.SetActive(false);
+            }
+            else
+            {
+                if (SceneManager.CheckMultiSceneReady())
+                {
+                    GetComponent<CompAudio>().PlayEvent("Push");
+
+                    SceneManager.ChangeToSecondaryScene();
+                }
+            }
+          
+        }
+
     }
     public void Resume()
     {

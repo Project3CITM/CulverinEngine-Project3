@@ -30,8 +30,8 @@ namespace CulverinEditor
         /// <summary>  
         ///     Get Enabled or Disbaled Behaviours.
         /// </summary>
-        //[MethodImpl(MethodImplOptions.InternalCall)]
-        //public extern bool GetEnabled();
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern bool GetEnabled();
 
         /// <summary>  
         ///     Set Enabled or Disbaled Behaviours.
@@ -43,8 +43,8 @@ namespace CulverinEditor
         /// <summary>  
         ///     Set Enabled or Disbaled Behaviours.
         /// </summary>
-        //[MethodImpl(MethodImplOptions.InternalCall)]
-        //public extern void SetEnabled(bool active);
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern void SetEnabled(bool active);
 
     }
 }

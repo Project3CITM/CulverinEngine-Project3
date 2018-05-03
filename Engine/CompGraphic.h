@@ -1,12 +1,15 @@
 #ifndef COMPONENT_GRAPHIC_H
 #define COMPONENT_GRAPHIC_H
+
 #include "Component.h"
 #include "Math\float4.h"
 #include "VertexUIData.h"
+
 class CompRectTransform;
 class CompCanvasRender;
 class CompCanvas;
 class CompInteractive;
+
 class CompGraphic : public Component
 {
 public:
@@ -14,6 +17,14 @@ public:
 	CompGraphic(const CompGraphic& copy, GameObject* parent);
 	~CompGraphic();
 	void Clear();
+
+	void Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const;
+	void Load(const JSON_Object * object, std::string name);
+
+	void GetOwnBufferSize(uint& buffer_size);
+	void SaveBinary(char** cursor, int position) const;
+	void LoadBinary(char** cursor);
+
 	void AddCanvas();
 	void AddCanvasRender();
 	void AddRectTransform();
@@ -39,6 +50,8 @@ public:
 	float4 GetColor()const;
 	bool GetParentActive();
 	float GetAlpha()const;
+	virtual int GetWidth()const;
+	virtual int GetHeight()const;
 
 	void ResizeGenerateMesh();
 

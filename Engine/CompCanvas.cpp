@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "ModuleRenderer3D.h"
 #include "CompCamera.h"
+#include "JSONSerialization.h"
 
 #include "ModuleGUI.h"
 #include "WindowInspector.h"
@@ -178,21 +179,38 @@ void CompCanvas::Load(const JSON_Object* object, std::string name)
 	Enable();
 }
 
+void CompCanvas::GetOwnBufferSize(uint & buffer_size)
+{
+	Component::GetOwnBufferSize(buffer_size);
+	buffer_size += sizeof(int);				//UID
+	buffer_size += sizeof(float);			//current_canvas_alpha
+}
+
+void CompCanvas::SaveBinary(char ** cursor, int position) const
+{
+	Component::SaveBinary(cursor, position);
+	App->json_seria->SaveIntBinary(cursor, uid);
+	App->json_seria->SaveFloatBinary(cursor, current_canvas_alpha);
+
+}
+
+void CompCanvas::LoadBinary(char ** cursor)
+{
+	uid = App->json_seria->LoadIntBinary(cursor);
+	default_ui_shader = App->module_shaders->CreateDefaultShader("default shader", UIShaderFrag, UIShaderVert, nullptr, true);
+	current_canvas_alpha = App->json_seria->LoadFloatBinary(cursor);
+	canvas_alpha = current_canvas_alpha;
+	default_ui_shader = App->module_shaders->CreateDefaultShader("default shader", UIShaderFrag, UIShaderVert, nullptr, true);
+
+	//...
+	Enable();
+}
+
 void CompCanvas::Resize(int width, int height)
 {
-	//UpdateCanvasScale();
 	float2 resize_factor = my_transform->GenerateResizeFactor(width, height);
-	my_transform->Resize(resize_factor, true);
 
-	CompRectTransform* childs_transf = nullptr;
-	for (int i = 0; i < parent->GetNumChilds(); i++)
-	{
-		childs_transf = (CompRectTransform*)parent->GetChildbyIndex(i)->FindComponentByType(C_RECT_TRANSFORM);
-		if (childs_transf != nullptr)
-		{
-			childs_transf->Resize(resize_factor);
-		}
-	}
+	my_transform->ResizeRecursive(resize_factor, true);
 
 	for (uint i = 0; i < graphic_vector.size(); i++)
 	{

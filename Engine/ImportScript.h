@@ -103,6 +103,9 @@ private:
 	static void BlockGUIinput();
 	static void QuitScene();
 	static void LoadNewWalkableMap(MonoString* walkable_map);
+	static void PushSaveInfoV2(MonoObject* info);
+	static void PushSaveInfo(float hp);
+	static float PopLoadInfo();
 
 	/* Scene Management */
 	static void SendInteractiveSelected(MonoObject* interactive);
@@ -131,11 +134,14 @@ private:
 	static mono_bool	GetInput_MouseButtonDown(MonoString* name, MonoString* input);
 	static mono_bool	GetInput_MouseButtonUp(MonoString* name, MonoString* input);
 	static float		GetInput_ControllerAxis(MonoString* name, MonoString* input);
-	static MonoString*	GetInput_ControllerActionName(MonoString* name, MonoString* input, MonoString* device, bool negative_key);
-	static MonoString*	GetInput_ControllerKeyBindingName(MonoString* name, MonoString* input, MonoString* device, bool negative_key);
-	static mono_bool	GetInput_ControllerWaitForKey(MonoString* name, MonoString* input, MonoString* device, bool negative_key);
-	static void			SetInput_ControllerWaitForKey(MonoString* name, MonoString* input, MonoString* device, bool negative_key);
-
+	static MonoString*	GetInput_ControllerActionName(MonoString* name, MonoString* input, int device, bool negative_key);
+	static MonoString*	GetInput_ControllerKeyBindingName(MonoString* name, MonoString* input, int device, bool negative_key);
+	static void			SetInputActionToChange(MonoString* name, MonoString* input, int device, bool negative_key);
+	static bool			GetChangeInputActive();
+	static int			GetChangeInputState();
+	static int			GetActualDeviceCombo();
+	static void			SavePlayerAction();
+	static void			LoadDefaultPlayerAction();
 	static void			RumblePlay(float intensity, int milliseconds);
 
 	/* Time */
@@ -172,6 +178,7 @@ private:
 
 	/* Object */
 	static MonoObject*	Instantiate(MonoObject* object, MonoString* prefab);
+	static MonoObject*  SpawnPrefabFromPos(MonoObject* object, MonoString* prefab_name, MonoObject* realposition, MonoObject* realrotation, MonoObject* prefabpos);
 	static MonoObject*	Instantiate_respawn(MonoObject* object, MonoString* prefab, float time);
 	static void			Destroy(MonoObject* object, MonoObject* gameobject, float time);
 	
@@ -240,6 +247,11 @@ private:
 	static void Deactivate(MonoObject* object, int uid);
 	static void SetInteractivity(MonoObject* object, mono_bool enable);
 
+	static bool IsNormal(MonoObject * object);
+	static bool IsHighlighted(MonoObject * object);
+	static bool IsPressed(MonoObject * object);
+	static bool IsDisabled(MonoObject * object);
+
 	/*Component Interactive Button*/
 	static void Clicked(MonoObject * object);
 
@@ -250,6 +262,14 @@ private:
 	static void DeactivateRender(MonoObject * object);
 	static void SetAlpha(MonoObject* object, float alpha);
 
+	static int GetHeight(MonoObject * object);
+
+	static int GetWidth(MonoObject * object);
+
+	/*Component CheckBox*/
+	static void HideTick(MonoObject * object);
+	/*Component Slider*/
+	static float GetFill(MonoObject * object);
 	/*Component Text*/
 	static void SetText(MonoObject* object, MonoString* alpha);
 	/*Component Canvas*/
@@ -258,7 +278,13 @@ private:
 	/*Component Graphic Image*/
 	static void FillAmount(MonoObject* object, float value);
 	static void SetColor(MonoObject* object, MonoObject* color, float alpha);
-
+	/*Screen*/
+	static void SetFullScreen(MonoObject * object);
+	static void SetWindowed(MonoObject * object);
+	static void SetBordeless(MonoObject * object);
+	static void SetVSync(MonoObject * object);
+	static void ShowFPS(MonoObject * object);
+	static void SwapControllerVibration(MonoObject * object);
 	/*Component Collier*/
 	static MonoObject*	GetCollidedObject(MonoObject * object);
 	static MonoObject*	GetContactPoint(MonoObject* object);
@@ -305,7 +331,7 @@ private:
 	static void SetSecondctiveBlendingClipWeight(MonoObject* object, float weight);
 	static void SetBlendInTime(MonoObject* object, MonoString* string, float weight);
 	static void PlayAnimationNode(MonoObject* object, MonoString* string);
-
+	
 	/*Component Material*/
 	static void SetAlbedo(MonoObject* object, MonoString* string);
 	static void SetNormals(MonoObject* object, MonoString* string);
@@ -324,6 +350,8 @@ private:
 	/*Component Rect_Transform*/
 	static void SetUIPosition(MonoObject* object, MonoObject* vector3);
 	static MonoObject* GetUIPosition(MonoObject* object);
+	static void SetWidth(MonoObject * object, int value);
+	static void SetHeight(MonoObject * object, int value);
 
 	/*Module Physics*/
 	static MonoObject*	RayCast(MonoObject* origin, MonoObject* direction, float distance);

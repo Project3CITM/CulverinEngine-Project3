@@ -28,6 +28,7 @@ struct KeyFrameData
 	KeyFrameData(int key, int max_keys, int sample_rate, AnimationValue value);
 	~KeyFrameData();
 	bool ShowKeyValue(int i);
+	ResourceMaterial * SelectSprite();
 	void CaptureKeyValue(int i);
 	void SetKeyValue(int i);
 
@@ -47,6 +48,7 @@ struct KeyFrameData
 	int destination=1;
 	float current_interpolation = 0.0f;
 	bool invalid_key = false;
+	bool show_materials = false;
 	std::vector<KeyData> key_data;
 	ParameterValue parameter;
 	AnimData* my_anim_data = nullptr;

@@ -11,6 +11,12 @@ public class EnemyShield_BT : Enemy_BT
     public GameObject shield_name;
     public int texture_type = 0;
 
+    public float arrow_pen = 0.0f;
+    public float tripleArrow_pen = 0.0f;
+    public float fireball_pen = 0.0f;
+    public float firebreath_pen = 0.0f;
+    CompAudio audio_comp;
+
     public override void Start()
     {
         GameObject Temp_go = GetLinkedObject("enemies_manager");
@@ -36,7 +42,7 @@ public class EnemyShield_BT : Enemy_BT
             enemy_mat_sword = GetMaterialByName("Alpha1_ShieldEnemy2_Material_21_04");
         }
 
-
+        audio_comp = GetComponent<CompAudio>();
         shield_name = GetLinkedObject("shield_name");
 
         base.Start();
@@ -45,7 +51,6 @@ public class EnemyShield_BT : Enemy_BT
 
     public override void Update()
     {
-
         shield_block_timer += Time.deltaTime;
 
         enemy_mat_sword.SetFloat("dmg_alpha", dmg_alpha);
@@ -63,7 +68,6 @@ public class EnemyShield_BT : Enemy_BT
 
         if (attack_ready && current_action.action_type == Action.ACTION_TYPE.GET_HIT_ACTION)
         {
-            Debug.Log("GetHitInterrupted BITCH", Department.IA);
             current_action.Interupt();
         }
 
@@ -75,6 +79,8 @@ public class EnemyShield_BT : Enemy_BT
         //Attack action
         if (InRange())
         {
+            bool attack_ready = attack_timer >= attack_cooldown;
+
             if (!GetComponent<Movement_Action>().LookingAtPlayer())
             {
                 current_action.Interupt();
@@ -82,9 +88,21 @@ public class EnemyShield_BT : Enemy_BT
                 return;
             }
 
-            bool attack_ready = attack_timer >= attack_cooldown;
+            else if (shield_block_timer >= shield_block_cd && player.GetComponent<CharactersManager>().GetCurrentCharacterName() == "Jaime")
+            {
+                MovementController.Direction player_dir = GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerDirection();
+                Movement_Action.Direction enemy_dir = GetComponent<Movement_Action>().SetDirection();
+                if (player_dir == MovementController.Direction.NORTH && enemy_dir == Movement_Action.Direction.DIR_SOUTH ||
+                    player_dir == MovementController.Direction.SOUTH && enemy_dir == Movement_Action.Direction.DIR_NORTH ||
+                    player_dir == MovementController.Direction.EAST && enemy_dir == Movement_Action.Direction.DIR_WEST ||
+                    player_dir == MovementController.Direction.WEST && enemy_dir == Movement_Action.Direction.DIR_EAST)
+                {
+                    next_action = GetComponent<ShieldBlock_Action>();
+                }
+                return;
+            }
 
-            if (attack_ready)
+            else if (attack_ready)
             {
                 attack_timer = 0.0f;
                 state = AI_STATE.AI_ATTACKING;
@@ -104,8 +122,19 @@ public class EnemyShield_BT : Enemy_BT
         }
         else if (player_detected == true && Disable_Movement_Gameplay_Debbuger == false)
         {
-            GetComponent<ChasePlayer_Action>().ActionStart();
-            current_action = GetComponent<ChasePlayer_Action>();
+            if (player.GetComponent<CharactersManager>().GetCurrentCharacterName() == "Jaime")
+            {
+                GetComponent<ChasePlayer_Action>().SetBlocking(false);
+                GetComponent<ChasePlayer_Action>().ActionStart();
+                current_action = GetComponent<ChasePlayer_Action>();
+            }
+            else
+            {
+                GetComponent<ChasePlayer_Action>().SetBlocking(true);
+                GetComponent<ChasePlayer_Action>().ActionStart();
+                current_action = GetComponent<ChasePlayer_Action>();
+            }
+
             return;
         }
     }
@@ -155,54 +184,88 @@ public class EnemyShield_BT : Enemy_BT
         switch (life_state)
         {
             case ENEMY_STATE.ENEMY_ALIVE:
-                if (shield_block_timer >= shield_block_cd && damage_type != ENEMY_GET_DAMAGE_TYPE.FIREWALL)
+                if (GetComponent<ShieldBlock_Action>().IsBlocking() == true || GetComponent<ChasePlayer_Action>().IsBlocking() == true)
                 {
-                    MovementController.Direction player_dir = GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerDirection();
-                    Movement_Action.Direction enemy_dir = GetComponent<Movement_Action>().SetDirection();
-                    if (player_dir == MovementController.Direction.NORTH && enemy_dir == Movement_Action.Direction.DIR_SOUTH ||
-                        player_dir == MovementController.Direction.SOUTH && enemy_dir == Movement_Action.Direction.DIR_NORTH ||
-                        player_dir == MovementController.Direction.EAST && enemy_dir == Movement_Action.Direction.DIR_WEST ||
-                        player_dir == MovementController.Direction.WEST && enemy_dir == Movement_Action.Direction.DIR_EAST)
+                    if (damage_type == ENEMY_GET_DAMAGE_TYPE.FIREWALL)
                     {
-                        shield_block_timer = 0.0f;
-                        //GetComponent<CompAnimation>().PlayAnimationNode("Block");
-                        next_action = GetComponent<ShieldBlock_Action>();
-                        GetComponent<CompAudio>().PlayEvent("Enemy3_ShieldBlock");
-                        return false;
+                        audio_comp.PlayEvent("Enemy3_Hurt");
+                        return base.ApplyDamage(damage, damage_type);
+                    }
+                    else if(damage_type == ENEMY_GET_DAMAGE_TYPE.FIREBALL)
+                    {
+                        Debug.Log("FIREBALL BLOCKED!", Department.PLAYER, Color.RED);
+                        GetComponent<CompAnimation>().PlayAnimationNode("Block");
+                        return base.ApplyDamage(damage * fireball_pen, damage_type);
+                    }
+                    else if(damage_type == ENEMY_GET_DAMAGE_TYPE.ARROW)
+                    {
+                        Debug.Log("ARROW BLOCKED!", Department.PLAYER, Color.RED);
+                        GetComponent<CompAnimation>().PlayAnimationNode("Block");
+                        return base.ApplyDamage(damage * arrow_pen, damage_type);
+                    }
+                    else if(damage_type == ENEMY_GET_DAMAGE_TYPE.FIREBREATH)
+                    {
+                        Debug.Log("FIREBREATH BLOCKED!", Department.PLAYER, Color.RED);
+                        GetComponent<CompAnimation>().PlayAnimationNode("Block");
+                        return base.ApplyDamage(damage * firebreath_pen, damage_type);
                     }
                     else
-                        return base.ApplyDamage(damage, damage_type);
+                    {
+                        GetComponent<ShieldBlock_Action>().DecreaseBlockTime();
+                        GetComponent<CompAnimation>().PlayAnimationNode("Block");
+                        GetComponent<CompAudio>().PlayEvent("Enemy3_ShieldBlock");
+                        base.UpdateHUD();
+                    }
                 }
                 else
+                {
                     return base.ApplyDamage(damage, damage_type);
-
+                }
                 break;
 
             case ENEMY_STATE.ENEMY_DAMAGED:
-                if (shield_block_timer >= shield_block_cd_damaged && damage_type != ENEMY_GET_DAMAGE_TYPE.FIREWALL)
+                if (GetComponent<ShieldBlock_Action>().IsBlocking() == true || GetComponent<ChasePlayer_Action>().IsBlocking() == true)
                 {
-                    MovementController.Direction player_dir = GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerDirection();
-                    Movement_Action.Direction enemy_dir = GetComponent<Movement_Action>().SetDirection();
-                    if (player_dir == MovementController.Direction.NORTH && enemy_dir == Movement_Action.Direction.DIR_SOUTH ||
-                        player_dir == MovementController.Direction.SOUTH && enemy_dir == Movement_Action.Direction.DIR_NORTH ||
-                        player_dir == MovementController.Direction.EAST && enemy_dir == Movement_Action.Direction.DIR_WEST ||
-                        player_dir == MovementController.Direction.WEST && enemy_dir == Movement_Action.Direction.DIR_EAST)
+                    if (damage_type == ENEMY_GET_DAMAGE_TYPE.FIREWALL)
                     {
-                        shield_block_timer = 0.0f;
-                        next_action = GetComponent<ShieldBlock_Action>();
-                        //GetComponent<CompAnimation>().PlayAnimationNode("Block");
-                        GetComponent<CompAudio>().PlayEvent("Enemy3_ShieldBlock");
-                        return false;
+                        audio_comp.PlayEvent("Enemy3_Hurt");
+                        return base.ApplyDamage(damage, damage_type);
+                    }
+                    else if (damage_type == ENEMY_GET_DAMAGE_TYPE.FIREBALL)
+                    {
+                        Debug.Log("FIREBALL BLOCKED!", Department.PLAYER, Color.RED);
+                        GetComponent<CompAnimation>().PlayAnimationNode("Block");
+                        return base.ApplyDamage(damage * fireball_pen, damage_type);
+                    }
+                    else if (damage_type == ENEMY_GET_DAMAGE_TYPE.ARROW)
+                    {
+                        Debug.Log("ARROW BLOCKED!", Department.PLAYER, Color.RED);
+                        GetComponent<CompAnimation>().PlayAnimationNode("Block");
+                        return base.ApplyDamage(damage * arrow_pen, damage_type);
+                    }
+                    else if (damage_type == ENEMY_GET_DAMAGE_TYPE.FIREBREATH)
+                    {
+                        Debug.Log("FIREBREATH BLOCKED!", Department.PLAYER, Color.RED);
+                        GetComponent<CompAnimation>().PlayAnimationNode("Block");
+                        return base.ApplyDamage(damage * firebreath_pen, damage_type);
                     }
                     else
-                        return base.ApplyDamage(damage, damage_type);
+                    {
+                        GetComponent<ShieldBlock_Action>().DecreaseBlockTime();
+                        GetComponent<CompAnimation>().PlayAnimationNode("Block");
+                        GetComponent<CompAudio>().PlayEvent("Enemy3_ShieldBlock");
+                        base.UpdateHUD();
+                    }
                 }
                 else
+                {
+                    audio_comp.PlayEvent("Enemy3_Hurt");
                     return base.ApplyDamage(damage, damage_type);
-
+                }
                 break;
 
             case ENEMY_STATE.ENEMY_STUNNED:
+                audio_comp.PlayEvent("Enemy3_Hurt");
                 return base.ApplyDamage(damage, damage_type);
                 break;
 
@@ -225,5 +288,10 @@ public class EnemyShield_BT : Enemy_BT
         GetComponent<CompMaterial>().SetAlbedo("enemy1_Color.png");
         GetComponent<CompMaterial>().SetNormals("enemy1_Normal.png");
         GetComponent<CompMaterial>().SetAmbientOcclusion("enemy1_AO.png");
+    }
+
+    public void ResetShieldBlockTimer()
+    {
+        shield_block_timer = 0.0f;
     }
 }

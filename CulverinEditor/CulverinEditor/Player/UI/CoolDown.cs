@@ -3,7 +3,10 @@ using CulverinEditor.Debug;
 
 public class CoolDown : CulverinBehaviour
 {
-    public CompButton button_cd;
+    protected CompButton button_cd;
+    protected CompImage fill_image;
+    protected CompText timer_text;
+    protected CharactersManager characters_manager;
 
     public float cd_time = 2.0f;
     public float act_time = 0.0f;
@@ -12,6 +15,18 @@ public class CoolDown : CulverinBehaviour
     public int seconds = 0;
     protected int prev_seconds = 0;
     protected bool reset_timer = false;
+
+    protected void LinkTextTimer(GameObject text_obj)
+    {
+        timer_text = text_obj.GetComponent<CompText>();
+    }
+
+    public virtual void Start()
+    {
+        button_cd = GetComponent<CompButton>();
+        fill_image = GetComponent<CompImage>();
+        characters_manager = GetLinkedObject("player_obj").GetComponent<CharactersManager>();
+    }
 
     public virtual void Update()
     {
@@ -25,7 +40,7 @@ public class CoolDown : CulverinBehaviour
             }
 
             calc_time = final_time / cd_time;
-            GetComponent<CompImage>().FillAmount(calc_time);
+            fill_image.FillAmount(calc_time);
 
             //Manage Logical CD time
             act_time += Time.deltaTime;
@@ -34,9 +49,8 @@ public class CoolDown : CulverinBehaviour
             if (act_time >= cd_time)
             {
                 in_cd = false;
-                button_cd = GetComponent<CompButton>();
                 button_cd.Activate();
-                GetComponent<CompImage>().FillAmount(1.0f);
+                fill_image.FillAmount(1.0f);
                 reset_timer = true;
             }
         }
@@ -50,7 +64,7 @@ public class CoolDown : CulverinBehaviour
     {
     }
 
-    protected void ManageTextTimer(GameObject timer_obj)
+    protected void ManageTextTimer()
     {
         seconds = (int)(cd_time - act_time) + 1;
         if (seconds < prev_seconds)
@@ -58,13 +72,18 @@ public class CoolDown : CulverinBehaviour
             prev_seconds = seconds;
 
             //Set time text
-            timer_obj.GetComponent<CompText>().SetText(prev_seconds.ToString());
+            timer_text.SetText(prev_seconds.ToString());
         }
     }
 
-    protected void ResetTextTimer(GameObject timer_obj)
+    protected void ResetTextTimer()
     {
         //Set time text
-        timer_obj.GetComponent<CompText>().SetText("");
+        timer_text.SetText("");
+    }
+
+    public void SetCDTime(float time)
+    {
+        cd_time = time;
     }
 }

@@ -1,10 +1,12 @@
 #ifndef COMPONENT_CANVAS_RENDER_H
 #define COMPONENT_CANVAS_RENDER_H
+
 #include "Component.h"
 #include <vector>
 #include "Math\float2.h"
 #include "Math\float3.h"
 #include "CompImage.h"
+
 class CompText;
 class CompImage;
 class CompGraphic;
@@ -31,6 +33,11 @@ public:
 	void CopyValues(const CompCanvasRender * component);
 	void Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const;
 	void Load(const JSON_Object * object, std::string name);
+
+	void GetOwnBufferSize(uint& buffer_size);
+	void SaveBinary(char** cursor, int position) const;
+	void LoadBinary(char** cursor);
+
 	void SyncComponent(GameObject* sync_parent);
 
 	void DrawGraphic();

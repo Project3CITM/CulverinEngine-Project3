@@ -22,6 +22,7 @@
 CompAnimation::CompAnimation(Comp_Type t, GameObject * parent) : Component(t, parent)
 {
 	name_component = "CompAnimation";
+	uid = App->random->Int();
 }
 
 CompAnimation::CompAnimation(const CompAnimation & copy, GameObject * parent) : Component(Comp_Type::C_ANIMATION, parent)
@@ -121,11 +122,14 @@ void CompAnimation::PreUpdate(float dt)
 			}
 			if (playing)
 			{
+				AnimationNode* blending_node = nullptr;
+				if(blending_animation != nullptr)
+					blending_node = GetNodeFromName(blending_animation->name);
 				for (std::vector<std::pair<GameObject*, const AnimBone*>>::iterator it = bone_update_vector.begin(); it != bone_update_vector.end(); ++it)
 				{
 					if (it->first != nullptr)
 					{
-						it->second->UpdateBone(it->first, current_animation, active_node->GetFirstActiveBlendingClip(), active_node->GetSecondActiveBlendingClip(), blending_animation);
+						it->second->UpdateBone(it->first, current_animation, active_node->GetFirstActiveBlendingClip(), active_node->GetSecondActiveBlendingClip(), blending_node);
 					}
 				}
 			}
@@ -1116,6 +1120,263 @@ void CompAnimation::Load(const JSON_Object * object, std::string name)
 	}
 }
 
+void CompAnimation::GetOwnBufferSize(uint & buffer_size)
+{
+	Component::GetOwnBufferSize(buffer_size);
+	
+	buffer_size += sizeof(int); //Component UUID
+	buffer_size += sizeof(int); //Resource UUID
+	buffer_size += sizeof(int); //Number of clips
+
+	for (std::vector<AnimationClip*>::const_iterator it = animation_clips.begin(); it != animation_clips.end(); ++it)
+	{
+		buffer_size += sizeof(int);		//Animation clip name
+		buffer_size += sizeof((*it)->name.length());
+		buffer_size += sizeof(bool);	//Loop
+		buffer_size += sizeof(bool);	//Finished
+		buffer_size += sizeof(float);	//Time
+		buffer_size += sizeof(float);	//Start_frame_time
+		buffer_size += sizeof(float);	//End_frame_time
+		buffer_size += sizeof(float);	//Speed_factor
+		buffer_size += sizeof(float);	//total_blending time
+		buffer_size += sizeof(float);	//current_blending_time
+		buffer_size += sizeof(int);	//animation state
+	}
+	
+	buffer_size += sizeof(int);			//Number of nodes
+	for (std::vector<AnimationNode*>::const_iterator it = animation_nodes.begin(); it != animation_nodes.end(); ++it)
+	{
+		buffer_size += sizeof(int);		//Node name
+		buffer_size += (*it)->name.length();
+		buffer_size += sizeof(int);		//Animation clip name
+		buffer_size += (*it)->clip->name.length();
+		buffer_size += sizeof(bool);	//Active
+		buffer_size += sizeof(int);		//Animation audio
+		buffer_size += (*it)->anim_audio.length();
+		buffer_size += sizeof(float);	//Audio time
+		buffer_size += sizeof(int);		//Animation particle
+		buffer_size += (*it)->anim_prefab_particle.length();
+		buffer_size += sizeof(float);	//Prefab particle time
+		buffer_size += sizeof(float);	//Particle pos
+		buffer_size += sizeof(float);	//
+		buffer_size += sizeof(float);	//
+	}
+	for (std::vector<AnimationNode*>::const_iterator it = animation_nodes.begin(); it != animation_nodes.end(); ++it)
+	{
+		buffer_size += sizeof(int);		//Number of transitions
+		for (std::vector<AnimationTransition*>::const_iterator trans_it = (*it)->transitions.begin(); trans_it != (*it)->transitions.end(); ++trans_it)
+		{
+			buffer_size += sizeof(int);		//Transition name
+			buffer_size += (*trans_it)->name.length();
+			buffer_size += sizeof(int);		//Destination name
+			buffer_size += (*trans_it)->name.length();
+			buffer_size += sizeof(bool);	//Condition
+			buffer_size += sizeof(bool);	//Has exit time
+			buffer_size += sizeof(float);	//Exit time
+		}
+
+		buffer_size += sizeof(int);		//Number of blending clips
+		for (std::vector<BlendingClip*>::const_iterator blend_it = (*it)->blending_clips.begin(); blend_it != (*it)->blending_clips.end(); ++blend_it)
+		{
+			buffer_size += sizeof(int);		//Blending clip name
+			buffer_size += (*blend_it)->name.length();
+			buffer_size += sizeof(int);		//Clip name
+			buffer_size += (*blend_it)->clip->name.length();
+			buffer_size += sizeof(bool);	//First active
+			buffer_size += sizeof(bool);	//Second active
+			buffer_size += sizeof(float);	//Weight
+		}
+	}
+}
+
+void CompAnimation::SaveBinary(char ** cursor, int position) const
+{
+	Component::SaveBinary(cursor, position);
+	App->json_seria->SaveIntBinary(cursor, uid);
+	if (animation_resource != nullptr)
+	{
+		App->json_seria->SaveIntBinary(cursor, animation_resource->GetUUID());
+	}
+	else
+	{
+		App->json_seria->SaveIntBinary(cursor, 0);
+	}
+	App->json_seria->SaveIntBinary(cursor, animation_clips.size());
+
+	for (std::vector<AnimationClip*>::const_iterator it = animation_clips.begin(); it != animation_clips.end(); ++it)
+	{
+		App->json_seria->SaveStringBinary(cursor, (*it)->name);
+		App->json_seria->SaveBooleanBinary(cursor, (*it)->loop);
+		App->json_seria->SaveBooleanBinary(cursor, (*it)->finished);
+		App->json_seria->SaveFloatBinary(cursor, (*it)->time);
+		App->json_seria->SaveFloatBinary(cursor, (*it)->start_frame_time);
+		App->json_seria->SaveFloatBinary(cursor, (*it)->end_frame_time);
+		App->json_seria->SaveFloatBinary(cursor, (*it)->total_blending_time);
+		App->json_seria->SaveFloatBinary(cursor, (*it)->current_blending_time);
+		App->json_seria->SaveFloatBinary(cursor, (*it)->speed_factor);
+		App->json_seria->SaveFloatBinary(cursor, (int)(*it)->state);
+	}
+
+	App->json_seria->SaveIntBinary(cursor, animation_nodes.size());
+
+
+	for (std::vector<AnimationNode*>::const_iterator it = animation_nodes.begin(); it != animation_nodes.end(); ++it)
+	{
+		App->json_seria->SaveStringBinary(cursor, (*it)->name);
+		App->json_seria->SaveStringBinary(cursor, (*it)->clip->name);
+		App->json_seria->SaveBooleanBinary(cursor, (*it)->active);
+		App->json_seria->SaveStringBinary(cursor, (*it)->anim_audio);
+		App->json_seria->SaveFloatBinary(cursor, (*it)->audio_time);
+		App->json_seria->SaveStringBinary(cursor, (*it)->anim_prefab_particle);
+		App->json_seria->SaveFloatBinary(cursor, (*it)->prefab_particle_time);
+		App->json_seria->SaveFloat3Binary(cursor, (*it)->prefab_pos);
+	}
+	for (std::vector<AnimationNode*>::const_iterator it = animation_nodes.begin(); it != animation_nodes.end(); ++it)
+	{
+		App->json_seria->SaveIntBinary(cursor, (*it)->transitions.size());
+		for (std::vector<AnimationTransition*>::const_iterator trans_it = (*it)->transitions.begin(); trans_it != (*it)->transitions.end(); ++trans_it)
+		{
+			App->json_seria->SaveStringBinary(cursor, (*trans_it)->name);
+			App->json_seria->SaveStringBinary(cursor, (*trans_it)->destination->name);
+			App->json_seria->SaveBooleanBinary(cursor, (*trans_it)->condition);
+			App->json_seria->SaveBooleanBinary(cursor, (*trans_it)->has_exit_time);
+			App->json_seria->SaveFloatBinary(cursor, (*trans_it)->exit_time);
+		}
+
+		App->json_seria->SaveIntBinary(cursor, (*it)->blending_clips.size());
+		for (std::vector<BlendingClip*>::const_iterator blend_it = (*it)->blending_clips.begin(); blend_it != (*it)->blending_clips.end(); ++blend_it)
+		{
+			App->json_seria->SaveStringBinary(cursor, (*blend_it)->name);
+			App->json_seria->SaveStringBinary(cursor, (*blend_it)->clip->name);
+			App->json_seria->SaveBooleanBinary(cursor, (*blend_it)->first_active);
+			App->json_seria->SaveBooleanBinary(cursor, (*blend_it)->second_active);
+			App->json_seria->SaveFloatBinary(cursor, (*blend_it)->weight);
+		}
+	}
+}
+
+void CompAnimation::LoadBinary(char ** cursor)
+{
+	uid = App->json_seria->LoadIntBinary(cursor);
+	uint resourceID = App->json_seria->LoadIntBinary(cursor);
+	if (resourceID > 0)
+	{
+		animation_resource = (ResourceAnimation*)App->resource_manager->GetResource(resourceID);
+		if (animation_resource != nullptr)
+		{
+			animation_resource->num_game_objects_use_me++;
+
+			// LOAD ANIMATION ----------------------------  
+			if (animation_resource->IsLoadedToMemory() == Resource::State::UNLOADED)
+			{
+				App->importer->iAnimation->LoadResource(animation_resource->name.c_str(), animation_resource);
+			}
+		}
+	}
+
+	int num_clips = App->json_seria->LoadIntBinary(cursor);
+	
+	for (int i = 0; i < num_clips; i++)
+	{
+		AnimationClip* temp = new AnimationClip();
+		temp->name = App->json_seria->LoadStringBinary(cursor);
+		temp->loop = App->json_seria->LoadBooleanBinary(cursor);
+		temp->finished = App->json_seria->LoadBooleanBinary(cursor);
+		temp->time = App->json_seria->LoadFloatBinary(cursor);
+		temp->start_frame_time = App->json_seria->LoadFloatBinary(cursor);
+		temp->end_frame_time = App->json_seria->LoadFloatBinary(cursor);
+		temp->total_blending_time = App->json_seria->LoadFloatBinary(cursor);
+		temp->current_blending_time = App->json_seria->LoadFloatBinary(cursor);
+		temp->speed_factor = App->json_seria->LoadFloatBinary(cursor);
+		temp->state = (AnimationState)App->json_seria->LoadIntBinary(cursor);
+		animation_clips.push_back(temp);
+		if (temp->state == AnimationState::A_PLAY)
+		{
+			current_animation = temp;
+		}
+		else if (temp->state == AnimationState::A_BLENDING)
+		{
+			blending_animation = temp;
+		}
+	}
+	int num_nodes = App->json_seria->LoadIntBinary(cursor);
+	for (int i = 0; i < num_nodes; i++)
+	{
+		AnimationNode* temp = new AnimationNode();
+		temp->name = App->json_seria->LoadStringBinary(cursor);
+		std::string clip_name = App->json_seria->LoadStringBinary(cursor);
+		temp->active = App->json_seria->LoadBooleanBinary(cursor);
+		if (temp->active == true)
+		{
+			active_node = temp;
+		}
+		temp->anim_audio = App->json_seria->LoadStringBinary(cursor);
+		temp->audio_time = App->json_seria->LoadFloatBinary(cursor);
+
+		temp->anim_prefab_particle = App->json_seria->LoadStringBinary(cursor);
+		temp->prefab_particle_time = App->json_seria->LoadFloatBinary(cursor);
+		temp->prefab_pos = App->json_seria->LoadFloat3Binary(cursor);
+
+		for (std::vector<AnimationClip*>::iterator temp_it = animation_clips.begin(); temp_it != animation_clips.end(); temp_it++)
+		{
+			if ((*temp_it)->name == clip_name)
+			{
+				temp->clip = (*temp_it);
+				break;
+			}
+		}
+		animation_nodes.push_back(temp);
+	}
+
+	for (int i = 0; i < num_nodes; i++)
+	{
+		//Load transitions
+		int num_transitions = App->json_seria->LoadIntBinary(cursor);
+		for (int j = 0; j < num_transitions; j++)
+		{
+			AnimationTransition* temp_transition = new AnimationTransition();
+
+			temp_transition->name = App->json_seria->LoadStringBinary(cursor);
+			temp_transition->destination_name = App->json_seria->LoadStringBinary(cursor);
+			temp_transition->condition = App->json_seria->LoadBooleanBinary(cursor);
+			temp_transition->has_exit_time = App->json_seria->LoadBooleanBinary(cursor);
+			temp_transition->exit_time = App->json_seria->LoadFloatBinary(cursor);
+
+			for (std::vector<AnimationNode*>::iterator temp_it = animation_nodes.begin(); temp_it != animation_nodes.end(); temp_it++)
+			{
+				if ((*temp_it)->name == temp_transition->destination_name)
+				{
+					temp_transition->destination = (*temp_it);
+					break;
+				}
+			}
+			animation_nodes.at(i)->transitions.push_back(temp_transition);
+		}
+
+		int num_blending_clips = App->json_seria->LoadIntBinary(cursor);
+		for (int j = 0; j < num_blending_clips; j++)
+		{
+			BlendingClip* temp_blending_clip = new BlendingClip();
+			temp_blending_clip->name = App->json_seria->LoadStringBinary(cursor);
+			temp_blending_clip->name_clip = App->json_seria->LoadStringBinary(cursor);
+			temp_blending_clip->first_active = App->json_seria->LoadBooleanBinary(cursor);
+			temp_blending_clip->second_active = App->json_seria->LoadBooleanBinary(cursor);
+			temp_blending_clip->weight= App->json_seria->LoadFloatBinary(cursor);
+			AnimationClip* temp_clip = GetClipFromName(temp_blending_clip->name_clip);
+			if (temp_clip != nullptr)
+			{
+				temp_blending_clip->clip = temp_clip;
+			}
+
+			animation_nodes.at(i)->blending_clips.push_back(temp_blending_clip);
+		}
+	}
+}
+
+void CompAnimation::SyncComponent(GameObject * sync_parent)
+{
+}
+
 void CompAnimation::CreateAnimationClip()
 {
 	AnimationClip* temp_anim_clip = new AnimationClip();
@@ -1289,7 +1550,6 @@ void AnimationClip::RestartAnimationClip()
 
 AnimationNode::~AnimationNode()
 {
-
 	for (std::vector<BlendingClip*>::iterator temp = blending_clips.begin(); temp != blending_clips.end(); temp++)
 	{
 		RELEASE((*temp));
@@ -1419,6 +1679,43 @@ void CompAnimation::SetActiveAnimationNode(AnimationNode* active)
 		if ((*new_item) != active)
 		{
 			(*new_item)->active = false;
+		}
+	}
+}
+
+void CompAnimation::SpawnPrefabFromPos(std::string prefab_name,float3 realposition, float3 realrotation, float3 prefabpos, float3 prefabrot)
+{
+	std::string directory_prebaf = App->fs->GetMainDirectory();
+	directory_prebaf += "/";
+	directory_prebaf += prefab_name.c_str();
+	directory_prebaf += ".prefab.json";
+	GameObject* gameobject = App->json_seria->GetLoadPrefab(directory_prebaf.c_str(), true);
+	if (gameobject != nullptr)
+	{
+		App->scene->root->AddChildGameObject(gameobject);
+		App->importer->iScript->UpdateMonoMap(gameobject);
+
+		CompTransform* trans = gameobject->GetComponentTransform();
+		CompTransform* my_trans = parent->GetComponentTransform();
+
+		if (trans != nullptr)
+		{
+			float3 final_pos = realposition;
+			float3 globalrot = realrotation;
+				
+			float3x3 mat;
+			mat = mat.identity;
+			mat = mat.FromEulerXYZ(realrotation.x, realrotation.y, realrotation.z);
+
+			float3 rotatedpos = mat * prefabpos;
+			final_pos = final_pos + rotatedpos;
+			trans->SetPos(final_pos);
+
+			float3 prefabrot = ((trans->GetRotGlobal()).ToEulerXYZ()) *RADTODEG;
+
+			globalrot = globalrot + prefabrot;
+			trans->SetRot(globalrot);
+			gameobject->UpdateChildsMatrices();
 		}
 	}
 }

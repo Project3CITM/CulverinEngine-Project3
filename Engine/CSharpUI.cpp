@@ -22,7 +22,8 @@
 #include "CompImage.h"
 #include "CompText.h"
 #include "CompCanvas.h"
-
+#include "CompRectTransform.h"
+#include "CompCheckBox.h"
 void CSharpScript::Activate(MonoObject* object, int uid)
 {
 	Component* comp = App->importer->iScript->GetComponentMono(object);
@@ -80,6 +81,7 @@ void CSharpScript::Clicked(MonoObject * object)
 	}
 }
 
+
 void CSharpScript::SetInteractivity(MonoObject * object, mono_bool enable)
 {
 	if (object != nullptr)
@@ -88,6 +90,52 @@ void CSharpScript::SetInteractivity(MonoObject * object, mono_bool enable)
 		if (item != nullptr)
 		{
 			item->SetInteractivity(enable);
+		}
+	}
+}
+bool CSharpScript::IsNormal(MonoObject * object)
+{
+	if (object != nullptr)
+	{
+		CompInteractive* item = (CompInteractive*)App->importer->iScript->GetComponentMono(object);
+		if (item != nullptr)
+		{
+			return item->IsStateNormal();
+		}
+	}
+}
+bool CSharpScript::IsHighlighted(MonoObject * object)
+{
+	if (object != nullptr)
+	{
+		CompInteractive* item = (CompInteractive*)App->importer->iScript->GetComponentMono(object);
+		if (item != nullptr)
+		{
+			return item->IsStateHighlighted();
+		}
+	}
+}
+
+bool CSharpScript::IsPressed(MonoObject * object)
+{
+	if (object != nullptr)
+	{
+		CompInteractive* item = (CompInteractive*)App->importer->iScript->GetComponentMono(object);
+		if (item != nullptr)
+		{
+			return item->IsStatePressed();
+		}
+	}
+}
+
+bool CSharpScript::IsDisabled(MonoObject * object)
+{
+	if (object != nullptr)
+	{
+		CompInteractive* item = (CompInteractive*)App->importer->iScript->GetComponentMono(object);
+		if (item != nullptr)
+		{
+			return item->IsStateDisabled();
 		}
 	}
 }
@@ -116,7 +164,29 @@ void CSharpScript::FillAmount(MonoObject * object, float value)
 		}
 	}
 }
+void CSharpScript::SetWidth(MonoObject * object, int value)
+{
+	if (object != nullptr)
+	{
+		CompRectTransform* item = (CompRectTransform*)App->importer->iScript->GetComponentMono(object);
+		if (item != nullptr)
+		{
+			item->SetWidth(value);
+		}
+	}
+}
 
+void CSharpScript::SetHeight(MonoObject * object, int value)
+{
+	if (object != nullptr)
+	{
+		CompRectTransform* item = (CompRectTransform*)App->importer->iScript->GetComponentMono(object);
+		if (item != nullptr)
+		{
+			item->SetHeight(value);
+		}
+	}
+}
 void CSharpScript::SetRender(MonoObject * object, mono_bool flag)
 {
 	if (object != nullptr)
@@ -166,6 +236,40 @@ void CSharpScript::SetAlpha(MonoObject * object, float alpha)
 		}
 	}
 }
+int CSharpScript::GetWidth(MonoObject * object)
+{
+	if (object != nullptr)
+	{
+		CompGraphic* item = (CompGraphic*)App->importer->iScript->GetComponentMono(object);
+		if (item != nullptr)
+		{
+			return item->GetWidth();
+		}
+	}
+}
+int CSharpScript::GetHeight(MonoObject * object)
+{
+	if (object != nullptr)
+	{
+		CompGraphic* item = (CompGraphic*)App->importer->iScript->GetComponentMono(object);
+		if (item != nullptr)
+		{
+			return item->GetHeight();
+		}
+	}
+}
+
+void CSharpScript::HideTick(MonoObject * object)
+{
+	if (object != nullptr)
+	{
+		CompCheckBox* checkbox = (CompCheckBox*)App->importer->iScript->GetComponentMono(object);
+		if (checkbox != nullptr)
+		{
+			checkbox->HideTick();
+		}
+	}
+}
 
 void CSharpScript::SetText(MonoObject * object, MonoString * string)
 {
@@ -184,7 +288,7 @@ void CSharpScript::SetColor(MonoObject * object, MonoObject * color, float alpha
 	Component* comp = App->importer->iScript->GetComponentMono(object);
 	if (comp != nullptr)
 	{
-		CompImage* image = (CompImage*)comp->GetParent()->FindComponentByType(Comp_Type::C_IMAGE);
+		CompGraphic* image = (CompGraphic*)App->importer->iScript->GetComponentMono(object);
 		if (image != nullptr)
 		{
 			MonoClass* classT = mono_object_get_class(color);

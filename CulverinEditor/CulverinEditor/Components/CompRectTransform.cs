@@ -12,6 +12,12 @@ namespace CulverinEditor
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern Vector3 GetUIPosition();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern Vector3 SetWidth(int value);
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern Vector3 SetHeight(int value);
     }
 
 }

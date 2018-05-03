@@ -115,7 +115,18 @@ bool ModuleResourceManager::Start()
 			{
 				if (strcmp(files_reimport[files_reimport.size() - 1], resources_to_reimport[i].directory_obj) != 0)
 				{
-					files_reimport.push_back(resources_to_reimport[i].directory_obj);
+					bool dontrepeat = false;
+					for (int j = 0; j < files_reimport.size(); j++)
+					{
+						if (strcmp(resources_to_reimport[i].directory_obj, files_reimport[j]) == 0)
+						{
+							dontrepeat = true;
+						}
+					}
+					if (!dontrepeat)
+					{
+						files_reimport.push_back(resources_to_reimport[i].directory_obj);
+					}
 				}
 			}
 			// if a Resource state == Resource::State::REIMPORT delete it.

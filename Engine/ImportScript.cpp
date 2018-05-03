@@ -1073,7 +1073,7 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.Object::Instantiate(string)", (const void*)Instantiate);
 	mono_add_internal_call("CulverinEditor.Object::Instantiate(string,single)", (const void*)Instantiate_respawn);
 	mono_add_internal_call("CulverinEditor.Object::Destroy", (const void*)Destroy);
-	
+		mono_add_internal_call("CulverinEditor.Object::SpawnPrefabFromPos", (const MonoObject*)SpawnPrefabFromPos);
 	// Transform ---------------------------
 	mono_add_internal_call("CulverinEditor.Transform::GetForwardVector", (const void*)GetForwardVector);
 	mono_add_internal_call("CulverinEditor.Transform::GetBackwardVector", (const void*)GetBackwardVector);
@@ -1123,6 +1123,9 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::BlockGUIinput", (const void*)BlockGUIinput);
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::QuitScene", (const void*)QuitScene);
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::LoadNewWalkableMap", (const void*)LoadNewWalkableMap);
+	//mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::PushSaveInfo(object)", (const void*)PushSaveInfoV2);
+	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::PushSaveInfo(single)", (const void*)PushSaveInfo);
+	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::PopLoadInfo", (const void*)PopLoadInfo);
 	//EVENT SYSTEM FUNCTIONS ----------------------------
 	mono_add_internal_call("CulverinEditor.EventSystem.EventSystem::SendInteractiveSelected", (const void*)SendInteractiveSelected);
 	mono_add_internal_call("CulverinEditor.EventSystem.EventSystem::GetInteractiveSelectedActive", (const void*)GetInteractiveSelectedActive);
@@ -1154,8 +1157,14 @@ void ImportScript::LinkFunctions()
 
 	mono_add_internal_call("CulverinEditor.Input::GetInput_ControllerActionName", (const void*)GetInput_ControllerActionName);
 	mono_add_internal_call("CulverinEditor.Input::GetInput_ControllerKeyBindingName", (const void*)GetInput_ControllerKeyBindingName);
-	mono_add_internal_call("CulverinEditor.Input::GetInput_ControllerWaitForKey", (const void*)GetInput_ControllerWaitForKey);
-	mono_add_internal_call("CulverinEditor.Input::SetInput_ControllerWaitForKey", (const void*)SetInput_ControllerWaitForKey);
+	mono_add_internal_call("CulverinEditor.Input::SetInputActionToChange", (const void*)SetInputActionToChange);
+	mono_add_internal_call("CulverinEditor.Input::GetChangeInputActive", (const void*)GetChangeInputActive);
+	mono_add_internal_call("CulverinEditor.Input::GetChangeInputState", (const void*)GetChangeInputState);
+	mono_add_internal_call("CulverinEditor.Input::GetActualDeviceCombo", (const void*)GetActualDeviceCombo);
+
+	
+	mono_add_internal_call("CulverinEditor.Input::SavePlayerAction", (const void*)SavePlayerAction);
+	mono_add_internal_call("CulverinEditor.Input::LoadDefaultPlayerAction", (const void*)LoadDefaultPlayerAction);
 
 	mono_add_internal_call("CulverinEditor.Input::RumblePlay", (const void*)RumblePlay);
 
@@ -1195,11 +1204,17 @@ void ImportScript::LinkFunctions()
 	//COMPONENT UI_RECT_TRANSFORM FUNCTIONS -----------------
 	mono_add_internal_call("CulverinEditor.CompRectTransform::SetUIPosition", (const void*)SetUIPosition);
 	mono_add_internal_call("CulverinEditor.CompRectTransform::GetUIPosition", (const void*)GetUIPosition);
+	mono_add_internal_call("CulverinEditor.CompRectTransform::SetWidth", (const void*)SetWidth);
+	mono_add_internal_call("CulverinEditor.CompRectTransform::SetHeight", (const void*)SetHeight);
 
 	//COMPONENT UI_INTERACTIVE FUNCTIONS -----------------
 	mono_add_internal_call("CulverinEditor.CompInteractive::Activate", (const void*)Activate);
 	mono_add_internal_call("CulverinEditor.CompInteractive::Deactivate", (const void*)Deactivate);
 	mono_add_internal_call("CulverinEditor.CompInteractive::SetInteractivity", (const void*)SetInteractivity);
+	mono_add_internal_call("CulverinEditor.CompInteractive::IsNormal", (const void*)IsNormal);
+	mono_add_internal_call("CulverinEditor.CompInteractive::IsHighlighted", (const void*)IsHighlighted);
+	mono_add_internal_call("CulverinEditor.CompInteractive::IsPressed", (const void*)IsPressed);
+	mono_add_internal_call("CulverinEditor.CompInteractive::IsDisabled", (const void*)IsDisabled);
 
 	
 	//COMPONENT UI_INTERACTIVE FUNCTIONS -----------------
@@ -1214,6 +1229,8 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.CompGraphic::DeactivateRender", (const void*)DeactivateRender);
 	mono_add_internal_call("CulverinEditor.CompGraphic::SetColor", (const void*)SetColor);
 	mono_add_internal_call("CulverinEditor.CompGraphic::SetAlpha", (const void*)SetAlpha);
+	mono_add_internal_call("CulverinEditor.CompGraphic::GetWidth", (const void*)GetWidth);
+	mono_add_internal_call("CulverinEditor.CompGraphic::GetHeight", (const void*)GetHeight);
 
 	mono_add_internal_call("CulverinEditor.CompImage::FillAmount", (const void*)FillAmount);
 	
@@ -1221,6 +1238,10 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.CompText::SetText", (const void*)SetText);
 	//COMPONENT UI_GRAPHIC FUNCTIONS -----------------
 	mono_add_internal_call("CulverinEditor.CompCanvas::SetCanvasAlpha", (const void*)SetCanvasAlpha);
+	//CHECKBOX METHODS
+	mono_add_internal_call("CulverinEditor.CompCheckBox::HideTick", (const void*)HideTick);
+	//SLIDERFUNCIOTNRGAS
+	mono_add_internal_call("CulverinEditor.CompSlider::GetFill", (const void*)GetFill);
 	//COMPONENT COLLIDER FUNCTIONS -----------------------
 	mono_add_internal_call("CulverinEditor.CompCollider::GetCollidedObject", (const void*)GetCollidedObject);
 	mono_add_internal_call("CulverinEditor.CompCollider::GetContactPoint", (const void*)GetContactPoint);
@@ -1275,7 +1296,6 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.CompAnimation::SetFirstActiveBlendingClipWeight", (const void*)SetFirstActiveBlendingClipWeight);
 	mono_add_internal_call("CulverinEditor.CompAnimation::SetBlendInTime", (const void*)SetBlendInTime);
 	mono_add_internal_call("CulverinEditor.CompAnimation::PlayAnimationNode", (const void*)PlayAnimationNode);
-
 	//MODULE PHYSICS FUNCTIONS ----------------------------
 	mono_add_internal_call("CulverinEditor.PhysX::RayCast", (const void*)RayCast);
 
@@ -1293,6 +1313,13 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.Random::Range(int,int)", (const void*)RangeInt);
 	mono_add_internal_call("CulverinEditor.Random::Range(single,single)", (const void*)RangeFloat);
 	mono_add_internal_call("CulverinEditor.Random::Range(int,int,int)", (const void*)RangeIntNoRepeat);
+	//SCREEN FUNCTRIONS ---------------------------
+	mono_add_internal_call("CulverinEditor.Screen.Screen::SetFullScreen", (const void*)SetFullScreen);
+	mono_add_internal_call("CulverinEditor.Screen.Screen::SetWindowed", (const void*)SetWindowed);
+	mono_add_internal_call("CulverinEditor.Screen.Screen::SetBordeless", (const void*)SetBordeless);
+	mono_add_internal_call("CulverinEditor.Screen.Screen::SetVSync", (const void*)SetVSync);
+	mono_add_internal_call("CulverinEditor.Screen.Screen::ShowFPS", (const void*)ShowFPS);
+	mono_add_internal_call("CulverinEditor.Screen.Screen::SwapControllerVibration", (const void*)SwapControllerVibration);
 }
 
 //Log messages into Engine Console
@@ -1436,6 +1463,41 @@ void ImportScript::LoadNewWalkableMap(MonoString* walkable_map)
 		App->map->imported_map = map;
 		App->map->ImportMap(true);
 	}
+}
+
+void ImportScript::PushSaveInfoV2(MonoObject* info)
+{
+	if (info != nullptr)
+	{
+		//MonoClass* classT = mono_object_get_class(info);
+		//MonoClassField* x_field = mono_class_get_field_from_name(classT, "x");
+		//MonoClassField* y_field = mono_class_get_field_from_name(classT, "y");
+		//MonoClassField* z_field = mono_class_get_field_from_name(classT, "z");
+
+		//float3 info_p;
+
+		//if (x_field) mono_field_get_value(info, x_field, &info_p.x);
+		//if (y_field) mono_field_get_value(info, y_field, &info_p.y);
+		//if (z_field) mono_field_get_value(info, z_field, &info_p.z);
+
+		//App->scene->infoPlayer.push_back(info_p);
+	}
+}
+
+void ImportScript::PushSaveInfo(float hp)
+{
+	App->scene->infoPlayer.push_back(hp);
+}
+
+float ImportScript::PopLoadInfo()
+{
+	if (App->scene->infoPlayer.size() > 0)
+	{
+		float ret = App->scene->infoPlayer[App->scene->infoPlayer.size() - 1];
+		App->scene->infoPlayer.pop_back();
+		return ret;
+	}
+	return 0.0f;
 }
 
 void ImportScript::SendInteractiveSelected(MonoObject * interactive)
@@ -1613,26 +1675,40 @@ float ImportScript::GetInput_ControllerAxis(MonoString* name, MonoString* input)
 	return App->input->player_action->GetInput_ControllerAxis(mono_string_to_utf8(name), mono_string_to_utf8(input));
 }
 
-MonoString * ImportScript::GetInput_ControllerActionName(MonoString * name, MonoString * input, MonoString * device, bool negative_key)
+MonoString * ImportScript::GetInput_ControllerActionName(MonoString * name, MonoString * input, int device, bool negative_key)
 {
-	return nullptr;
-		//App->input->player_action->GetInput_ControllerActionName(mono_string_to_utf8(name), mono_string_to_utf8(input), mono_string_to_utf8(device), negative_key);
+	return mono_string_new_wrapper(App->input->player_action->GetInput_ControllerActionName(mono_string_to_utf8(name), mono_string_to_utf8(input), device, negative_key));
 }
 
-MonoString * ImportScript::GetInput_ControllerKeyBindingName(MonoString * name, MonoString * input, MonoString * device, bool negative_key)
+MonoString * ImportScript::GetInput_ControllerKeyBindingName(MonoString * name, MonoString * input, int device, bool negative_key)
 {
-	return nullptr;
+	return mono_string_new_wrapper(App->input->player_action->GetInput_ControllerKeyBindingName(mono_string_to_utf8(name), mono_string_to_utf8(input), device, negative_key));
 }
 
-mono_bool ImportScript::GetInput_ControllerWaitForKey(MonoString * name, MonoString * input, MonoString * device, bool negative_key)
+void ImportScript::SetInputActionToChange(MonoString * name, MonoString * input, int device, bool negative_key)
 {
-	return mono_bool();
+	App->input->player_action->SetInputActionToChange(mono_string_to_utf8(name), mono_string_to_utf8(input), device, negative_key);
 }
-
-void ImportScript::SetInput_ControllerWaitForKey(MonoString * name, MonoString * input, MonoString * device, bool negative_key)
+bool ImportScript::GetChangeInputActive()
 {
+	return App->input->player_action->GetChangeInputActive();
 }
-
+int ImportScript::GetChangeInputState()
+{
+	return App->input->player_action->GetChangeInputState();;
+}
+int ImportScript::GetActualDeviceCombo()
+{
+	return App->input->GetActualDeviceCombo();;
+}
+void ImportScript::SavePlayerAction()
+{
+	App->input->SavePlayerAction();
+}
+void ImportScript::LoadDefaultPlayerAction()
+{
+	App->input->LoadDefaultPlayerAction();
+}
 void ImportScript::RumblePlay(float intensity, int milliseconds)
 {
 	App->input->RumblePlay(intensity, milliseconds);
@@ -2041,7 +2117,24 @@ void ImportScript::SetInteractivity(MonoObject * object, mono_bool enable)
 {
 	current->SetInteractivity(object, enable);
 }
+bool ImportScript::IsNormal(MonoObject * object)
+{
+	return current->IsNormal(object);
+}
+bool ImportScript::IsHighlighted(MonoObject * object)
+{
+	return current->IsHighlighted(object);
+}
 
+bool ImportScript::IsPressed(MonoObject * object)
+{
+	return current->IsPressed(object);
+}
+
+bool ImportScript::IsDisabled(MonoObject * object)
+{
+	return current->IsDisabled(object);
+}
 void ImportScript::Clicked(MonoObject * object)
 {
 	current->Clicked(object);
@@ -2069,6 +2162,26 @@ void ImportScript::DeactivateRender(MonoObject * object)
 void ImportScript::SetAlpha(MonoObject * object, float alpha)
 {
 	current->SetAlpha(object, alpha);
+}
+
+int ImportScript::GetHeight(MonoObject * object)
+{
+	return current->GetWidth(object);
+}
+
+int ImportScript::GetWidth(MonoObject * object)
+{
+	return current->GetHeight(object);
+}
+
+void ImportScript::HideTick(MonoObject * object)
+{
+	current->HideTick(object);
+}
+
+float ImportScript::GetFill(MonoObject * object)
+{
+	return GetFill(object);
 }
 
 void ImportScript::SetText(MonoObject * object, MonoString * text)
@@ -2287,6 +2400,11 @@ void ImportScript::PlayAnimationNode(MonoObject * object, MonoString * string)
 	current->PlayAnimationNode(object, string);
 }
 
+MonoObject * ImportScript::SpawnPrefabFromPos(MonoObject * object, MonoString * prefab_name, MonoObject* realposition, MonoObject* realrotation, MonoObject* prefabpos)
+{
+	return current->SpawnPrefabFromPos(object, prefab_name, realposition, realrotation, prefabpos);
+}
+
 void ImportScript::SetAlbedo(MonoObject * object, MonoString * string)
 {
 	current->SetAlbedo(object, string);
@@ -2352,6 +2470,15 @@ MonoObject * ImportScript::GetUIPosition(MonoObject * object)
 	return current->GetUIPosition(object);
 }
 
+void ImportScript::SetWidth(MonoObject * object, int value)
+{
+	current->SetWidth(object, value);
+}
+
+void ImportScript::SetHeight(MonoObject * object, int value)
+{
+	current->SetHeight(object, value);
+}
 MonoObject * ImportScript::RayCast(MonoObject * origin, MonoObject * direction, float distance)
 {
 	return current->RayCast(origin, direction, distance);
@@ -2402,4 +2529,34 @@ int ImportScript::RangeIntNoRepeat(int min, int max, int norepeat)
 		}
 	}
 	return 0;
+}
+
+void ImportScript::SetFullScreen(MonoObject * object)
+{
+	App->full_screen = !(App->full_screen);
+}
+
+void ImportScript::SetWindowed(MonoObject * object)
+{
+	App->resizable_window = !(App->resizable_window);
+}
+
+void ImportScript::SetBordeless(MonoObject * object)
+{
+	App->borderless = !(App->borderless);
+}
+
+void ImportScript::SetVSync(MonoObject * object)
+{
+	App->vsync = !(App->vsync);
+}
+
+void ImportScript::ShowFPS(MonoObject * object)
+{
+	App->active_fps = !(App->active_fps);
+}
+
+void ImportScript::SwapControllerVibration(MonoObject * object)
+{
+	App->SwapControllerVibration();
 }

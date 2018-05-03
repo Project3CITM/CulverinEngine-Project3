@@ -32,7 +32,7 @@ struct Navigation
 
 };
 
-class CompInteractive:public Component
+class CompInteractive:public Component 
 {
 public:
 	CompInteractive(Comp_Type t, GameObject* parent);
@@ -50,13 +50,26 @@ public:
 	void Clear();
 	void ShowOptions();
 	void CopyValues(const CompInteractive * component);
+
+	// Save & Load ----------------------------------------------------------------------
 	void Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const;
 	void Load(const JSON_Object * object, std::string name);
+
+	void GetOwnBufferSize(uint& buffer_size);
+	void SaveBinary(char** cursor, int position) const;
+	void LoadBinary(char** cursor);
+	//----------------------------------------------------------------------------------
+
 	void SyncComponent(GameObject* sync_parent);
 	bool IsActivate()const;
-	bool IsSelective() const;
-	void Activate();
+	bool IsDragrable() const;
+	bool IsStateNormal()const;
+	bool IsStateHighlighted()const;
+	bool IsStatePressed()const;
+	bool IsStateDisabled()const;
 
+	void Activate();
+	void OnGOActive(bool active);
 	bool IsInteractiveEnabled() const;
 	
 
@@ -135,6 +148,8 @@ protected:
 	virtual void UpdateSelectionState(Event event_data);
 	void ShowInspectorColorTransition();
 	void ShowInspectorSpriteTransition();
+	void ShowInspectorAnimationTransition();
+
 	void PrepareHandleTransition();
 	void HandleTransition(SelectionStates selection_state);
 
@@ -143,6 +158,8 @@ private:
 	void StartTransitionColor(float4 color_to_change, bool no_fade);
 	void UpdateTransitionColor(float dt);
 	void StartTransitionSprite(ResourceMaterial* sprite_to_change);
+	void StartAnimationSprite();
+
 public:
 
 	
@@ -176,13 +193,16 @@ protected:
 	int sprite_value = -1;
 	bool select_sprite = false;
 
+	//Animation parameters
+	SelectionStates to_anim = STATE_NORMAL;
+	CompImage* image_state[3];
 	//State values
 
 	bool disabled = false;
 	bool point_down = false;
 	bool point_inside = false;
 	bool interactive_selected = false;
-	bool selective = false;
+	bool dragable = false;
 
 	bool interactive_enabled = true;
 

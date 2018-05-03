@@ -80,6 +80,10 @@ public:
 	void SaveScript(JSON_Object* object, std::string name) const;
 	void LoadScript(const JSON_Object* object, std::string name);
 
+	void GetOwnBufferSize(uint& buffer_size);
+	void SaveBinary(char** cursor, int position) const;
+	void LoadBinary(char** cursor);
+
 public:
 
 	std::string name_script;

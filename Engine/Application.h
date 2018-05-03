@@ -100,7 +100,7 @@ public:
 	void SetState(EngineState state);
 
 	void WantToSave(bool binary = false);
-	void WantToLoad(bool in_game = false);
+	void WantToLoad(bool in_game = false, bool binary = false, bool force_json = false);
 	void DontDestroyOnLoad();
 	void LoadMultiScene();
 	void ChangeToSecondary();
@@ -116,6 +116,14 @@ public:
 	void MakeBuild(std::string build_name, std::string Initial_scene, std::string destination, bool game_mode = true);
 	void SaveLogs(const char* path = nullptr);
 	bool InitBuild();
+
+	//
+	void SetFullScreen();
+	void SetWindowed();
+	void SetBordeless();
+	void SetVSync();
+	void ShowFPS();
+	void SwapControllerVibration();
 
 private:
 
@@ -186,7 +194,10 @@ public:
 	bool change_to_secondary_scene = false;
 	bool remove_secondary_scene = false;
 	bool activate_gui_input = false;
-
+	bool active_fps = false;
+	bool full_screen = false;
+	bool resizable_window = true;
+	bool borderless = false;
 	// -------------------------------------------
 
 	float4 scene_dock = { 0, 0, 0, 0 };
@@ -204,7 +215,9 @@ private:
 
 	bool want_to_save = false;
 	bool want_to_save_binary = false;
+	bool want_to_load_json = false;
 	bool want_to_load = false;
+	bool want_to_load_binary = false;
 	bool load_in_game = false;
 
 	bool change_to_scene = false;

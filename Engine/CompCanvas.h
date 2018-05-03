@@ -21,8 +21,14 @@ public:
 	void ShowOptions();
 	void ShowInspectorInfo();
 	void CopyValues(const CompCanvas * component);
+
 	void Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const;
 	void Load(const JSON_Object * object, std::string name);
+
+	void GetOwnBufferSize(uint& buffer_size);
+	void SaveBinary(char** cursor, int position) const;
+	void LoadBinary(char** cursor);
+
 	void Resize(int width, int height);
 
 	void SyncComponent(GameObject* sync_parent);

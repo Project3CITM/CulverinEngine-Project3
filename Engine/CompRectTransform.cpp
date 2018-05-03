@@ -9,6 +9,7 @@
 #include "WindowSceneWorld.h"
 #include "ModuleCamera3D.h"
 #include "ModuleFS.h"
+#include "JSONSerialization.h"
 
 #include "ImGui/ImGuizmo.h"
 
@@ -22,6 +23,7 @@ CompRectTransform::CompRectTransform(Comp_Type t, GameObject * parent) :CompTran
 	name_component = "CompRectTransform";
 	ui_position = float2::zero;
 	resize_factor = float2::one;
+	curr_resize = float2::one;
 	max_anchor = float2(0.5f, 0.5f);
 	min_anchor = float2(0.5f, 0.5f);
 	pivot = float2(0.5f, 0.5f);
@@ -290,9 +292,10 @@ void CompRectTransform::ShowTransform(float drag_speed)
 		}
 		ImGui::Text("Uniform Scale"); ImGui::SameLine(op + 30);
 
-		if (ImGui::Checkbox("##uniform_scale", &unitar_resize))
+		if (ImGui::Checkbox("##uniform_scale", &use_unitary_rescale))
 		{
 			Resize(resize_factor);
+			update_rect = true;
 		}
 		break;
 	}
@@ -395,6 +398,104 @@ void CompRectTransform::Load(const JSON_Object* object, std::string name)
 	Enable();
 }
 
+void CompRectTransform::GetOwnBufferSize(uint & buffer_size)
+{
+	Component::GetOwnBufferSize(buffer_size);
+
+	buffer_size += sizeof(int);						//UID
+
+	float3 save_pos = GetPos();
+	save_pos.x = ui_position.x;
+	save_pos.y = ui_position.y;
+	save_pos.z = 0;
+
+	buffer_size += sizeof(float);					//save_pos
+	buffer_size += sizeof(float);					//save_pos
+	buffer_size += sizeof(float);					//save_pos
+
+	buffer_size += sizeof(float);					//float4(GetRot().x, GetRot().y, GetRot().z, GetRot().w)
+	buffer_size += sizeof(float);					//
+	buffer_size += sizeof(float);					//
+	buffer_size += sizeof(float);					//
+
+	buffer_size += sizeof(float);					//GetScale()
+	buffer_size += sizeof(float);					//
+	buffer_size += sizeof(float);					//
+
+	buffer_size += sizeof(float);					//max_anchor
+	buffer_size += sizeof(float);					//
+
+	buffer_size += sizeof(float);					//min_anchor
+	buffer_size += sizeof(float);					//
+
+	buffer_size += sizeof(float);					//right_pivot
+	buffer_size += sizeof(float);					//
+
+	buffer_size += sizeof(float);					//left_pivot
+	buffer_size += sizeof(float);					//
+
+	buffer_size += sizeof(float);					//pivot
+	buffer_size += sizeof(float);					//
+
+	buffer_size += sizeof(int);						//width
+	buffer_size += sizeof(int);						//height
+
+	buffer_size += sizeof(bool);					//ignore_z
+}
+
+void CompRectTransform::SaveBinary(char ** cursor, int position) const
+{
+	Component::SaveBinary(cursor, position);
+	App->json_seria->SaveIntBinary(cursor, uid);
+
+	// TRANSFORM -----------
+	float3 save_pos = GetPos();
+	save_pos.x = ui_position.x;
+	save_pos.y = ui_position.y;
+	save_pos.z = 0;
+
+	App->json_seria->SaveFloat3Binary(cursor, save_pos);
+	App->json_seria->SaveFloat4Binary(cursor, float4(GetRot().x, GetRot().y, GetRot().z, GetRot().w));
+	App->json_seria->SaveFloat3Binary(cursor, GetScale());
+
+
+	App->json_seria->SaveFloat2Binary(cursor, max_anchor);
+	App->json_seria->SaveFloat2Binary(cursor, min_anchor);
+	App->json_seria->SaveFloat2Binary(cursor, right_pivot);
+	App->json_seria->SaveFloat2Binary(cursor, left_pivot);
+	App->json_seria->SaveFloat2Binary(cursor, pivot);
+
+	App->json_seria->SaveIntBinary(cursor, width);
+	App->json_seria->SaveIntBinary(cursor, height);
+	App->json_seria->SaveBooleanBinary(cursor, ignore_z);
+}
+
+void CompRectTransform::LoadBinary(char ** cursor)
+{
+	uid = App->json_seria->LoadIntBinary(cursor);
+
+	//...
+	float3 position = App->json_seria->LoadFloat3Binary(cursor);
+	float4 rotation = App->json_seria->LoadFloat4Binary(cursor);
+	float3 scale = App->json_seria->LoadFloat3Binary(cursor);
+
+	max_anchor = App->json_seria->LoadFloat2Binary(cursor);
+	min_anchor = App->json_seria->LoadFloat2Binary(cursor);
+	right_pivot = App->json_seria->LoadFloat2Binary(cursor);
+	left_pivot = App->json_seria->LoadFloat2Binary(cursor);
+	pivot = App->json_seria->LoadFloat2Binary(cursor);
+
+	width = App->json_seria->LoadIntBinary(cursor);
+	height = App->json_seria->LoadIntBinary(cursor);
+	ignore_z = App->json_seria->LoadBooleanBinary(cursor);
+
+	Init(position, rotation, scale);
+
+	ui_position = float2(position.x, position.y);
+
+	Enable();
+}
+
 void CompRectTransform::DrawRectTransform()
 {
 	float3 south_west = GetSouthWestPosition();
@@ -429,10 +530,10 @@ void CompRectTransform::Resize(float2 res_factor, bool is_canvas)
 	if (parent_obj != nullptr)
 	{
 		CompRectTransform* parent_transform = (CompRectTransform*)parent_obj->FindComponentByType(Comp_Type::C_RECT_TRANSFORM);
-		if (parent_transform != nullptr && parent_obj->FindComponentByType(C_CANVAS))
+		if (parent_transform != nullptr)
 		{
 			resize_factor = res_factor;
-			if (unitar_resize)
+			if (use_unitary_rescale)
 			{
 				curr_resize.x = Max(resize_factor.x, resize_factor.y);
 				curr_resize.y = curr_resize.x;
@@ -443,30 +544,8 @@ void CompRectTransform::Resize(float2 res_factor, bool is_canvas)
 			}
 			int p_width = parent_transform->GetWidth();
 			int p_height = parent_transform->GetHeight();
-			pos.x = (p_width*(max_anchor.x-pivot.x) + ui_position.x)*res_factor.x;
-			pos.y = (p_height*(max_anchor.y-pivot.y) + ui_position.y)*res_factor.y;
-			float3 loc_pos = GetPos();
-			loc_pos.x = pos.x;
-			loc_pos.y = pos.y;
-			SetPos(loc_pos);
-			//Update(0.f);
-			//update_rect = false;
-		}
-		else
-		{
-			resize_factor = res_factor;
-			if (unitar_resize)
-			{
-				curr_resize.x = Max(resize_factor.x, resize_factor.y);
-				curr_resize.y = curr_resize.x;
-			}
-			else
-			{
-				curr_resize = resize_factor;
-			}
-			
-			pos.x = ui_position.x*resize_factor.x;
-			pos.y = ui_position.y*resize_factor.y;
+			pos.x = (p_width*(max_anchor.x-pivot.x) + ui_position.x)*curr_resize.x;
+			pos.y = (p_height*(max_anchor.y-pivot.y) + ui_position.y)*curr_resize.y;
 			float3 loc_pos = GetPos();
 			loc_pos.x = pos.x;
 			loc_pos.y = pos.y;
@@ -475,14 +554,29 @@ void CompRectTransform::Resize(float2 res_factor, bool is_canvas)
 	}
 	else if (is_canvas)
 	{
-		pos.x = width * 0.5* res_factor.x;
-		pos.y = height * 0.5* res_factor.y;
+		resize_factor = res_factor;
+		curr_resize = res_factor;
+		pos.x = width * 0.5* curr_resize.x;
+		pos.y = height * 0.5* curr_resize.y;
 		float3 loc_pos = GetPos();
 		loc_pos.x = pos.x;
 		loc_pos.y = pos.y;
 		SetPos(loc_pos);
-		//Update(0.f);
-		//update_rect = false;
+	}
+}
+
+void CompRectTransform::ResizeRecursive(float2 resize_factor, bool is_canvas)
+{
+	Resize(resize_factor, is_canvas);
+
+	std::vector<GameObject*>* childs_vec = parent->GetChildsPtr();
+	for (uint i = 0; i < childs_vec->size(); i++)
+	{
+		CompRectTransform* child_rect = (CompRectTransform*)(*childs_vec)[i]->FindComponentByType(C_RECT_TRANSFORM);
+		if (child_rect != nullptr)
+		{
+			child_rect->ResizeRecursive(resize_factor);
+		}
 	}
 }
 
@@ -659,15 +753,7 @@ float2 CompRectTransform::GenerateResizeFactor(int width, int height)
 	resize_factor.x = (float)width / (float)this->width;
 	resize_factor.y = (float)height / (float)this->height;
 
-	if (unitar_resize)
-	{
-		curr_resize.x = Max(resize_factor.x, resize_factor.y);
-		curr_resize.y = curr_resize.x;
-	}
-	else
-	{
-		curr_resize = resize_factor;
-	}
+	curr_resize = resize_factor;
 	return resize_factor;
 
 }
@@ -697,15 +783,12 @@ AnimationValue CompRectTransform::GetParameter(ParameterValue parameter)
 		break;
 	case RECT_TRANSFORM_SCALE:
 		ret.f3_value = GetScale();
-
 		break;
 	case RECT_TRANSFORM_WIDTH:
 		ret.f_value = GetWidth();
-
 		break;
 	case RECT_TRANSFORM_HEIGHT:
 		ret.f_value = GetHeight();
-
 		break;
 	default:
 		break;
@@ -725,7 +808,7 @@ int CompRectTransform::GetHeight()const
 
 float2 CompRectTransform::GetResizeFactor() const
 {
-	return resize_factor;
+	return curr_resize;
 }
 
 float2 CompRectTransform::GetMaxAnchor()const
@@ -759,7 +842,7 @@ float4 CompRectTransform::GetRect()const
 }
 float4 CompRectTransform::GetGlobalRect()const
 {
-	return float4(position_global.x - (abs(width*resize_factor.x)*left_pivot.x), position_global.y + (abs(height*resize_factor.y)*left_pivot.y), (float)abs(width*resize_factor.x), (float)abs(height*resize_factor.y));
+	return float4(position_global.x - (abs(width*curr_resize.x)*left_pivot.x), position_global.y + (abs(height*curr_resize.y)*left_pivot.y), (float)abs(width*curr_resize.x), (float)abs(height*curr_resize.y));
 }
 float3 CompRectTransform::GetGlobalPosition()const
 {

@@ -21,7 +21,7 @@
 #include "CSharpScript.h"
 #include "CompScript.h"
 #include "ResourceMesh.h"
-#include "CompCheckBox.h"
+#include "ModuleFS.h"
 #include "CompSlider.h"
 #include "ImportMesh.h"
 #include "ImportScript.h"
@@ -248,14 +248,7 @@ update_status Scene::Update(float dt)
 	// Draw Skybox (direct mode for now)
 	//if (App->scene->draw_skybox) 
 
-	glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
 	App->scene->scene_buff->Bind("Scene");
-	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-
-	if(App->renderer3D->active_camera)
-		App->scene->skybox->DrawSkybox(800, App->renderer3D->active_camera->frustum.pos, App->scene->skybox_index);
-
-
 	// Draw Plane
 	if (App->engine_state != EngineState::PLAY)
 	{
@@ -369,7 +362,17 @@ void Scene::LoadScene()
 	if (strcmp(App->GetActualScene().c_str(), "") != 0)
 	{
 		new_scene = false;
-		App->json_seria->LoadScene(App->GetActualScene().c_str());
+		std::string scene_binary = "Assets/";
+		scene_binary += "SceneBinary/";
+		scene_binary += App->fs->GetOnlyName(App->GetActualScene()) + ".culverinscene";
+		if (App->fs->CheckIsFileExist(scene_binary))
+		{
+			App->json_seria->LoadSceneBinary(scene_binary.c_str());
+		}
+		else
+		{
+			App->json_seria->LoadScene(App->GetActualScene().c_str());
+		}
 
 	}
 	if (new_scene)
@@ -966,7 +969,6 @@ void Scene::RemoveAllPointers(GameObject* gameobject)
 		case Comp_Type::C_CHECK_BOX:
 		{
 			CompCheckBox* check_box = (CompCheckBox*)comp;
-			check_box->Tick = nullptr;
 			check_box->ClearLinkedScripts();
 			break;
 		}
@@ -978,6 +980,7 @@ void Scene::RemoveAllPointers(GameObject* gameobject)
 		}
 		case Comp_Type::C_SLIDER:
 		{
+
 			//CompSlider* slider = (CompSlider*)comp;
 			break;
 		}
@@ -1167,6 +1170,7 @@ GameObject* Scene::CreateGameObject(GameObject* parent)
 	if (parent == nullptr)
 	{
 		root->AddChildGameObject(obj);
+		dynamic_objects.push_back(obj);
 	}
 
 	return obj;
@@ -1547,6 +1551,7 @@ GameObject * Scene::CreateMainLight(GameObject * parent)
 	{
 		// Only add to GameObjects list the Root Game Objects
 		App->scene->root->AddChildGameObject(obj);
+		dynamic_objects.push_back(obj);
 	}
 
 	LOG("MAIN CAMERA Created.");
@@ -1707,7 +1712,7 @@ GameObject * Scene::CreateCheckBox(GameObject * parent)
 GameObject * Scene::CreateSlider(GameObject * parent)
 {
 	GameObject* obj = new GameObject(parent);
-
+	
 
 	// SET NAME -----------------------------------
 	static uint slider_count = 0;
@@ -1717,17 +1722,15 @@ GameObject * Scene::CreateSlider(GameObject * parent)
 	char* name_str = new char[name.size() + 1];
 	strcpy(name_str, name.c_str());
 	obj->SetName(name_str);
+	
+
 
 	// TRANSFORM COMPONENT --------------
 	CompRectTransform* transform = (CompRectTransform*)obj->AddComponent(Comp_Type::C_RECT_TRANSFORM);
 	transform->Init(float3(0, 0, 0), float3(0, 0, 0), float3(1, 1, 1));
 	transform->Enable();
 
-	// IMAGE COMPONENT -----------------
-	CompImage* image = (CompImage*)obj->AddComponent(Comp_Type::C_IMAGE);
-	image->Enable();
-	image->SyncComponent(nullptr);
-	image->UpdateSpriteId();
+
 	// SLIDER -----------------
 	CompSlider* slide = (CompSlider*)obj->AddComponent(Comp_Type::C_SLIDER);
 	slide->Enable();

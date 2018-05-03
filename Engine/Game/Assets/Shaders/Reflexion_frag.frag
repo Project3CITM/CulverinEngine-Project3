@@ -42,7 +42,7 @@ uniform float a_Ks;
 uniform float a_shininess;
 uniform float reflexion_strenght;
 
-uniform int iterations;
+
 uniform int shadow_blur;
 uniform float bias;
 
@@ -75,7 +75,7 @@ float random(vec3 seed, int i){
 
 vec4 light_colors[MAX_LIGHTS];
 
-vec3 blinnPhongDir(Light light, float Kd, float Ks, float shininess, vec3 N)
+vec3 blinnPhongDir(Light light, float Kd, float Ks, float shininess, vec3 N, float shadow)
 {
     vec3 v = normalize(TBN * _cameraPosition - FragPos);
 
@@ -96,7 +96,7 @@ vec3 blinnPhongDir(Light light, float Kd, float Ks, float shininess, vec3 N)
         float diffuse = Kd * lightInt * cosTheta;
         float spec =  Ks* lightInt* pow(cosAlpha,shininess);
 
-        return vec3(diffuse,spec,1);
+        return vec3(diffuse,spec,1) * shadow;
 
     }
 
@@ -129,13 +129,13 @@ float CalcShadow(vec4 shadowPos, float usedBias)
 
     if(shadowPos.z > 1.0)
         return 0.0;
-
+   int iterations = 1;
     for(int i = 0; i < iterations; ++i)
     {
         int index = int(16.0 * random(floor(mat3(model) * ourPos * 1000.0), i)) % 16;
 
-        float shadowVal = (1.0f - texture(_shadowMap, vec3(shadowPos.xy + poissonDisk[index] / 200.0, (shadowPos.z - usedBias) / shadowPos.w)));
-        float tmp = 0.05 * shadowVal;
+        float shadowVal = (1.0f - texture(_shadowMap, vec3(shadowPos.xy + poissonDisk[i] / 200.0, (shadowPos.z - usedBias) / shadowPos.w)));
+        float tmp = 1 * shadowVal;
 
         shadow -= tmp;
     }
@@ -180,7 +180,7 @@ void main()
 
  for (int i = 0; i <_numLights; ++i) {
 
-       inten = blinnPhongDir(_lights[i], a_Kd, spec_texture.r, gloss_texture.r, N);
+       inten = blinnPhongDir(_lights[i], a_Kd, spec_texture.r, gloss_texture.r, N, shadow);
        inten_final.xy += inten.xy;
        light_colors[i] = vec4(_lights[i].l_color.rgb,inten.z);
 
@@ -194,7 +194,7 @@ void main()
     final_color =normalize(final_color);
 
 	vec3 col = max( color_texture * 0.1 ,
-	color_texture * (inten_final.x + inten_final.y * spec_texture.r)*final_color.rgb * shadow);
+	color_texture * (inten_final.x + inten_final.y * spec_texture.r)*final_color.rgb);
 
 
 vec3 tmp = normalize(ourPos -  _cameraPosition);

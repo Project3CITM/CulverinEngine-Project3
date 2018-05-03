@@ -78,6 +78,7 @@
     <Compile Include="AI\Actions\Investigate_Action.cs" />
     <Compile Include="AI\Actions\Movement_Action.cs" />
     <Compile Include="AI\Actions\ShieldBlock_Action.cs" />
+    <Compile Include="AI\Enemy_EasyValueChanges.cs" />
     <Compile Include="AI\SpearGuard_Listener.cs" />
     <Compile Include="AI\SwordGuard_Listener.cs" />
     <Compile Include="AI\PerceptionEmitter.cs" />
@@ -89,6 +90,9 @@
     <Compile Include="AI\Actions\Seek_Steering.cs" />
     <Compile Include="AI\Actions\Attack_Action.cs" />
     <Compile Include="AI\ShieldGuard_Listener.cs" />
+    <Compile Include="Puzzles\Level 2\BarrelPuzzle\ChainMove.cs" />
+    <Compile Include="UI_Scripts\Component\CompSlider.cs" />
+    <Compile Include="UI_Scripts\Component\CompCheckBox.cs" />
     <Compile Include="Player\Fountain.cs" />
     <Compile Include="DebugSceneChanger.cs" />
     <Compile Include="Player\UI\LeftMana.cs" />
@@ -99,6 +103,7 @@
     <Compile Include="Miscellanea\DoorLever.cs" />
     <Compile Include="Miscellanea\ReverbCorridor.cs" />
     <Compile Include="Player\Jaime\ComboController.cs" />
+    <Compile Include="Puzzles\FadeToBlack.cs" />
     <Compile Include="Puzzles\Level 2\BarrelPuzzle\BarrelFall.cs" />
     <Compile Include="Puzzles\Level 2\BarrelPuzzle\BarrelPuzzleManager.cs" />
     <Compile Include="Puzzles\Level 2\BarrelPuzzle\Lever.cs" />
@@ -112,10 +117,20 @@
     <Compile Include="Puzzles\Level 2\TrapPuzzle\TrapManager.cs" />
     <Compile Include="Puzzles\Level 2\TrapPuzzle\TrapTile.cs" />
     <Compile Include="Puzzles\Tests\PuzzleRotation.cs" />
+    <Compile Include="Tests\TestParticlesV2.cs" />
+    <Compile Include="UI_Scripts\Input\InputShow.cs" />
+    <Compile Include="UI_Scripts\Scene\AudioMenu.cs" />
+    <Compile Include="UI_Scripts\Scene\Screen.cs" />
+    <Compile Include="UI_Scripts\Scene\ScreenOptions.cs" />
+    <Compile Include="UI_Scripts\Scene\DisplayMenu.cs" />
+    <Compile Include="UI_Scripts\ShowScore2.cs" />
     <Compile Include="Tools\Random.cs" />
     <Compile Include="UI_Scripts\Component\CompCanvas.cs" />
+    <Compile Include="UI_Scripts\Input\EditKeyBinding.cs" />
     <Compile Include="UI_Scripts\EventSystem\EventSystem.cs" />
+    <Compile Include="UI_Scripts\Input\KeyBindingChangeStatus.cs" />
     <Compile Include="UI_Scripts\Scene\FinishedLevel2.cs" />
+    <Compile Include="UI_Scripts\Scene\KeyBindingMenu.cs" />
     <Compile Include="UI_Scripts\Scene\LevelFinished.cs" />
     <Compile Include="UI_Scripts\Component\CompText.cs" />
     <Compile Include="Components\CompLight.cs" />
@@ -130,6 +145,8 @@
     <Compile Include="UI_Scripts\Scene\FadeAlpha.cs" />
     <Compile Include="UI_Scripts\Scene\ReturnToMenuFromLose.cs" />
     <Compile Include="UI_Scripts\Scene\Scroll.cs" />
+    <Compile Include="UI_Scripts\Input\ShowActionName.cs" />
+    <Compile Include="UI_Scripts\Input\ShowInputName.cs" />
     <Compile Include="UI_Scripts\ShowScore.cs" />
     <Compile Include="UI_Scripts\StatsScore.cs" />
     <Compile Include="UI_Scripts\Scene\PKeyScene.cs" />

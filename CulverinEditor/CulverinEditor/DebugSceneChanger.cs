@@ -9,7 +9,7 @@ class DebugSceneChanger : CulverinBehaviour
         if (Input.GetKeyDown(KeyCode.B))
         {
             SceneManager.LoadNewWalkableMap("Boss_Test_Map");
-            SceneManager.LoadScene("BossTestScene");
+            SceneManager.LoadScene("ScoreScenev2");
         }
     }
 }

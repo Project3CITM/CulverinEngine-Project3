@@ -21,6 +21,7 @@
 #include "DepthCubeMap.h"
 #include "ResourceMesh.h"
 
+
 using namespace glm;
 
 
@@ -153,9 +154,17 @@ bool ModuleLightning::Start()
 	//------------------------------------
 
 	shadow_Shader = App->module_shaders->CreateDefaultShader("Shadow_Map", ShadowMapFrag, ShadowMapVert, nullptr, true);
+	shadow_Shader_skinning = App->module_shaders->CreateDefaultShader("Shadow_Map_Skinnin", ShadowMapFrag, SkinningVert, nullptr, true);
 	point_light_shadow_depth_shader = App->module_shaders->CreateDefaultShader("Point_Shadow_Map", PointShadowMapFrag, PointShadowMapVert, nullptr, true);
 	
 	//-------------------------------------
+	
+	shadow_skinning_mat = new Material();
+	shadow_skinning_mat->name = "Shadow Skining Material";
+	shadow_skinning_mat->material_shader = shadow_Shader_skinning;
+	shadow_skinning_mat->GetProgramVariables();
+	App->module_shaders->materials.insert(std::pair<uint, Material*>(shadow_skinning_mat->GetProgramID(), shadow_skinning_mat));
+	shadow_skinning_mat->active_num = 1;
 
 	
 
@@ -204,10 +213,23 @@ update_status ModuleLightning::PreUpdate(float dt)
 
 	frame_used_lights.clear();
 	//std::sort(scene_lights.begin(), scene_lights.end(), OrderLights); 
-	for (auto item = scene_lights.begin(); item < scene_lights.end(); item++)
+	if (scene_lights.size() > 0)
 	{
-		if ((*item)->to_delete == true)
-			scene_lights.erase(item);
+		for (auto item = scene_lights.begin(); item != scene_lights.end(); item++)
+		{
+			if ((*item)->to_delete == true)
+			{
+				scene_lights.erase(item);
+				if (scene_lights.size() > 0)
+				{
+					item = scene_lights.begin();
+				}
+				else
+				{
+					break;
+				}
+			}
+		}
 	}
 
 	for (uint i = 0; i < scene_lights.size(); ++i)
@@ -236,9 +258,9 @@ update_status ModuleLightning::Update(float dt)
 			Frustum* frustum = &App->renderer3D->GetActiveCamera()->frustum;
 
 			glm::vec3 lDir = glm::vec3(dir.x, dir.y, dir.z);
-			glm::vec3 camPos = glm::vec3(frustum->pos.x, frustum->pos.y, frustum->pos.z);
+			glm::vec3 camPos = glm::vec3(frustum->pos.x, 0, frustum->pos.z);
 
-			glm::vec3 lookPos = camPos + (glm::vec3(frustum->front.x, frustum->front.y, frustum->front.z) * dstSceneCameraToLookAt);
+			glm::vec3 lookPos = camPos + (glm::vec3(frustum->front.x, 0, frustum->front.z) * dstSceneCameraToLookAt);
 
 			glm::vec3 eye = lookPos + (lDir * dstShadowmapCameraToLookAt);
 			
@@ -252,39 +274,11 @@ update_status ModuleLightning::Update(float dt)
 			glm::mat4 depthProjectionMatrix = glm::ortho<float>(-projSize, projSize, -projSize, projSize, nearPlane, farPlane);
 			glm::mat4 depthViewMatrix = glm::lookAt(eye, lookPos, glm::vec3(0, 1, 0));
 
-
+			
 			light->depthMVPMat = depthProjectionMatrix * depthViewMatrix;
 			light->depthBiasMat = biasMatrix * light->depthMVPMat;
 		}
 	}
-
-
-
-/*
-	shadow_Shader->Bind();
-	text.Bind("peter");
-
-	glm::vec3 lightInvDir = glm::vec3(0.5f, 2, 2);
-
-	// Compute the MVP matrix from the light's point of view
-	glm::mat4 depthProjectionMatrix = glm::ortho<float>(-10, 10, -10, 10, -10, 20);
-	glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
-	glm::mat4 depthModelMatrix = glm::mat4(1.0);
-	glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
-
-	
-
-
-	uint depthMatrixID= glGetUniformLocation(shadow_Shader->programID, "depthMVP");
-	glUniformMatrix4fv(depthMatrixID, 1, GL_FALSE, &depthMVP[0][0]);
-
-	App->scene->scene_buff->Bind("Scene");
-	ImGui::Image((ImTextureID*)text.frame_id, ImVec2(shadow_maps_res_w, shadow_maps_res_h));
-	shadow_Shader->Unbind();
-	//text.UnBind("peter");
-
-	*/
-
 
 	return UPDATE_CONTINUE;
 }
@@ -307,10 +301,7 @@ bool ModuleLightning::CleanUp()
 		RELEASE((*it));
 	}
 
-	//RELEASE(shadow_Shader);
-	//RELEASE(point_light_shadow_depth_shader);
-
-
+	
 	return true;
 }
 
@@ -322,9 +313,6 @@ void ModuleLightning::OnEvent(Event & event)
 
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_FRONT);
-
-
-
 	switch (event.Get_event_data_type())
 	{
 	case EventType::EVENT_SEND_3D_3DA_MM:
@@ -333,28 +321,29 @@ void ModuleLightning::OnEvent(Event & event)
 
 		if (light->type == Light_type::DIRECTIONAL_LIGHT) {
 			test_fix.Bind("peter");
-			glViewport(0, 0, 256, 256);
+			glViewport(0, 0, 1024, 1024);
 
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			shadow_Shader->Bind();
 			uint depthMatrixID = glGetUniformLocation(shadow_Shader->programID, "depthMVP");
 			glUniformMatrix4fv(depthMatrixID, 1, GL_FALSE, &light->depthMVPMat[0][0]);
 			scene_objects = App->scene->GetAllSceneObjects();
+			float3 view_pos = float3(App->renderer3D->active_camera->frustum.front.x, 0, App->renderer3D->active_camera->frustum.front.z) * dstSceneCameraToLookAt;
 			for (std::vector<GameObject*>::const_iterator item = scene_objects->begin(); item != scene_objects->end(); item++)
 			{
 				CompMesh* m = (*item)->GetComponentMesh();
-
+				
 				if (m == nullptr)
 					continue;
-				if (m->HasSkeleton())
+				if (!m->GetMaterial()->material->cast_shadows)
 					continue;
-				if (App->renderer3D->active_camera == nullptr || (m->GetGameObjectPos() - App->renderer3D->active_camera->frustum.pos).Length() > projSize)
+				if (App->renderer3D->active_camera == nullptr || (m->GetGameObjectPos() - (App->renderer3D->active_camera->frustum.pos + view_pos)).Length() > (projSize + 50))
 					continue;
 				if (m->resource_mesh != nullptr)
 				{
 					if (m->resource_mesh->vertices.size() > 0 && m->resource_mesh->indices.size() > 0)
 					{
-						//CalcDirectionalShadowMap((CompLight*)light, m);
+						CalcDirectionalShadowMap((CompLight*)light, m);
 					}
 
 					else
@@ -384,7 +373,7 @@ void ModuleLightning::OnEvent(Event & event)
 	}
 
 	glCullFace(GL_BACK);
-
+	
 	App->scene->scene_buff->Bind("Scene"); glCullFace(GL_BACK);
 	glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
 	
@@ -494,9 +483,12 @@ void ModuleLightning::CalcPointShadowMaps(Event& events, CompLight* light)
 void ModuleLightning::CalcDirectionalShadowMap(CompLight* light, CompMesh* m)
 {
 	BROFILER_CATEGORY("OnEvent: ModuleLightning", Profiler::Color::Blue);
-	if (m->HasSkeleton()) return;
-	int x = 0;
-
+	ShaderProgram* shader = shadow_Shader;
+	if (m->HasSkeleton()) {
+		shadow_Shader_skinning->Bind();
+		shader = shadow_Shader_skinning;
+	}
+	
 
 	Material* material = App->renderer3D->default_material;
 
@@ -514,31 +506,58 @@ void ModuleLightning::CalcDirectionalShadowMap(CompLight* light, CompMesh* m)
 		matrixfloat[0][3],matrixfloat[1][3],matrixfloat[2][3],matrixfloat[3][3]
 	};
 
-	GLint modelLoc = glGetUniformLocation(shadow_Shader->programID, "model");
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, matrix);
-
-
+	GLint modelLoc = glGetUniformLocation(shader->programID, "model");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, matrix);	
+	uint depthMatrixID = glGetUniformLocation(shader->programID, "viewproj");
+	glUniformMatrix4fv(depthMatrixID, 1, GL_FALSE, &light->depthMVPMat[0][0]);
 
 	int total_save_buffer = 14;
+	int bones_size_in_buffer = 0;
+	if (m->HasSkeleton())
+	{		
+		int sum = 0;
+		
+		bones_size_in_buffer = 4 * sizeof(GLint) + 4 * sizeof(GLfloat);
+		GLuint skinning_texture_id = glGetUniformLocation(shader->programID, "_skinning_text");
+		m->GetSkeleton()->GenSkinningTexture(m->GetParent());
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_BUFFER, m->GetSkeleton()->skinning_mats_id);
+		glUniform1i(skinning_texture_id, 0);
+	}
+
 
 	if (m->resource_mesh->vertices.size()>0) {
 		glBindBuffer(GL_ARRAY_BUFFER, m->resource_mesh->id_total_buffer);
 
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat), (char *)NULL + (0 * sizeof(float)));
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat) + bones_size_in_buffer, (char *)NULL + (0 * sizeof(float)));
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat) + bones_size_in_buffer, (char *)NULL + (3 * sizeof(float)));
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat) + bones_size_in_buffer, (char *)NULL + (5 * sizeof(float)));
+		glEnableVertexAttribArray(5);
+		glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat) + bones_size_in_buffer, (char *)NULL + (8 * sizeof(float)) + bones_size_in_buffer);
+		glEnableVertexAttribArray(6);
+		glVertexAttribPointer(6, 3, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat) + bones_size_in_buffer, (char *)NULL + (11 * sizeof(float)) + bones_size_in_buffer);
 
-
+		if (m->HasSkeleton())
+		{
+			glEnableVertexAttribArray(3);
+			glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat) + bones_size_in_buffer, (char *)NULL + (8 * sizeof(float)));
+			glEnableVertexAttribArray(4);
+			glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, total_save_buffer * sizeof(GLfloat) + bones_size_in_buffer, (char *)NULL + (12 * sizeof(float)));
+		}
 		glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m->resource_mesh->indices_id);
 		glDrawElements(GL_TRIANGLES, m->resource_mesh->num_indices, GL_UNSIGNED_INT, NULL);
 
 	}
 
-	/*
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_NORMAL_ARRAY);
-	glDisableClientState(GL_ELEMENT_ARRAY_BUFFER);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);*/
+	if (m->HasSkeleton())
+	{
+		shadow_Shader->Bind();
+	}
+	
 }
 
 void ModuleLightning::SetShadowCastPoints(uint points)

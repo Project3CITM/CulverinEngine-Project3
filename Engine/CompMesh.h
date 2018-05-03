@@ -55,6 +55,10 @@ struct Skeleton
 	void Save(JSON_Object* object, std::string name) const;
 	void Load(const JSON_Object* object, std::string name);
 	void Link(const SkeletonSource* source);
+
+	void GetOwnBufferSize(uint& buffer_size);
+	void SaveBinary(char** cursor) const;
+	void LoadBinary(char** cursor);
 };
 
 class CompMesh: public Component
@@ -89,6 +93,10 @@ public:
 	void Load(const JSON_Object* object, std::string name);
 	void SyncComponent(GameObject* sync_parent);
 	void LinkSkeleton();
+
+	void GetOwnBufferSize(uint& buffer_size);
+	void SaveBinary(char** cursor, int position) const;
+	void LoadBinary(char** cursor);
 	// -------------------------------------
 
 
@@ -96,6 +104,7 @@ public:
 	bool HasSkeleton() const;
 	void SetSkeleton(bool has_skeleton);
 	void GenSkeleton();
+	Skeleton* GetSkeleton()const;
 	GameObject* GenBone(char** name_iterator, const SkeletonSource* source, uint& generated_bones, Skeleton* skeleton);
 
 	CompMaterial* GetMaterial() const;
