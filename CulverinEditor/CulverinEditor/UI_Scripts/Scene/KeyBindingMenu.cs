@@ -46,23 +46,29 @@ public class KeyBindingMenu : CulverinBehaviour
         GetComponent<CompAudio>().PlayEvent("Push");
         option_menu.SetActive(false);
         keybinding_menu.SetActive(true);
+        keyboard_menu.SetActive(true);
+        controller_menu.SetActive(false);
+
         EventSystem.SendInteractiveSelected(keyboard_button);
 
     }
     public void OpenKeyBoardMenu()
     {
+    
         GetComponent<CompAudio>().PlayEvent("Push");
-        keybinding_menu.SetActive(false);
+        if (keyboard_menu.IsActive())
+            return;
+        controller_menu.SetActive(false);
         keyboard_menu.SetActive(true);
-        EventSystem.SendInteractiveSelected(keyboard_return_button);
 
     }
     public void OpenControllerMenu()
     {
         GetComponent<CompAudio>().PlayEvent("Push");
-        keybinding_menu.SetActive(false);
+        if (controller_menu.IsActive())
+            return;
         controller_menu.SetActive(true);
-        EventSystem.SendInteractiveSelected(controller_return_button);
+        keyboard_menu.SetActive(false);
 
     }
     public void CloseKeyboardControllerMenu()
@@ -71,27 +77,11 @@ public class KeyBindingMenu : CulverinBehaviour
             return;
 
         GetComponent<CompAudio>().PlayEvent("Push");
-        if(keyboard_menu.IsActive())
-        {
-            keybinding_menu.SetActive(false);
-            EventSystem.SendInteractiveSelected(keyboard_button);
-        }
-        else if (controller_menu.IsActive())
-        {
-            controller_menu.SetActive(false);
-            EventSystem.SendInteractiveSelected(controller_button);
-
-        }
-        keybinding_menu.SetActive(true);
-    }
-    public void CloseKeyBindingMenu()
-    {
-        GetComponent<CompAudio>().PlayEvent("Push");
         keybinding_menu.SetActive(false);
         option_menu.SetActive(true);
         EventSystem.SendInteractiveSelected(input_button);
-
     }
+ 
     public void SavePlayerAction()
     {
         GetComponent<CompAudio>().PlayEvent("Push");

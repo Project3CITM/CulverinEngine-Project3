@@ -137,37 +137,37 @@
       },
       "InputAction12": {
         "InputActionName": "TriangleR",
-        "KeyRelationNamePositive": "CButtonB",
+        "KeyRelationNamePositive": " B",
         "KeyRelationNameNegative": "None",
         "ActionType": 4
       },
       "InputAction13": {
         "InputActionName": "TriangleL",
-        "KeyRelationNamePositive": "CButtonX",
+        "KeyRelationNamePositive": " X",
         "KeyRelationNameNegative": "None",
         "ActionType": 4
       },
       "InputAction14": {
         "InputActionName": "RAllyAttack",
-        "KeyRelationNamePositive": "CButtonRightStick",
+        "KeyRelationNamePositive": "R2",
         "KeyRelationNameNegative": "None",
         "ActionType": 1
       },
       "InputAction15": {
         "InputActionName": "LAllyAttack",
-        "KeyRelationNamePositive": "CButtonLeftStick",
+        "KeyRelationNamePositive": "L2",
         "KeyRelationNameNegative": "None",
         "ActionType": 1
       },
       "InputAction16": {
         "InputActionName": "RAttack",
-        "KeyRelationNamePositive": "CButtonRightShoulder",
+        "KeyRelationNamePositive": "R1",
         "KeyRelationNameNegative": "None",
         "ActionType": 4
       },
       "InputAction17": {
         "InputActionName": "LAttack",
-        "KeyRelationNamePositive": "CButtonLeftShoulder",
+        "KeyRelationNamePositive": "L1",
         "KeyRelationNameNegative": "None",
         "ActionType": 4
       },
@@ -179,7 +179,7 @@
       },
       "InputAction19": {
         "InputActionName": "Interact",
-        "KeyRelationNamePositive": "CButtonA",
+        "KeyRelationNamePositive": " A",
         "KeyRelationNameNegative": "None",
         "ActionType": 4
       },
@@ -191,7 +191,7 @@
       },
       "InputAction21": {
         "InputActionName": "Menu",
-        "KeyRelationNamePositive": "CStart",
+        "KeyRelationNamePositive": "Start",
         "KeyRelationNameNegative": "None",
         "ActionType": 4
       }

@@ -272,6 +272,7 @@ bool PlayerActions::SetInputActionToChange(const char * input_action, const char
 					if (action_item->key_device == this_device)
 					{
 						key_change.SetInputAction(action_item);
+						
 						return true;
 					}					
 				}

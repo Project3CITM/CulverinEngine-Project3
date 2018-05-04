@@ -658,6 +658,8 @@ void ModuleInput::LoadDefaultPlayerAction()
 			player_action->Clear();
 			RELEASE(player_action);
 		}
+		player_action = new PlayerActions(this);
+
 		App->json_seria->LoadPlayerAction(&player_action, name.c_str());
 	}
 }
