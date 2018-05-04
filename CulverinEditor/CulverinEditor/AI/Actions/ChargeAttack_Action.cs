@@ -165,24 +165,24 @@ public class ChargeAttack_Action : Action
 
         Pathfinder pf = GetLinkedObject("map").GetComponent<Pathfinder>();
         PathNode ret = new PathNode(-1, -1);
-
+         
         //Charging from North
         if (delta > -50.0f && delta < 50.0f)
         {
             ret = new PathNode(player_x, player_y + 1);
 
-            if (pf.IsWalkableTile(ret) == false)
+            if (pf.IsWalkableTile(ret) == false || (ret.GetTileX() == objective.GetTileX() && ret.GetTileY() == objective.GetTileY()))
             {
                 if (delta < 0.0)
                 {
                     ret = new PathNode(player_x - 1, player_y);
-                    if (pf.IsWalkableTile(ret) == false)
+                    if (pf.IsWalkableTile(ret) == false || (ret.GetTileX() == objective.GetTileX() && ret.GetTileY() == objective.GetTileY()))
                         ret = new PathNode(player_x + 1, player_y);
                 }
                 else
                 {
                     ret = new PathNode(player_x + 1, player_y);
-                    if (pf.IsWalkableTile(ret) == false)
+                    if (pf.IsWalkableTile(ret) == false || (ret.GetTileX() == objective.GetTileX() && ret.GetTileY() == objective.GetTileY()))
                         ret = new PathNode(player_x - 1, player_y);
                 }
             }
@@ -192,18 +192,18 @@ public class ChargeAttack_Action : Action
         {
             ret = new PathNode(player_x + 1, player_y);
 
-            if (pf.IsWalkableTile(ret) == false)
+            if (pf.IsWalkableTile(ret) == false || (ret.GetTileX() == objective.GetTileX() && ret.GetTileY() == objective.GetTileY()))
             {
                 if (delta < 90.0)
                 {
                     ret = new PathNode(player_x, player_y - 1);
-                    if (pf.IsWalkableTile(ret) == false)
+                    if (pf.IsWalkableTile(ret) == false || (ret.GetTileX() == objective.GetTileX() && ret.GetTileY() == objective.GetTileY()))
                         ret = new PathNode(player_x, player_y + 1);
                 }
                 else
                 {
                     ret = new PathNode(player_x, player_y + 1);
-                    if (pf.IsWalkableTile(ret) == false)
+                    if (pf.IsWalkableTile(ret) == false || (ret.GetTileX() == objective.GetTileX() && ret.GetTileY() == objective.GetTileY()))
                         ret = new PathNode(player_x, player_y - 1);
                 }
             }
@@ -213,18 +213,18 @@ public class ChargeAttack_Action : Action
         {
             ret = new PathNode(player_x - 1, player_y);
 
-            if (pf.IsWalkableTile(ret) == false)
+            if (pf.IsWalkableTile(ret) == false || (ret.GetTileX() == objective.GetTileX() && ret.GetTileY() == objective.GetTileY()))
             {
                 if (delta < -90.0)
                 {
                     ret = new PathNode(player_x, player_y + 1);
-                    if (pf.IsWalkableTile(ret) == false)
+                    if (pf.IsWalkableTile(ret) == false || (ret.GetTileX() == objective.GetTileX() && ret.GetTileY() == objective.GetTileY()))
                         ret = new PathNode(player_x, player_y - 1);
                 }
                 else
                 {
                     ret = new PathNode(player_x, player_y - 1);
-                    if (pf.IsWalkableTile(ret) == false)
+                    if (pf.IsWalkableTile(ret) == false || (ret.GetTileX() == objective.GetTileX() && ret.GetTileY() == objective.GetTileY()))
                         ret = new PathNode(player_x, player_y + 1);
                 }
             }
@@ -234,56 +234,22 @@ public class ChargeAttack_Action : Action
         {
             ret = new PathNode(player_x, player_y - 1);
 
-            if (pf.IsWalkableTile(ret) == false)
+            if (pf.IsWalkableTile(ret) == false || (ret.GetTileX() == objective.GetTileX() && ret.GetTileY() == objective.GetTileY()))
             {
                 if (delta < 0.0)
                 {
                     ret = new PathNode(player_x + 1, player_y);
-                    if (pf.IsWalkableTile(ret) == false)
+                    if (pf.IsWalkableTile(ret) == false || (ret.GetTileX() == objective.GetTileX() && ret.GetTileY() == objective.GetTileY()))
                         ret = new PathNode(player_x - 1, player_y);
                 }
                 else
                 {
                     ret = new PathNode(player_x - 1, player_y);
-                    if (pf.IsWalkableTile(ret) == false)
+                    if (pf.IsWalkableTile(ret) == false || (ret.GetTileX() == objective.GetTileX() && ret.GetTileY() == objective.GetTileY()))
                         ret = new PathNode(player_x + 1, player_y);
                 }
             }
         }
         return ret;
-    }
-
-    private void PushPlayer(PathNode tile)
-    {
-        //player.GetComponent<MovementController>().MoveTo(tile);
-        /*
-        Vector3 target_pos = new Vector3(0.0f, 0.0f, 0.0f);
-        target_pos.x = tile.GetTileX() * GetComponent<Movement_Action>().tile_size;
-        target_pos.z = tile.GetTileY() * GetComponent<Movement_Action>().tile_size;
-
-        Vector3 forward = new Vector3(player.GetComponent<Transform>().GetForwardVector());
-        Vector3 pos = new Vector3(player.GetComponent<Transform>().position);
-        Vector3 obj_vec = new Vector3(target_pos - pos);
-
-        float delta = Vector3.AngleBetweenXZ(forward, obj_vec);
-
-        if (delta > Mathf.PI)
-            delta = delta - 2 * Mathf.PI;
-        if (delta < (-Mathf.PI))
-            delta = delta + 2 * Mathf.PI;
-
-        delta = Mathf.Rad2deg(delta);
-
-        if (delta > -50.0f && delta < 50.0f)
-            player.GetComponent<MovementController>().MoveForward();
-        else if (delta > -140.0f && delta < -50.0f)
-        {
-        }
-        else if (delta > 50.0f && delta < 140.0f)
-        {
-        }
-        else if (delta < -140.0f || delta > 140.0f)
-        {
-        }*/
     }
 }
