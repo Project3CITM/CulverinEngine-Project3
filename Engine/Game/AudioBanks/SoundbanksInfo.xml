@@ -257,7 +257,7 @@
 				</File>
 				<File Id="706131552" Language="SFX">
 					<ShortName>Daennerys_FlameCrepitarLoop.wav</ShortName>
-					<Path>SFX\Daennerys_FlameCrepitarLoop_6DE6523E.wem</Path>
+					<Path>SFX\Daennerys_FlameCrepitarLoop_E9A98EAB.wem</Path>
 				</File>
 				<File Id="764335624" Language="SFX">
 					<ShortName>Characters\Daenerys\Daenerys_Dead_1.wav</ShortName>
@@ -510,7 +510,7 @@
 				</File>
 				<File Id="788695252" Language="SFX">
 					<ShortName>Enemy\Enemy_1\Enemy1_Dead4.wav</ShortName>
-					<Path>SFX\Enemy\Enemy_1\Enemy1_Dead4_F4E2F85E.wem</Path>
+					<Path>SFX\Enemy\Enemy_1\Enemy1_Dead4_ADBB1C68.wem</Path>
 				</File>
 				<File Id="885694415" Language="SFX">
 					<ShortName>Enemy_SwordDraw.wav</ShortName>
