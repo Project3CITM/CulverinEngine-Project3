@@ -36,6 +36,8 @@ CompCamera::CompCamera(Comp_Type t, GameObject* parent) : Component(t, parent)
 	frustum.farPlaneDistance = far_plane;
 	frustum.verticalFov = vertical_fov * DEGTORAD;
 	frustum.horizontalFov = Atan(aspect_ratio*Tan(frustum.verticalFov / 2)) * 2;
+	frustum_center = frustum.CenterPoint();
+	frustum_halfdistance_squared = frustum.MinimalEnclosingAABB().HalfSize().LengthSq();
 
 	name_component = "Camera";
 }
@@ -62,6 +64,8 @@ CompCamera::CompCamera(const CompCamera& copy, GameObject* parent) : Component(C
 	frustum.farPlaneDistance = far_plane;
 	frustum.verticalFov = vertical_fov * DEGTORAD;
 	frustum.horizontalFov = Atan(aspect_ratio*Tan(frustum.verticalFov / 2)) * 2;
+	frustum_center = frustum.CenterPoint();
+	frustum_halfdistance_squared = frustum.MinimalEnclosingAABB().HalfSize().LengthSq();
 
 	name_component = "Camera";
 }
@@ -111,6 +115,8 @@ void CompCamera::UpdateFrustum()
 	frustum.pos = trans.Col3(3);
 	frustum.front = trans.Col3(2).Normalized();
 	frustum.up = trans.Col3(1).Normalized();
+	frustum_center = frustum.CenterPoint();
+	frustum_halfdistance_squared = frustum.MinimalEnclosingAABB().HalfSize().LengthSq();
 }
 
 void CompCamera::Draw()
@@ -334,8 +340,6 @@ void CompCamera::CullStaticObjects()
 void CompCamera::CullDynamicObjects()
 {
 	const AABB* box = nullptr;
-	float3 frustum_center = frustum.CenterPoint();
-	float far_plane_Sq = frustum.MinimalEnclosingAABB().HalfSize().LengthSq();
 
 	const int num = App->scene->dynamic_objects.size();
 	GameObject** ptr = (num > 0) ? App->scene->dynamic_objects.data() : nullptr;
@@ -348,7 +352,7 @@ void CompCamera::CullDynamicObjects()
 		{
 			box = &curr_obj->box_fixed;
 
-			if ((box->CenterPoint() - frustum_center).LengthSq() - box->HalfSize().LengthSq() >  far_plane_Sq)
+			if ((box->CenterPoint() - frustum_center).LengthSq() - box->HalfSize().LengthSq() >  frustum_halfdistance_squared)
 			{
 				curr_obj->SetVisible(false); // OUTSIDE CAMERA VISION
 			}
@@ -568,6 +572,16 @@ float CompCamera::GetFOV() const
 float CompCamera::GetRatio() const
 {
 	return frustum.AspectRatio();
+}
+
+float CompCamera::GetFrustumDistance() const
+{
+	return frustum_halfdistance_squared;
+}
+
+float3 CompCamera::GetFrustumCenter() const
+{
+	return frustum_center;
 }
 
 float* CompCamera::GetViewMatrix() const

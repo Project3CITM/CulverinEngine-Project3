@@ -77,8 +77,11 @@ void CompParticleSystem::Update(float dt)
 		pop_up_save_open = false;
 	}
 		
-
-	part_system->SetEmitterTransform(parent->GetComponentTransform()->GetGlobalTransform().Transposed());	
+	CompTransform* transf = parent->GetComponentTransform();
+	if (transf->GetUpdated())
+	{
+		part_system->SetEmitterTransform(transf->GetGlobalTransform().Transposed());
+	}
 }
 
 void CompParticleSystem::Clear()
@@ -254,7 +257,14 @@ void CompParticleSystem::LoadBinary(char ** cursor)
 	part_system->discard_distance = App->json_seria->LoadFloatBinary(cursor);
 }
 
-
+void CompParticleSystem::SyncComponent(GameObject * sync_parent)
+{
+	CompTransform* transf = parent->GetComponentTransform();
+	if (transf)
+	{
+		part_system->SetEmitterTransform(transf->GetGlobalTransform().Transposed());
+	}
+}
 
 bool CompParticleSystem::SaveParticleStates(ResourceMaterial* TextureResource, const ParticleTextureData* TexData, const ParticleState* stateI, const ParticleState* stateF) const
 {
