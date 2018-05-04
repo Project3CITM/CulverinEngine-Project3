@@ -42,8 +42,10 @@ public class FadeToBlack : CulverinBehaviour
         saveinfo_player = GetLinkedObject("saveinfo_player");
         if (go_normal)
         {
+            //Time.timeScale = 0.0f;
             state = StateFade.GO_NORMAL;
             actual_alpha = 1.0f;
+            image_fade.SetActive(true);
             image_fade.GetComponent<CompImage>().SetAlpha(actual_alpha);
             if (load_playerinfo)
             {
@@ -85,7 +87,9 @@ public class FadeToBlack : CulverinBehaviour
                 {
                     saveinfo_player.GetComponent<CharactersManager>().SaveInfoPlayer();
                 }
+                //Time.timeScale = 1.0f;
                 // Now Load Scene
+                image_fade.SetActive(false);
                 LoadScene();
             }
             else if(actual_alpha < 0.0f)
@@ -94,6 +98,8 @@ public class FadeToBlack : CulverinBehaviour
                 image_fade.GetComponent<CompImage>().SetAlpha(actual_alpha);
                 fadeing = false;
                 state = StateFade.NONE;
+                //Time.timeScale = 1.0f;
+                image_fade.SetActive(false);
             }
             else
             {
@@ -118,6 +124,7 @@ public class FadeToBlack : CulverinBehaviour
                 state = StateFade.GO_BLACK;
                 fadeing = true;
                 image_fade.SetActive(true);
+                //Time.timeScale = 0.0f;
             }
         }
     }
