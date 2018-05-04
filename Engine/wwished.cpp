@@ -140,13 +140,13 @@ void Wwished::Utility::SetLanguage(const char * language)
 //Loads audiobanks and returns 1 if success, 0 if not found and 2 if duplicated. IMPORTANT: never call this before InitWwished()
 int Wwished::Utility::LoadBank(const char * path)
 {
-	int ret = 1;
+	int ret = 0;
 	unsigned long bank_id;
 	AKRESULT res = AK::SoundEngine::LoadBank(path, AK_DEFAULT_POOL_ID, bank_id);
 	
-	if (res == AK_Fail)
+	if (res == AK_Success)
 	{
-		ret = 0;
+		ret = 1;
 	}
 
 	if (res == AK_BankAlreadyLoaded)

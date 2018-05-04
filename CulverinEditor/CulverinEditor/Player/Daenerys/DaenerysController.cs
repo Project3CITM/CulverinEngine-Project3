@@ -1,5 +1,6 @@
 ﻿using CulverinEditor;
 using CulverinEditor.Debug;
+using CulverinEditor.Pathfinding;
 
 public class DaenerysController : CharacterController
 {
@@ -347,7 +348,40 @@ public class DaenerysController : CharacterController
             //Damage Feedback
             damage_feedback.SetDamage(health.GetCurrentHealth(), max_hp);
         }
+        else
+        {
+            SetAnimationTransition("ToDeath", true);
+            Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("D_Death");
+            SetState(State.DEAD);
 
+            PlayFx("DaenerysDead");
+        }
+
+        return true;
+    }
+
+    public override bool Push(float dmg, PathNode tile)
+    {
+        health.GetDamage(dmg);
+        curr_hp -= dmg;
+        movement.MovePush(tile);
+
+        // SET HIT ANIMATION
+        if (health.GetCurrentHealth() > 0)
+        {
+            if (GetState() == 0)
+            {
+                Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("Hit");
+                SetAnimationTransition("ToHit", true);
+                SetState(State.HIT);
+            }
+
+            PlayFx("DaenerysHurt");
+            play_breathing_audio = true;
+
+            //Damage Feedback
+            damage_feedback.SetDamage(health.GetCurrentHealth(), max_hp);
+        }
         else
         {
             SetAnimationTransition("ToDeath", true);

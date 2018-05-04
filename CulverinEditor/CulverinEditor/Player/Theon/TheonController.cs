@@ -1,5 +1,6 @@
 ﻿using CulverinEditor;
 using CulverinEditor.Debug;
+using CulverinEditor.Pathfinding;
 
 public class TheonController : CharacterController
 {
@@ -326,7 +327,39 @@ public class TheonController : CharacterController
             //Damage Feedback
             damage_feedback.SetDamage(health.GetCurrentHealth(), max_hp);
         }
+        else
+        {
+            Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("T_Death");
+            SetAnimationTransition("ToDeath", true);
+            SetState(State.DEAD);
 
+            PlayFx("TheonDead");
+        }
+
+        return true;
+    }
+
+    public override bool Push(float dmg, PathNode tile)
+    {
+        health.GetDamage(dmg);
+        movement.MovePush(tile);
+
+        // SET HIT ANIMATION
+        if (health.GetCurrentHealth() > 0)
+        {
+            if (GetState() == 0)
+            {
+                Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("Hit");
+                SetAnimationTransition("ToHit", true);
+                SetState(State.HIT);
+            }
+
+            PlayFx("TheonHurt");
+            play_breathing_audio = true;
+
+            //Damage Feedback
+            damage_feedback.SetDamage(health.GetCurrentHealth(), max_hp);
+        }
         else
         {
             Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("T_Death");

@@ -16,6 +16,7 @@ class BossEngage_Action : Action
         GetLinkedObject("player_obj").GetComponent<CharactersManager>().SetCurrentCharacterState(CharacterController.State.GRABBED);
         GetComponent<CompAnimation>().SetTransition("ToPresentation");
         GetComponent<CompAnimation>().SetClipDuration("Presentation", duration);
+        GetComponent<Boss_BT>().boss_fight_timer = 0.0f;
         return true;
     }
 

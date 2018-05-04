@@ -11,6 +11,7 @@
 #include "CompCanvas.h"
 #include "ModuleFS.h"
 #include <vector>
+#include "JSONSerialization.h"
 #include "CompSlider.h"
 #include "ModuleInput.h"
 
@@ -197,6 +198,37 @@ void CompSlider::Load(const JSON_Object * object, std::string name)
 	speed = json_object_dotget_number_with_std(object, name + "Slide Speed");
 	Enable();
 }
+
+void CompSlider::GetOwnBufferSize(uint & buffer_size)
+{
+	CompInteractive::GetOwnBufferSize(buffer_size);
+	buffer_size += sizeof(int);						//SaveSliderCompUID(slide_bg)
+	buffer_size += sizeof(int);						//SaveSliderCompUID(slide_bar)
+	buffer_size += sizeof(float);					//fill
+	buffer_size += sizeof(float);					//speed
+
+}
+
+void CompSlider::SaveBinary(char ** cursor, int position) const
+{
+	CompInteractive::SaveBinary(cursor, position);
+	App->json_seria->SaveIntBinary(cursor, SaveSliderCompUID(slide_bg));
+	App->json_seria->SaveIntBinary(cursor, SaveSliderCompUID(slide_bar));
+	App->json_seria->SaveFloatBinary(cursor, fill);
+	App->json_seria->SaveFloatBinary(cursor, speed);
+
+}
+
+void CompSlider::LoadBinary(char ** cursor)
+{
+	CompInteractive::LoadBinary(cursor);
+	uuid_reimported_slide_bg = App->json_seria->LoadIntBinary(cursor);
+	uuid_reimported_slide_bar = App->json_seria->LoadIntBinary(cursor);
+	fill = App->json_seria->LoadFloatBinary(cursor);
+	speed = App->json_seria->LoadFloatBinary(cursor);
+	Enable();
+}
+
 void CompSlider::SyncComponent(GameObject* sync_parent)
 {
 	CompInteractive::SyncComponent(sync_parent);

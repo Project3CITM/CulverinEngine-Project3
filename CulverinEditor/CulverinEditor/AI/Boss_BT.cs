@@ -57,6 +57,7 @@ public class Boss_BT : BT
     private bool boss_dead = false;
     public float boss_dead_delay_time = 5.0f;
     private float boss_dead_delay_timer = 0.0f;
+    public float boss_fight_timer = 0.0f;
 
     private CompText boss_title_text;
 
@@ -94,6 +95,7 @@ public class Boss_BT : BT
 
     public override void Update()
     {
+        boss_dead_delay_timer += Time.deltaTime;
         if (rumble == true)
         {
             rumble_timer += Time.deltaTime;
@@ -114,17 +116,18 @@ public class Boss_BT : BT
             else if (boss_title_timer >= time && boss_title_timer <= (time * 2.0f))
                 boss_title_text.SetAlpha(1.0f);
             else
-                boss_title_text.SetAlpha((time / boss_title_timer));
+            {
+                float alpha = ((boss_title_timer - (2 * time)) / time);
+                alpha -= 1.0f;
+                if (alpha < 0.0f)
+                    alpha = -alpha;
+                boss_title_text.SetAlpha(alpha);
+            }
 
             if (boss_title_timer >= boss_title_time_on_screen)
             {
                 boss_title_on = false;
-                Debug.Log("Boss is triggered");
-                GetLinkedObject("boss_door").GetComponent<DoorLevel2>().CloseDoor();
-                Activate();
-                GetComponent<BossSight>().SetEnabled(false);
                 boss_title.SetActive(false);
-                boss_active = true;
             }
         }
 
@@ -133,6 +136,8 @@ public class Boss_BT : BT
             boss_dead_delay_timer += Time.deltaTime;
             if (boss_dead_delay_timer >= boss_dead_delay_time)
             {
+                StatsScore.boss_time = boss_fight_timer;
+                StatsScore.combat_points += GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetTotalHP();
                 if (SceneManager.CheckMultiSceneReady())
                     SceneManager.RemoveSecondaryScene();
                 SceneManager.LoadScene("ScoreMenu");
@@ -143,6 +148,7 @@ public class Boss_BT : BT
 
     public override void MakeDecision()
     {
+        Debug.Log("Here");
         if (next_action.action_type != Action.ACTION_TYPE.NO_ACTION)
         {
             current_action = next_action;
@@ -331,8 +337,8 @@ public class Boss_BT : BT
     {
         next_action = GetComponent<BossEngage_Action>();
         GetComponent<CompAudio>().PlayEvent("BossGrowl");
-        GetLinkedObject("map_obj").GetComponent<LevelMap>().UpdateMap(21, 12, 1);
-        GetLinkedObject("map").GetComponent<Pathfinder>().SetWalkableTile(21, 12, 1);
+        GetLinkedObject("map_obj").GetComponent<LevelMap>().UpdateMap(23, 7, 1);
+        GetLinkedObject("map").GetComponent<Pathfinder>().SetWalkableTile(23, 7, 1);
         rumble = true;
     }
 
@@ -354,9 +360,17 @@ public class Boss_BT : BT
     {
         if (boss_active == false)
         {
+            // Boss title
             boss_title_on = true;
             boss_title.SetActive(true);
             boss_title_text.SetAlpha(0.0f);
+
+            // Activate Boss
+            Debug.Log("Boss is triggered");
+            GetLinkedObject("boss_door").GetComponent<DoorLevel2>().CloseDoor();
+            Activate();
+            GetComponent<BossSight>().SetEnabled(false);
+            boss_active = true;
         }
     }
 }

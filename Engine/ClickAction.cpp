@@ -253,16 +253,16 @@ void ClickAction::ShowOnClickInfo()
 	ImGui::SameLine();
 	if (ImGui::ImageButton((ImTextureID*)App->gui->icon_remove, ImVec2(8, 8), ImVec2(-1, 1), ImVec2(0, 0)))
 	{
-		ClickActionData new_action;
-		actions.pop_back();
+		if (actions.size() > 0)
+		{
+			actions.pop_back();
+		}
 	}
 	ImGui::PopStyleColor();
 	ImGui::EndChild();
 	ImGui::PopStyleVar();
 	// Andre how to call functions :D
 	// actions[i].script->csharp->DoPublicMethod(actions[i].method, &actions[i].value);
-
-
 }
 void ClickAction::ShowTypeMethod(int index)
 {
@@ -665,6 +665,10 @@ void ClickAction::GetOwnBufferSize(uint & buffer_size)
 			}
 		}
 	}
+	else
+	{
+		buffer_size += sizeof(int);										//actions.size() == 0
+	}
 }
 
 void ClickAction::SaveBinary(char** cursor) const
@@ -678,7 +682,7 @@ void ClickAction::SaveBinary(char** cursor) const
 			App->json_seria->SaveIntBinary(cursor, actions[i].selected_mode);
 			if (actions[i].attacked == nullptr)
 			{
-				App->json_seria->SaveIntBinary(cursor, 0);
+				App->json_seria->SaveIntBinary(cursor, -1);
 				continue;
 			}
 			App->json_seria->SaveIntBinary(cursor, actions[i].attacked->GetUUID());
@@ -725,6 +729,10 @@ void ClickAction::SaveBinary(char** cursor) const
 			}
 			}
 		}
+	}
+	else
+	{
+		App->json_seria->SaveIntBinary(cursor, 0);
 	}
 }
 

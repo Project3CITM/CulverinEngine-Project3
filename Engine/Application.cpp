@@ -1446,17 +1446,20 @@ bool Application::InitBuild()
 
 void Application::SetFullScreen()
 {
-	full_screen = !full_screen;
+	LOG("Setting to Fullscreen");
+	SDL_SetWindowFullscreen(App->window->window, SDL_WINDOW_FULLSCREEN);
 }
 
 void Application::SetWindowed()
 {
-	resizable_window = !resizable_window;
+	LOG("Setting to Windowed");
+	SDL_SetWindowFullscreen(App->window->window, 0);
 }
 
 void Application::SetBordeless()
 {
-	borderless = !borderless;
+	LOG("Setting to Bordeless");
+	SDL_SetWindowFullscreen(App->window->window, SDL_WINDOW_FULLSCREEN_DESKTOP);
 }
 
 void Application::SetVSync()

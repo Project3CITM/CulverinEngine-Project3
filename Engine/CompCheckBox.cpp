@@ -9,6 +9,7 @@
 #include "ResourceMaterial.h"
 #include "ModuleResourceManager.h"
 #include "ModuleImporter.h"
+#include "JSONSerialization.h"
 #include "ImportMaterial.h"
 #include "CompImage.h"
 
@@ -169,6 +170,39 @@ void CompCheckBox::Load(const JSON_Object * object, std::string name)
 
 	Enable();
 }
+
+void CompCheckBox::GetOwnBufferSize(uint & buffer_size)
+{
+	CompInteractive::GetOwnBufferSize(buffer_size);
+	buffer_size += sizeof(int);               //Tick UUID
+	buffer_size += sizeof(bool);			  //active
+	ClickAction::GetOwnBufferSize(buffer_size);
+}
+
+void CompCheckBox::SaveBinary(char ** cursor, int position) const
+{
+	CompInteractive::SaveBinary(cursor, position);
+	if (tick != nullptr)
+	{
+		App->json_seria->SaveIntBinary(cursor, tick->GetUUID());
+	}
+	else
+	{
+		App->json_seria->SaveIntBinary(cursor, 0);
+	}
+	App->json_seria->SaveBooleanBinary(cursor, active);
+	ClickAction::SaveBinary(cursor);
+}
+
+void CompCheckBox::LoadBinary(char ** cursor)
+{
+	CompInteractive::LoadBinary(cursor);
+	tick_uid = App->json_seria->LoadIntBinary(cursor);
+	active = App->json_seria->LoadBooleanBinary(cursor);
+	ClickAction::LoadBinary(cursor);
+	Enable();
+}
+
 void CompCheckBox::SyncComponent(GameObject* sync_parent)
 {
 	CompInteractive::SyncComponent(sync_parent);

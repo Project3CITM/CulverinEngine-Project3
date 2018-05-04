@@ -11,7 +11,7 @@ static public class StatsScore
     static public float time = 0.0f; //counter for tracking how many characters you have used (1,2 or 3)
 
     static public uint fountain_times = 0;
-    static public uint combat_points = 0;
+    static public float combat_points = 0;
     static public uint puzzle_hits = 0;
     static public float boss_time = 0.0f;
 
