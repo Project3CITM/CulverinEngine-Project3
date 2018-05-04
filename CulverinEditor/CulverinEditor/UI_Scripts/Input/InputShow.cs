@@ -19,7 +19,7 @@ public class InputShow : CulverinBehaviour
 
         action_name = "Interact";
         input_name = "Player";
-        text = "Pulse ";
+        text = "Press ";
         text += Input.GetInput_ControllerKeyBindingName(action_name, input_name, device, false);
         if (heal)
             text += " to Heal";
@@ -35,7 +35,7 @@ public class InputShow : CulverinBehaviour
         if (!update)
             Start();
         device = Input.GetActualDeviceCombo();
-        text = "Pulse ";
+        text = "Press ";
         text += Input.GetInput_ControllerKeyBindingName(action_name, input_name, device, false);
         if (heal)
             text += " to Heal";
