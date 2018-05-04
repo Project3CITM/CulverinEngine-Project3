@@ -62,8 +62,7 @@ public class MovementController : CulverinBehaviour
 
     public bool drowning = false;
 
-    bool push = false;
-    PathNode push_tile;
+    public bool push = false;
 
     void Start()
     {
@@ -109,7 +108,7 @@ public class MovementController : CulverinBehaviour
 
         CheckIsWalkable();
 
-        if (GetComponent<Transform>().local_position == endPosition && rotating == false && face_rotating == false && char_manager.GetManagerState() != CharactersManager.State.DROWNING)
+        if (GetComponent<Transform>().local_position == endPosition && rotating == false && face_rotating == false && char_manager.GetManagerState() != CharactersManager.State.DROWNING && push == false)
         {
             Debug.Log("ENTEEEEER!");
 
@@ -159,6 +158,12 @@ public class MovementController : CulverinBehaviour
                     }
                 }
             }
+        }
+        else if (push == true)
+        {
+            GetComponent<Transform>().local_position = Vector3.MoveTowards(GetComponent<Transform>().local_position, endPosition, movSpeed * Time.deltaTime);
+            if (GetComponent<Transform>().local_position == endPosition)
+                push = false;
         }
         else if (rotating)
         {
@@ -286,15 +291,13 @@ public class MovementController : CulverinBehaviour
     {
         if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().IsIdle() && drowning == false)
         {
-            
-
-            if(push == true)
+            /*if(push == true)
             {
                 push = false;
                 MovePush(out tile_mov_x, out tile_mov_y);
                 GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, time_in_memory, footstep_radius, curr_x, curr_y);
                 return true;
-            }
+            }*/
 
             float variation = Input.GetInput_ControllerAxis("Horizontal", "Player");
             if (variation > 0.8)
@@ -464,17 +467,15 @@ public class MovementController : CulverinBehaviour
         }
     }
 
-    private void MovePush(out int tile_mov_x, out int tile_mov_y)
+    public void MovePush(PathNode obj)
     {
         characters_camera.GetComponent<CompAnimation>().PlayAnimation("Walk");
-        endPosition = new Vector3(push_tile.GetTileX() * distanceToMove, GetComponent<Transform>().local_position.y, push_tile.GetTileY() * distanceToMove);
-        tile_mov_x = push_tile.GetTileX() - curr_x;
-        tile_mov_y = push_tile.GetTileY() - curr_y;
-    }
-
-    public void Push(PathNode tile)
-    {
-        push_tile = new PathNode(tile.GetTileX(), tile.GetTileY());
+        endPosition = new Vector3(obj.GetTileX() * distanceToMove, GetComponent<Transform>().local_position.y, obj.GetTileY() * distanceToMove);
+        tile_mov_x = obj.GetTileX() - curr_x;
+        tile_mov_y = obj.GetTileY() - curr_y;
+        curr_x += tile_mov_x;
+        curr_y += tile_mov_y;
+        char_manager.SetCurrentPosition();
         push = true;
     }
 
@@ -593,6 +594,8 @@ public class MovementController : CulverinBehaviour
     {
         if (moving || rotating)
         {
+            if (push == true)
+                return false;
             return true;
         }
         else

@@ -155,9 +155,6 @@ public class DaenerysController : CharacterController
             //Check play breath audio
             base.CheckHealth(curr_hp, max_hp, "DaenerysBreathing");
 
-            if (push)
-                base.UpdatePush();
-
             // Check if player is moving to block attacks/abilities
             if (!movement.IsMoving())
             {
@@ -351,7 +348,6 @@ public class DaenerysController : CharacterController
             //Damage Feedback
             damage_feedback.SetDamage(health.GetCurrentHealth(), max_hp);
         }
-
         else
         {
             SetAnimationTransition("ToDeath", true);
@@ -368,7 +364,7 @@ public class DaenerysController : CharacterController
     {
         health.GetDamage(dmg);
         curr_hp -= dmg;
-        base.PushTo(tile, anim_controller.GetClipDuration("Hit"));
+        movement.MovePush(tile);
 
         // SET HIT ANIMATION
         if (health.GetCurrentHealth() > 0)

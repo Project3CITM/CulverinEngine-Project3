@@ -153,9 +153,6 @@ public class JaimeController : CharacterController
             //Check play breath audio
             base.CheckHealth(curr_hp, max_hp, "JaimeBreathing");
 
-            if(push)
-                base.UpdatePush();
-
             // Check if player is moving to block attacks/abilities
             if (!movement.IsMoving())
             {
@@ -365,7 +362,7 @@ public class JaimeController : CharacterController
         {
             SetAnimationTransition("ToBlock", true);
             Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("J_Block");
-            base.PushTo(tile, anim_controller.GetClipDuration("Block"));
+            movement.MovePush(tile);
 
             PlayFx("MetalHit");
             //PlayFx("MetalClash");
@@ -381,7 +378,7 @@ public class JaimeController : CharacterController
         {
             health.GetDamage(dmg);
             curr_hp -= dmg;
-            base.PushTo(tile, anim_controller.GetClipDuration("Hit"));
+            movement.MovePush(tile);
 
             if (health.GetCurrentHealth() > 0)
             {

@@ -161,9 +161,6 @@ public class TheonController : CharacterController
             //Check play breath audio
             base.CheckHealth(curr_hp, max_hp, "TheonBreathing");
 
-            if (push)
-                base.UpdatePush();
-
             // Check if player is moving to block attacks/abilities
             if (!movement.IsMoving())
             {
@@ -345,7 +342,7 @@ public class TheonController : CharacterController
     public override bool Push(float dmg, PathNode tile)
     {
         health.GetDamage(dmg);
-        base.PushTo(tile, anim_controller.GetClipDuration("Hit"));
+        movement.MovePush(tile);
 
         // SET HIT ANIMATION
         if (health.GetCurrentHealth() > 0)
