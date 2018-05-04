@@ -408,6 +408,7 @@ void Material::GetProgramVariables()
 		{
 			if (strcmp((*item).var_name.c_str(), (*item2).var_name.c_str()) == 0) {
 				(*item2).cube_map = (*item).cube_map;
+				(*item2).cube_name = (*item).cube_name;
 			}
 		}
 	}

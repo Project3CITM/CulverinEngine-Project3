@@ -138,13 +138,13 @@ float CalcShadow(vec4 shadowPos, float usedBias)
 
     if(shadowPos.z > 1.0)
         return 0.0;
-   int iterations = 1;
+   int iterations = 10;
     for(int i = 0; i < iterations; ++i)
     {
         int index = int(16.0 * random(floor(mat3(model) * ourPos * 1000.0), i)) % 16;
 
-        float shadowVal = (1.0f - texture(_shadowMap, vec3(shadowPos.xy + poissonDisk[i] / 200.0, (shadowPos.z - usedBias) / shadowPos.w)));
-        float tmp = 1 * shadowVal;
+        float shadowVal = (1.0f - texture(_shadowMap, vec3(shadowPos.xy + poissonDisk[i] / 400.0, (shadowPos.z - usedBias) / shadowPos.w)));
+        float tmp = 0.1 * shadowVal;
 
         shadow -= tmp;
     }

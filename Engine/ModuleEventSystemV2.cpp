@@ -99,15 +99,14 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 	IteratingMaps = true;
 	FrameBuffer* active_frame = nullptr;
 
-	if (App->renderer3D->active_camera)
-		App->scene->skybox->DrawSkybox(800, App->renderer3D->active_camera->frustum.pos, App->scene->skybox_index);
+	
 
 	//Draw opaque events
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_NORMAL_ARRAY);
 	glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	
+
 	if (App->renderer3D->wireframe) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	IterateLightsV(dt);
 	glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
@@ -118,7 +117,7 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 	//Draw alpha events
 	IterateDrawAlphaV(dt);
 	active_frame->UnBind("Scene");
-
+	
 	//Draw opaque with glow events
 	glViewport(0, 0, 128, 128);
 	active_frame = App->scene->glow_buff;
@@ -127,7 +126,9 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 	active_frame->UnBind("Scene");
 
 	glUseProgram(NULL);
-	
+	if (App->renderer3D->active_camera)
+		App->scene->skybox->DrawSkybox(800, App->renderer3D->active_camera->frustum.pos, App->scene->skybox_index);
+	glViewport(0, 0, 128, 128);
 	if (App->renderer3D->wireframe) glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
