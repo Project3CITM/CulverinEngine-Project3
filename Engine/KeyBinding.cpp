@@ -163,6 +163,11 @@ KeyRelation * KeyBinding::FindKeyBinding(DeviceCombinationType device, int event
 	return &key_binding_relations[KEY_NONE_NUM];
 }
 
+KeyRelation * KeyBinding::GetNullKeyBinding()
+{
+	return  &key_binding_relations[KEY_NONE_NUM];
+}
+
 DeviceCombinationType KeyRelation::SelectDeviceCombination(const char* value)
 {
 	if (strcmp(value, "mouse")==0|| strcmp(value, "keyboard") == 0)

@@ -712,6 +712,10 @@ KeyRelation * ModuleInput::FindKeyBinding(const char* string)
 		return nullptr;
 	return key_binding->FindKeyBinding(string);
 }
+KeyRelation * ModuleInput::GetNullKeyRelation()
+{
+	return key_binding->GetNullKeyBinding();
+}
 KeyRelation * ModuleInput::FindKeyBinding(DeviceCombinationType device, int event_value)
 {
 	if (key_binding == nullptr)

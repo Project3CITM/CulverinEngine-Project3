@@ -97,8 +97,101 @@ bool InputManager::ProcessEvent(SDL_Event * input_event)
 
 }
 
-void InputManager::ClearSameEvent(SDL_Event * input_event)
+void InputManager::ClearSameEvent(SDL_Event * input_event, DeviceCombinationType device)
 {
+
+	for (std::vector<InputAction*>::iterator it = action_vector.begin(); it != action_vector.end(); it++)
+	{
+		switch (input_event->type)
+		{
+		case SDL_KEYDOWN:
+			if (device == (*it)->key_device)
+			{
+
+				KeyRelation* key = (*it)->positive_button;
+
+				if (key != nullptr)
+				{
+					if (key->event_value == input_event->key.keysym.scancode)
+					{
+						key = App->input->GetNullKeyRelation();
+						(*it)->positive_button = key;
+					}
+				}
+				key = (*it)->negative_button;
+
+				if (key != nullptr)
+				{
+					if (key->event_value == input_event->key.keysym.scancode)
+					{
+						key = App->input->GetNullKeyRelation();
+						(*it)->negative_button = key;
+					}
+				}
+				
+
+			}
+			break;
+		case SDL_CONTROLLERBUTTONDOWN:
+			if (device == DeviceCombinationType::CONTROLLER_COMB_DEVICE)
+			{
+				KeyRelation* key = (*it)->positive_button;
+
+				if (key != nullptr)
+				{
+					if (key->event_value == input_event->key.keysym.scancode)
+					{
+						key = App->input->GetNullKeyRelation();
+						(*it)->positive_button = key;
+					}
+				}
+				key = (*it)->negative_button;
+
+				if (key != nullptr)
+				{
+					if (key->event_value == input_event->key.keysym.scancode)
+					{
+						key = App->input->GetNullKeyRelation();
+						(*it)->negative_button = key;
+					}
+				}
+
+			}
+
+			break;
+		case SDL_CONTROLLERAXISMOTION:
+
+			break;
+		case SDL_MOUSEBUTTONDOWN:
+			if (device == DeviceCombinationType::KEYBOARD_AND_MOUSE_COMB_DEVICE)
+			{
+				KeyRelation* key = (*it)->positive_button;
+
+				if (key != nullptr)
+				{
+					if (key->event_value == input_event->key.keysym.scancode)
+					{
+						key = App->input->GetNullKeyRelation();
+						(*it)->positive_button = key;
+					}
+				}
+				key = (*it)->negative_button;
+
+				if (key != nullptr)
+				{
+					if (key->event_value == input_event->key.keysym.scancode)
+					{
+						key = App->input->GetNullKeyRelation();
+						(*it)->negative_button = key;
+					}
+				}
+
+			}
+			break;
+		default:
+			break;
+		}
+	}
 }
 
 void InputManager::Clear()

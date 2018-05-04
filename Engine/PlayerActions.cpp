@@ -644,13 +644,19 @@ PlayerActions::KeyChange::KeyState PlayerActions::KeyChange::ReceiveEvent(SDL_Ev
 				key = key_to_change->negative_button;			
 			key = key_to_change->positive_button;
 
-			if (key == nullptr || key->event_value == input_event->key.keysym.scancode)
+			if (key == nullptr || key->event_value == input_event->key.keysym.scancode||
+				input_event->key.keysym.scancode==SDL_SCANCODE_Q || 
+				input_event->key.keysym.scancode == SDL_SCANCODE_R || 
+				input_event->key.keysym.scancode == SDL_SCANCODE_W || 
+				input_event->key.keysym.scancode == SDL_SCANCODE_A || 
+				input_event->key.keysym.scancode == SDL_SCANCODE_S || 
+				input_event->key.keysym.scancode == SDL_SCANCODE_D )
 				return KeyState::INVALID_KEY_STATE;
 			
 			if (key_to_change->my_manager == nullptr)
 				return KeyState::INVALID_KEY_STATE;
-			key_to_change->my_manager->ClearSameEvent(input_event);
-			key = App->input->FindKeyBinding(key->device, input_event->key.keysym.scancode);
+			key_to_change->my_manager->ClearSameEvent(input_event, key_to_change->key_device);
+			key = App->input->FindKeyBinding(key_to_change->key_device, input_event->key.keysym.scancode);
 			if (change_negative)
 				key_to_change->negative_button = key;
 			key_to_change->positive_button = key;
@@ -674,9 +680,9 @@ PlayerActions::KeyChange::KeyState PlayerActions::KeyChange::ReceiveEvent(SDL_Ev
 			if (key_to_change->my_manager == nullptr)
 				return KeyState::INVALID_KEY_STATE;
 
-			key_to_change->my_manager->ClearSameEvent(input_event);
+			key_to_change->my_manager->ClearSameEvent(input_event, key_to_change->key_device);
 
-			key = App->input->FindKeyBinding(key->device, input_event->cbutton.button);
+			key = App->input->FindKeyBinding(key_to_change->key_device, input_event->cbutton.button);
 			if (change_negative)
 				key_to_change->negative_button = key;
 			key_to_change->positive_button = key;
@@ -706,8 +712,8 @@ PlayerActions::KeyChange::KeyState PlayerActions::KeyChange::ReceiveEvent(SDL_Ev
 			if (key_to_change->my_manager == nullptr)
 				return KeyState::INVALID_KEY_STATE;
 
-			key_to_change->my_manager->ClearSameEvent(input_event);
-			key = App->input->FindKeyBinding(key->device, input_event->button.button);
+			key_to_change->my_manager->ClearSameEvent(input_event, key_to_change->key_device);
+			key = App->input->FindKeyBinding(key_to_change->key_device, input_event->button.button);
 			if (change_negative)
 				key_to_change->negative_button = key;
 			key_to_change->positive_button = key;

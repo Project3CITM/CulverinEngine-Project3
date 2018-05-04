@@ -132,6 +132,7 @@ public:
 	SDL_Joystick* GetJoystick() const;
 	SDL_Haptic* GetHaptic() const;
 	KeyRelation* FindKeyBinding(const char* string);
+	KeyRelation* GetNullKeyRelation();
 
 	KeyRelation * FindKeyBinding(DeviceCombinationType device, int event_value);
 	void SwapVibration();
