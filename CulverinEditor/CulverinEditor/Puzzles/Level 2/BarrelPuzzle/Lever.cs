@@ -160,7 +160,7 @@ public class Lever : CulverinBehaviour
         SetBarrels();
 
         // Get All Chains from Puzzle.
-       // SetChains();
+        SetChains();
 
         // Desactivate all barrels, while the player dont stay in puzzle. 
         DesactivateBarrels(line1);
@@ -272,7 +272,7 @@ public class Lever : CulverinBehaviour
                 MoveBarrels(line4);
                 MoveBarrels(line5);
                 MoveBarrels(line6);
-               // MoveChains(true);
+                MoveChains(true);
                 phase3 = true;
                 phase2 = true;
                 phase_wait = true;
@@ -310,7 +310,7 @@ public class Lever : CulverinBehaviour
                     SetPathWalkable(0, 3);
                     editmap = false;
                     countdown.StartCountdown();
-                   // MoveChains(false);
+                    MoveChains(false);
                 }
                 else if (countdown.IsCountdownOver())
                 {
@@ -410,7 +410,12 @@ public class Lever : CulverinBehaviour
             {
                 start_tile_x = curr_x;
                 start_tile_z = curr_y;
-               // SetChainsData(number_of_lines, start_tile_x, start_tile_z, target_tile_x, target_tile_z);
+                SetChainsData(number_of_lines, start_tile_x, start_tile_z, target_tile_x, target_tile_z);
+                Debug.Log("Chain: " + number_of_lines);
+                Debug.Log("Start x" + start_tile_x);
+                Debug.Log("Start z" + start_tile_z);
+                Debug.Log("Target x" + target_tile_x);
+                Debug.Log("Target z" + target_tile_z);
             }
         }
     }
