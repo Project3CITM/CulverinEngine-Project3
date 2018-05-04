@@ -444,15 +444,39 @@ void CompImage::CopyValues(const CompImage * component)
 
 void CompImage::Clear()
 {
+	if (source_image != nullptr)
+	{
+		if (source_image->num_game_objects_use_me > 0)
+		{
+			source_image->num_game_objects_use_me--;
+		}
+	}
 	source_image = nullptr;
+
+	if (overwrite_image != nullptr)
+	{
+		if (overwrite_image->num_game_objects_use_me > 0)
+		{
+			overwrite_image->num_game_objects_use_me--;
+		}
+	}
 	overwrite_image = nullptr;
+
+	if (controller_image != nullptr)
+	{
+		if (controller_image->num_game_objects_use_me > 0)
+		{
+			controller_image->num_game_objects_use_me--;
+		}
+	}
+	controller_image = nullptr;
 	if (my_canvas != nullptr)
 		my_canvas->RemoveGraphic(this);
 	my_canvas = nullptr;
 	my_canvas_render = nullptr;
 	transform = nullptr;
 
-
+	
 	
 }
 

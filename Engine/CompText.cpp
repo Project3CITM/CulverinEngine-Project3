@@ -425,6 +425,13 @@ void CompText::CopyValues(const CompText * component)
 void CompText::Clear()
 {
 	RELEASE_ARRAY(input_text);
+	if (text != nullptr)
+	{
+		if (text->num_game_objects_use_me > 0)
+		{
+			text->num_game_objects_use_me--;
+		}
+	}
 	text = nullptr;
 	if (my_canvas != nullptr)
 		my_canvas->RemoveGraphic(this);

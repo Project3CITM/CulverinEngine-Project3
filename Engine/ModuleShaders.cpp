@@ -677,13 +677,13 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 					}
 					if (material->textures[i].value != nullptr)
 					{
-						material->textures[i].value->num_game_objects_use_me++;
+						//material->textures[i].value->num_game_objects_use_me++;
 
-						// LOAD MATERIAL -------------------------
-						if (material->textures[i].value->IsLoadedToMemory() == Resource::State::UNLOADED)
-						{
-							App->importer->iMaterial->LoadResource(std::to_string(material->textures[i].value->GetUUID()).c_str(), material->textures[i].value);
-						}
+						//// LOAD MATERIAL -------------------------
+						//if (material->textures[i].value->IsLoadedToMemory() == Resource::State::UNLOADED)
+						//{
+						//	App->importer->iMaterial->LoadResource(std::to_string(material->textures[i].value->GetUUID()).c_str(), material->textures[i].value);
+						//}
 					}
 					else {
 						material->textures[i].value = App->renderer3D->default_texture;
