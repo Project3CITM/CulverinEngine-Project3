@@ -321,7 +321,7 @@ public class CharactersManager : CulverinBehaviour
 
                     if (Input.GetKeyDown(KeyCode.M))
                     {
-                        SceneManager.LoadScene("MainMenuScene");
+                        SceneManager.LoadScene("3D Menu intro");
                     }
 
                     if (Input.GetInput_KeyDown("TriangleR", "Player"))

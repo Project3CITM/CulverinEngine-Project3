@@ -83,7 +83,7 @@ public class PauseMenuButtons : CulverinBehaviour
         {
             SceneManager.RemoveSecondaryScene();
         }
-        SceneManager.LoadScene("MainMenuScene");
+        SceneManager.LoadScene("3D Menu intro");
     }
     public void NoButton()
     {
