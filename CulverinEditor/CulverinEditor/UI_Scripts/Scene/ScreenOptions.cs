@@ -45,7 +45,7 @@ public class ScreenOptions : CulverinBehaviour
         GetComponent<CompAudio>().PlayEvent("Push");
         screenoptions_menu.SetActive(true);
         options_menu.SetActive(false);
-        EventSystem.SendInteractiveSelected(display_button);
+        EventSystem.SendInteractiveSelected(windowed_cb);
     }
 
     public void CloseScreenOptions()
@@ -80,7 +80,7 @@ public class ScreenOptions : CulverinBehaviour
     public void SetVSync()
     {
         GetComponent<CompAudio>().PlayEvent("Push");
-        Screen.SetBordeless();
+        Screen.SetVSync();
     }
     public void ShowFPS()
     {
