@@ -124,6 +124,12 @@
     <Compile Include="UI_Scripts\Scene\Screen.cs" />
     <Compile Include="UI_Scripts\Scene\ScreenOptions.cs" />
     <Compile Include="UI_Scripts\Scene\DisplayMenu.cs" />
+    <Compile Include="UI_Scripts\Scene\Scroll_Lv1_1ToLv1_2.cs" />
+    <Compile Include="UI_Scripts\Scene\Scroll_Lv1_2ToLv1_3.cs" />
+    <Compile Include="UI_Scripts\Scene\Scroll_Lv1_3ToLv2_1.cs" />
+    <Compile Include="UI_Scripts\Scene\Scroll_Lv2_1To2_2.cs" />
+    <Compile Include="UI_Scripts\Scene\Scroll_Lv2_2To2_3.cs" />
+    <Compile Include="UI_Scripts\Scene\Scroll_TutTo1_1.cs" />
     <Compile Include="UI_Scripts\Scene\Volume.cs" />
     <Compile Include="UI_Scripts\ShowScore2.cs" />
     <Compile Include="Tools\Random.cs" />
