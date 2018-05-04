@@ -54,7 +54,8 @@ public class KeyBindingMenu : CulverinBehaviour
     }
     public void OpenKeyBoardMenu()
     {
-    
+        if (Input.GetChangeInputActive())
+            return;
         GetComponent<CompAudio>().PlayEvent("Push");
         if (keyboard_menu.IsActive())
             return;
@@ -64,6 +65,8 @@ public class KeyBindingMenu : CulverinBehaviour
     }
     public void OpenControllerMenu()
     {
+        if (Input.GetChangeInputActive())
+            return;
         GetComponent<CompAudio>().PlayEvent("Push");
         if (controller_menu.IsActive())
             return;
@@ -84,11 +87,15 @@ public class KeyBindingMenu : CulverinBehaviour
  
     public void SavePlayerAction()
     {
+        if (Input.GetChangeInputActive())
+            return;
         GetComponent<CompAudio>().PlayEvent("Push");
         Input.SavePlayerAction();
     }
     public void LoadDefaultPlayerAction()
     {
+        if (Input.GetChangeInputActive())
+            return;
         GetComponent<CompAudio>().PlayEvent("Push");
         Input.LoadDefaultPlayerAction();
     }
