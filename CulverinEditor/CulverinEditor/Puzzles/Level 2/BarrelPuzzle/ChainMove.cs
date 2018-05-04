@@ -15,6 +15,8 @@ public class ChainMove : CulverinBehaviour
 
     void Start()
     {
+        target_pos = new Vector3(0.0f, floor_height, 0.0f);
+        puzzle_ceter = new Vector3(0.0f, floor_height, 0.0f);
         target_pos.y = floor_height;
         puzzle_ceter.y = floor_height;
     }

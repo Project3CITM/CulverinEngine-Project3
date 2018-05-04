@@ -142,25 +142,8 @@ public class Lever : CulverinBehaviour
         line5 = new List<GameObject>();
         line6 = new List<GameObject>();
 
-        chain_line_1 = GetLinkedObject("chain_line_1");
-        chain_line_2 = GetLinkedObject("chain_line_2");
-        chain_line_3 = GetLinkedObject("chain_line_3");
-        chain_line_4 = GetLinkedObject("chain_line_4");
-        chain_line_5 = GetLinkedObject("chain_line_5");
-        chain_line_6 = GetLinkedObject("chain_line_6");
-
-        chains_1 = new List<GameObject>();
-        chains_2 = new List<GameObject>();
-        chains_3 = new List<GameObject>();
-        chains_4 = new List<GameObject>();
-        chains_5 = new List<GameObject>();
-        chains_6 = new List<GameObject>();
-
         // Get All barrels from Puzzle.
         SetBarrels();
-
-        // Get All Chains from Puzzle.
-        SetChains();
 
         // Desactivate all barrels, while the player dont stay in puzzle. 
         DesactivateBarrels(line1);
@@ -182,6 +165,23 @@ public class Lever : CulverinBehaviour
             other_lever_1 = GetLinkedObject("other_lever_1");
         if (other_lever_2 != null)
             other_lever_2 = GetLinkedObject("other_lever_2");
+
+        chain_line_1 = GetLinkedObject("chain_line_1");
+        chain_line_2 = GetLinkedObject("chain_line_2");
+        chain_line_3 = GetLinkedObject("chain_line_3");
+        chain_line_4 = GetLinkedObject("chain_line_4");
+        chain_line_5 = GetLinkedObject("chain_line_5");
+        chain_line_6 = GetLinkedObject("chain_line_6");
+
+        chains_1 = new List<GameObject>();
+        chains_2 = new List<GameObject>();
+        chains_3 = new List<GameObject>();
+        chains_4 = new List<GameObject>();
+        chains_5 = new List<GameObject>();
+        chains_6 = new List<GameObject>();
+
+        // Get All Chains from Puzzle.
+        SetChains();
 
         //// Testing --------------------------------------------
         //for (int y = 0; y < number_lines; y++)
@@ -272,12 +272,12 @@ public class Lever : CulverinBehaviour
                 MoveBarrels(line4);
                 MoveBarrels(line5);
                 MoveBarrels(line6);
-                MoveChains(true);
                 phase3 = true;
                 phase2 = true;
                 phase_wait = true;
                 time = Time.realtimeSinceStartup + delay_second_mode;
                 audio.PlayEvent("Chain");
+                MoveChains(true);
             }
 
             if (phase_wait) // wait to move the other mode
@@ -411,11 +411,6 @@ public class Lever : CulverinBehaviour
                 start_tile_x = curr_x;
                 start_tile_z = curr_y;
                 SetChainsData(number_of_lines, start_tile_x, start_tile_z, target_tile_x, target_tile_z);
-                Debug.Log("Chain: " + number_of_lines);
-                Debug.Log("Start x" + start_tile_x);
-                Debug.Log("Start z" + start_tile_z);
-                Debug.Log("Target x" + target_tile_x);
-                Debug.Log("Target z" + target_tile_z);
             }
         }
     }
