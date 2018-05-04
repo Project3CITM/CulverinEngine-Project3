@@ -116,17 +116,18 @@ public class Boss_BT : BT
             else if (boss_title_timer >= time && boss_title_timer <= (time * 2.0f))
                 boss_title_text.SetAlpha(1.0f);
             else
-                boss_title_text.SetAlpha((time / boss_title_timer));
+            {
+                float alpha = ((boss_title_timer - (2 * time)) / time);
+                alpha -= 1.0f;
+                if (alpha < 0.0f)
+                    alpha = -alpha;
+                boss_title_text.SetAlpha(alpha);
+            }
 
             if (boss_title_timer >= boss_title_time_on_screen)
             {
                 boss_title_on = false;
-                Debug.Log("Boss is triggered");
-                GetLinkedObject("boss_door").GetComponent<DoorLevel2>().CloseDoor();
-                Activate();
-                GetComponent<BossSight>().SetEnabled(false);
                 boss_title.SetActive(false);
-                boss_active = true;
             }
         }
 
@@ -359,9 +360,17 @@ public class Boss_BT : BT
     {
         if (boss_active == false)
         {
+            // Boss title
             boss_title_on = true;
             boss_title.SetActive(true);
             boss_title_text.SetAlpha(0.0f);
+
+            // Activate Boss
+            Debug.Log("Boss is triggered");
+            GetLinkedObject("boss_door").GetComponent<DoorLevel2>().CloseDoor();
+            Activate();
+            GetComponent<BossSight>().SetEnabled(false);
+            boss_active = true;
         }
     }
 }
