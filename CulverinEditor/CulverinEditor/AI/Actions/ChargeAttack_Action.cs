@@ -20,6 +20,16 @@ public class ChargeAttack_Action : Action
     int player_y = -1;
     GameObject player;
     bool pushed = false;
+    public float charge_attack_start_point = 0.9f;
+
+    enum Charge_Phase
+    {
+        CP_POSITIONING,
+        CP_CHARGEING,
+        CP_ATTACK
+    }
+
+    Charge_Phase phase = Charge_Phase.CP_POSITIONING;
 
     public ChargeAttack_Action()
     {
@@ -65,51 +75,61 @@ public class ChargeAttack_Action : Action
 
         pushed = false;
 
+        phase = Charge_Phase.CP_POSITIONING;
+
         return true;
     }
 
     // Update is called once per frame
     public override ACTION_RESULT ActionUpdate()
     {
-        Vector3 pos = new Vector3(trans.position);
-        pos.x = pos.x + speed_x * Time.deltaTime;
-        pos.z = pos.z + speed_z * Time.deltaTime;
-        trans.position = pos;
-
-        movement_x -= Mathf.Abs(speed_x) * Time.deltaTime;
-        movement_z -= Mathf.Abs(speed_z) * Time.deltaTime;
-
-        player.GetComponent<MovementController>().GetPlayerPos(out player_x, out player_y);
-        float tile_size = GetComponent<Movement_Action>().tile_size;
-        uint current_x = (uint)(pos.x / tile_size);
-        uint current_y = (uint)(pos.z / tile_size);
-
-        Debug.Log("Boss " + current_x + "," + current_y);
-        Debug.Log("Player " + player_x + "," + player_y);
-
-        if (current_x == player_x && current_y == player_y && pushed == false)
+        switch(phase)
         {
-            PathNode push_tile = GetPushTile();
-            Debug.Log("Push From " + current_x + "," + current_y);
-            Debug.Log("Push to " + push_tile.GetTileX() + "," + push_tile.GetTileY());
-            pushed = true;
-            if (player.GetComponent<CharactersManager>().Push(damage, push_tile) == true)
-                GetComponent<CompAudio>().PlayEvent("SwordHit");
-        }
+            case Charge_Phase.CP_POSITIONING:
+                if (GetComponent<CompAnimation>().IsAnimationStopped("ChargePositioning"))
+                    phase = Charge_Phase.CP_CHARGEING;
+                break;
 
-        if (movement_z <= 0.0f && movement_x <= 0.0f)
-        {
-            Vector3 final_pos = new Vector3(trans.position);
-            final_pos.x = objective.GetTileX() * tile_size;
-            final_pos.z = objective.GetTileY() * tile_size;
-            trans.position = final_pos;
-         
-            GetComponent<Movement_Action>().tile.SetCoords(objective.GetTileX(), objective.GetTileY());
-            GetComponent<CompAnimation>().SetTransition("ToIdleAttack");
-        }
+            case Charge_Phase.CP_CHARGEING:
+                Vector3 pos = new Vector3(trans.position);
+                pos.x = pos.x + speed_x * Time.deltaTime;
+                pos.z = pos.z + speed_z * Time.deltaTime;
+                trans.position = pos;
 
-        if (GetComponent<CompAnimation>().IsAnimationStopped("ChargeAttack"))
-            return ACTION_RESULT.AR_SUCCESS;
+                movement_x -= Mathf.Abs(speed_x) * Time.deltaTime;
+                movement_z -= Mathf.Abs(speed_z) * Time.deltaTime;
+
+                player.GetComponent<MovementController>().GetPlayerPos(out player_x, out player_y);
+                float tile_size = GetComponent<Movement_Action>().tile_size;
+                uint current_x = (uint)(pos.x / tile_size);
+                uint current_y = (uint)(pos.z / tile_size);
+
+                if (current_x == player_x && current_y == player_y && pushed == false)
+                {
+                    PathNode push_tile = GetPushTile();
+                    pushed = true;
+                    if (player.GetComponent<CharactersManager>().Push(damage, push_tile) == true)
+                        GetComponent<CompAudio>().PlayEvent("SwordHit");
+                }
+
+                if (movement_z <= 0.0f && movement_x <= 0.0f)
+                {
+                    Vector3 final_pos = new Vector3(trans.position);
+                    final_pos.x = objective.GetTileX() * tile_size;
+                    final_pos.z = objective.GetTileY() * tile_size;
+                    trans.position = final_pos;
+
+                    GetComponent<Movement_Action>().tile.SetCoords(objective.GetTileX(), objective.GetTileY());
+                    GetComponent<CompAnimation>().SetTransition("ToChargeAttack");
+                    phase = Charge_Phase.CP_ATTACK;
+                }
+                break;
+
+            case Charge_Phase.CP_ATTACK:
+                if (GetComponent<CompAnimation>().IsAnimationStopped("ChargeAttack"))
+                    return ACTION_RESULT.AR_SUCCESS;
+                break;
+        }
 
         return ACTION_RESULT.AR_IN_PROGRESS;
     }
