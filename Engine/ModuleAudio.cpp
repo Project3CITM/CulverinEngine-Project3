@@ -377,7 +377,10 @@ void ModuleAudio::ChangeState(const char * group, const char * new_state)
 {
 	Wwished::Utility::ChangeState(group, new_state);
 }
-
+float ModuleAudio::GetVolume()const
+{
+	return volume;
+}
 
 void ModuleAudio::ChangeVolume(float new_volume)
 {

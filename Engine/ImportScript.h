@@ -230,6 +230,7 @@ private:
 	static void ResumeAllSounds();
 	static void ChangeRTPC(MonoString* var_name, float value);
 	static void ChangeState(MonoString* group_name, MonoString* state_name);
+	static float GetVolume(MonoString * group_name);
 	static void ChangeVolume(float volume);
 	static void Mute(bool m);
 
@@ -270,6 +271,8 @@ private:
 	static void HideTick(MonoObject * object);
 	/*Component Slider*/
 	static float GetFill(MonoObject * object);
+	static void SetFill(MonoObject * object, float value);
+	/*Component Slider*/
 	/*Component Text*/
 	static void SetText(MonoObject* object, MonoString* alpha);
 	/*Component Canvas*/

@@ -45,6 +45,7 @@ public:
 	void ResumeSounds();
 	void SetAudioVariableValue(const char* variable_name, float value);
 	void ChangeState(const char* group, const char* new_state);
+	float GetVolume() const;
 	void ChangeVolume(float volume);
 	void Mute(bool m);
 

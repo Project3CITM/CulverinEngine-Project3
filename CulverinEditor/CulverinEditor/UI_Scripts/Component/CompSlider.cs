@@ -9,6 +9,9 @@ namespace CulverinEditor
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern float GetFill();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public extern void SetFill(float value);
     }
 }
 

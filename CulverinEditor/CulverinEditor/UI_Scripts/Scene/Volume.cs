@@ -19,8 +19,8 @@ public class Volume : CulverinBehaviour
         update = true;
         audio_sl = GetLinkedObject("audio_sl");
         mute_cb = GetLinkedObject("mute_cb");
-        value = audio_sl.GetComponent<CompSlider>().GetFill();
-        Audio.ChangeVolume(value * audio_multiplier);
+
+        value= Audio.GetVolume()/ audio_multiplier;
         last_value = value;
 
     }

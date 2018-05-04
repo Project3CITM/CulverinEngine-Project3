@@ -282,6 +282,17 @@ float CSharpScript::GetFill(MonoObject * object)
 		}
 	}
 }
+void CSharpScript::SetFill(MonoObject * object,float value)
+{
+	if (object != nullptr)
+	{
+		CompSlider* slider = (CompSlider*)App->importer->iScript->GetComponentMono(object);
+		if (slider != nullptr)
+		{
+			slider->SetFillBar(value);
+		}
+	}
+}
 void CSharpScript::SetText(MonoObject * object, MonoString * string)
 {
 	if (object != nullptr)

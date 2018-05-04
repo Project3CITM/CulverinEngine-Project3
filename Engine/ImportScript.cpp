@@ -1188,6 +1188,8 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.Audio::ResumeAllSounds", (const void*)ResumeAllSounds);
 	mono_add_internal_call("CulverinEditor.Audio::SetAudioVariableValue", (const void*)ChangeRTPC);
 	mono_add_internal_call("CulverinEditor.Audio::ChangeState", (const void*)ChangeState);
+	mono_add_internal_call("CulverinEditor.Audio::GetVolum", (const void*)GetVolume);
+
 	mono_add_internal_call("CulverinEditor.Audio::ChangeVolume", (const void*)ChangeVolume);
 	mono_add_internal_call("CulverinEditor.Audio::Mute", (const void*)Mute);
 	
@@ -1242,6 +1244,8 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.CompCheckBox::HideTick", (const void*)HideTick);
 	//SLIDERFUNCIOTNRGAS
 	mono_add_internal_call("CulverinEditor.CompSlider::GetFill", (const void*)GetFill);
+	mono_add_internal_call("CulverinEditor.CompSlider::SetFill", (const void*)SetFill);
+
 	//COMPONENT COLLIDER FUNCTIONS -----------------------
 	mono_add_internal_call("CulverinEditor.CompCollider::GetCollidedObject", (const void*)GetCollidedObject);
 	mono_add_internal_call("CulverinEditor.CompCollider::GetContactPoint", (const void*)GetContactPoint);
@@ -2063,7 +2067,11 @@ void ImportScript::ChangeState(MonoString * group_name, MonoString * state_name)
 	App->audio->ChangeState(mono_string_to_utf8(group_name), mono_string_to_utf8(state_name));
 	//LOG("State: %s  Value %s", mono_string_to_utf8(group_name), mono_string_to_utf8(state_name))
 }
-
+float ImportScript::GetVolume(MonoString * group_name)
+{
+	return App->audio->GetVolume();
+	//LOG("State: %s  Value %s", mono_string_to_utf8(group_name), mono_string_to_utf8(state_name))
+}
 void ImportScript::ChangeVolume(float volume)
 {
 	App->audio->ChangeVolume(volume);
@@ -2182,6 +2190,10 @@ void ImportScript::HideTick(MonoObject * object)
 float ImportScript::GetFill(MonoObject * object)
 {
 	return current->GetFill(object);
+}
+void ImportScript::SetFill(MonoObject * object,float value)
+{
+	current->SetFill(object,value);
 }
 
 void ImportScript::SetText(MonoObject * object, MonoString * text)
