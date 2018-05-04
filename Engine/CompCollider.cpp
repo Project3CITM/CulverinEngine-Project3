@@ -498,7 +498,15 @@ void CompCollider::SaveBinary(char ** cursor, int position) const
 	App->json_seria->SaveBooleanBinary(cursor, trigger);
 
 	App->json_seria->SaveIntBinary(cursor, collision_flags);
-	App->json_seria->SaveIntBinary(cursor, uid_script_asigned);
+
+	if (listener)
+	{
+		App->json_seria->SaveIntBinary(cursor, listener->GetUUID());
+	}
+	else
+	{
+		App->json_seria->SaveIntBinary(cursor, uid_script_asigned);
+	}
 
 	App->json_seria->SaveStringBinary(cursor, script_name);
 }
