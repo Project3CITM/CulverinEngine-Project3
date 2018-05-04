@@ -35,9 +35,12 @@ update_status ModuleParticles::PreUpdate(float dt)
 {
 	BROFILER_CATEGORY("PreUpdate: ModuleParticles", Profiler::Color::Blue);
 	const CompCamera* camera = App->renderer3D->GetActiveCamera();
-
+	
 	if (camera == nullptr)
 		return UPDATE_CONTINUE;
+
+	float3 frustum_center = camera->GetFrustumCenter();
+	float frustum_distance = camera->GetFrustumDistance();
 
 	for (std::vector<ParticleSystem*>::iterator item = particle_systems.begin(); item != particle_systems.cend(); )
 	{
@@ -54,12 +57,12 @@ update_status ModuleParticles::PreUpdate(float dt)
 
 		float3 emitter_pos;
 		((ParticleEmitter*)(*item)->GetEmitter())->GetPosition(emitter_pos);
-		(*item)->distance_to_camera = camera->frustum.pos.Distance(emitter_pos);
+		(*item)->distance_to_camera = (emitter_pos-frustum_center).LengthSq();
+		(*item)->discard_distance = frustum_distance;
 
-		if ((*item)->distance_to_camera < (*item)->discard_distance)
-			if (App->engine_state == EngineState::STOP)
-				(*item)->PreUpdate(0.02);
-			else (*item)->PreUpdate(dt);
+		if (App->engine_state == EngineState::STOP)
+			(*item)->PreUpdate(0.02);
+		else (*item)->PreUpdate(dt);
 
 		item++;
 	}

@@ -31,6 +31,7 @@ public:
 	void GetOwnBufferSize(uint& buffer_size);
 	void SaveBinary(char** cursor, int position) const;
 	void LoadBinary(char** cursor);
+	void SyncComponent(GameObject* sync_parent);
 
 	// EDITOR METHODS -----------------
 	void ShowOptions();
