@@ -42,6 +42,10 @@
 					<ShortName>Puzzle\Rope.wav</ShortName>
 					<Path>SFX\Puzzle\Rope_1C9C67B2.wem</Path>
 				</File>
+				<File Id="142507040" Language="SFX">
+					<ShortName>Ambient\AlternateBoss.wav</ShortName>
+					<Path>SFX\Ambient\AlternateBoss_F17FB28C.wem</Path>
+				</File>
 				<File Id="158615143" Language="SFX">
 					<ShortName>Boss_theme.wav</ShortName>
 					<Path>SFX\Boss_theme_F17FB28C.wem</Path>
@@ -85,6 +89,10 @@
 				<File Id="583166116" Language="SFX">
 					<ShortName>Door_open_close_end.wav</ShortName>
 					<Path>SFX\Door_open_close_end_69A33F19.wem</Path>
+				</File>
+				<File Id="606046557" Language="SFX">
+					<ShortName>Ambient\AlternateCombat.wav</ShortName>
+					<Path>SFX\Ambient\AlternateCombat_F17FB28C.wem</Path>
 				</File>
 				<File Id="688257092" Language="SFX">
 					<ShortName>Switch_Enable.wav</ShortName>

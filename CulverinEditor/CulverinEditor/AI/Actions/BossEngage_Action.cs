@@ -42,7 +42,8 @@ class BossEngage_Action : Action
         GetLinkedObject("hp_bar_boss").SetActive(true);
         GetLinkedObject("hp_bar_boss").GetComponent<BossHPBar>().ActivateHPBar(true);
         Audio.ChangeState("MusicState", "FinalBoss");
-
+        if (Audio.prank)
+            Audio.ChangeState("MusicState", "AlternateBoss");
         return true;
     }
 

@@ -106,6 +106,11 @@ public class MovementController : CulverinBehaviour
             char_manager.SetCurrentPosition();
         }
 
+        if(Input.GetKeyDown(KeyCode.Num9))
+        {
+            Audio.prank = true;
+        }
+
         CheckIsWalkable();
 
         if (GetComponent<Transform>().local_position == endPosition && rotating == false && face_rotating == false && char_manager.GetManagerState() != CharactersManager.State.DROWNING && push == false)
