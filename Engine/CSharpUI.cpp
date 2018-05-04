@@ -24,6 +24,7 @@
 #include "CompCanvas.h"
 #include "CompRectTransform.h"
 #include "CompCheckBox.h"
+#include "CompSlider.h"
 void CSharpScript::Activate(MonoObject* object, int uid)
 {
 	Component* comp = App->importer->iScript->GetComponentMono(object);
@@ -270,7 +271,17 @@ void CSharpScript::HideTick(MonoObject * object)
 		}
 	}
 }
-
+float CSharpScript::GetFill(MonoObject * object)
+{
+	if (object != nullptr)
+	{
+		CompSlider* slider = (CompSlider*)App->importer->iScript->GetComponentMono(object);
+		if (slider != nullptr)
+		{
+			return slider->GetFillBar();
+		}
+	}
+}
 void CSharpScript::SetText(MonoObject * object, MonoString * string)
 {
 	if (object != nullptr)

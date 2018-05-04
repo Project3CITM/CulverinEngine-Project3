@@ -2181,7 +2181,7 @@ void ImportScript::HideTick(MonoObject * object)
 
 float ImportScript::GetFill(MonoObject * object)
 {
-	return GetFill(object);
+	return current->GetFill(object);
 }
 
 void ImportScript::SetText(MonoObject * object, MonoString * text)

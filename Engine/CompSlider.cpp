@@ -281,6 +281,11 @@ void CompSlider::SetFillBar(float amount)
 	SetNewPositions();
 }
 
+float CompSlider::GetFillBar() const
+{
+	return fill;
+}
+
 void CompSlider::SyncSliderComponents(GameObject* sync_parent)
 {
 	//checkbox para el compimage tick (+ save)

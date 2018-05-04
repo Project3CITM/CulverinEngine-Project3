@@ -30,7 +30,7 @@ public:
 	void OnMove(Event event_data);
 
 	void SetFillBar(float amount);
-
+	float GetFillBar()const;
 	void SyncSliderComponents(GameObject* sync_parent);
 	void SyncBar();
 	void OnDrag(Event event_input);
