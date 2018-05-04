@@ -110,8 +110,6 @@ public class MovementController : CulverinBehaviour
 
         if (GetComponent<Transform>().local_position == endPosition && rotating == false && face_rotating == false && char_manager.GetManagerState() != CharactersManager.State.DROWNING && push == false)
         {
-            Debug.Log("ENTEEEEER!");
-
             tile_mov_x = 0;
             tile_mov_y = 0;
             moving = false;
@@ -471,10 +469,8 @@ public class MovementController : CulverinBehaviour
     {
         characters_camera.GetComponent<CompAnimation>().PlayAnimation("Walk");
         endPosition = new Vector3(obj.GetTileX() * distanceToMove, GetComponent<Transform>().local_position.y, obj.GetTileY() * distanceToMove);
-        tile_mov_x = obj.GetTileX() - curr_x;
-        tile_mov_y = obj.GetTileY() - curr_y;
-        curr_x += tile_mov_x;
-        curr_y += tile_mov_y;
+        curr_x = obj.GetTileX();
+        curr_y = obj.GetTileY();
         char_manager.SetCurrentPosition();
         push = true;
     }
