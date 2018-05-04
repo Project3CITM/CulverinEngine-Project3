@@ -17,7 +17,7 @@
 CompCheckBox::CompCheckBox(Comp_Type t, GameObject * parent) :CompInteractive(t, parent), ClickAction()
 {
 	uid = App->random->Int();
-	name_component = "Check Box";
+	name_component = "CompCheckBox";
 }
 
 CompCheckBox::CompCheckBox(const CompCheckBox & copy, GameObject * parent) : CompInteractive(Comp_Type::C_CHECK_BOX, parent)
