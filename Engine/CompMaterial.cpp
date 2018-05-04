@@ -652,6 +652,7 @@ void CompMaterial::ShowCubeMapVariable(int index, CubeMapVar * var)
 	}
 	if (ImGui::Combo("CubeMap", &cube_pos, cube_names.c_str())) {
 		var->cube_map = App->renderer3D->cube_maps[cube_pos];
+		var->cube_name = var->cube_map->GetName();
 
 	}
 
