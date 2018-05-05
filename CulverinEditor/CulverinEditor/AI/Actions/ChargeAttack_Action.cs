@@ -19,7 +19,8 @@ public class ChargeAttack_Action : Action
     float timer = 1.0f;
     int player_x = -1;
     int player_y = -1;
-    GameObject player;
+    public GameObject player = null;
+    CharactersManager player_manager = null;
     bool pushed = false;
     public float charge_attack_start_point = 0.9f;
 
@@ -40,7 +41,8 @@ public class ChargeAttack_Action : Action
     {
         objective = new PathNode(0,0);
         speed = velocity * GetComponent<Movement_Action>().tile_size;
-        player = GetLinkedObject("player_obj");
+        player = GetLinkedObject("player");
+        player_manager = player.GetComponent<CharactersManager>();
         trans = gameObject.GetComponent<Transform>();
     }
 
@@ -84,7 +86,13 @@ public class ChargeAttack_Action : Action
     // Update is called once per frame
     public override ACTION_RESULT ActionUpdate()
     {
-        switch(phase)
+        if (player_manager.dying)
+        {
+            Debug.Log("DON'T ATTACK PLAYER", Department.PLAYER, Color.YELLOW);
+            return ACTION_RESULT.AR_FAIL; //Player is dead, don't attack
+        }
+
+        switch (phase)
         {
             case Charge_Phase.CP_CHARGE:
                 Vector3 pos = new Vector3(trans.position);
