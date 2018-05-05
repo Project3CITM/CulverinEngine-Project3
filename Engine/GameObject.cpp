@@ -757,14 +757,17 @@ void GameObject::ShowGameObjectOptions()
 			LOG("Deleting a GameObject while PlayMode may cause crashes... you can't delete now.");
 		}
 	}
-	//if (ImGui::MenuItem("Set All Childs with tag 'No C#'"))
-	//{
-	//	SetAllChildsTag(this, "NoC#");
-	//}
-	//if (ImGui::MenuItem("Set All Childs with tag 'No C#' NO PARENT"))
-	//{
-	//	SetAllChildsTag(this, "NoC#", true);
-	//}
+	if (App->gui->develop_mode)
+	{
+		if (ImGui::MenuItem("Set All Childs with tag 'No C#'", NULL, false, App->gui->develop_mode))
+		{
+			SetAllChildsTag(this, "NoC#");
+		}
+		if (ImGui::MenuItem("Set All Childs with tag 'No C#' NO PARENT", NULL, false, App->gui->develop_mode))
+		{
+			SetAllChildsTag(this, "NoC#", true);
+		}
+	}
 	if (ImGui::MenuItem("Show Number of Childs (recursive)", NULL, false, App->gui->develop_mode))
 	{
 		uint count = 0;
@@ -963,21 +966,21 @@ void GameObject::ShowGameObjectOptions()
 	// -------------------------------------------------------------
 }
 
-//void GameObject::SetAllChildsTag(GameObject* child, const char* tag, bool parent)
-//{
-//	if (child->GetNumChilds() > 0)
-//	{
-//		for (int i = 0; i < child->GetNumChilds(); i++)
-//		{
-//			child->SetAllChildsTag(child->GetChildbyIndex(i), tag);
-//		}
-//	}
-//	if (child->GetNumComponents() > 1 && child->FindComponentByType(Comp_Type::C_COLLIDER) == nullptr &&
-//		child->FindComponentByType(Comp_Type::C_SCRIPT) == nullptr && parent == false)
-//	{
-//		child->SetTag(tag);
-//	}
-//}
+void GameObject::SetAllChildsTag(GameObject* child, const char* tag, bool parent)
+{
+	if (child->GetNumChilds() > 0)
+	{
+		for (int i = 0; i < child->GetNumChilds(); i++)
+		{
+			child->SetAllChildsTag(child->GetChildbyIndex(i), tag);
+		}
+	}
+	if (child->GetNumComponents() > 1 && child->FindComponentByType(Comp_Type::C_COLLIDER) == nullptr &&
+		child->FindComponentByType(Comp_Type::C_SCRIPT) == nullptr && parent == false)
+	{
+		child->SetTag(tag);
+	}
+}
 
 void GameObject::GetChildsRecursive(GameObject* child, uint& count)
 {

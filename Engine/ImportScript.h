@@ -230,7 +230,7 @@ private:
 	static void ResumeAllSounds();
 	static void ChangeRTPC(MonoString* var_name, float value);
 	static void ChangeState(MonoString* group_name, MonoString* state_name);
-	static float GetVolume(MonoString * group_name);
+	static float GetVolume();
 	static void ChangeVolume(float volume);
 	static void Mute(bool m);
 

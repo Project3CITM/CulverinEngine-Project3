@@ -52,9 +52,8 @@ class Die_Action : Action
     {
         if (anim_comp.IsAnimationStopped("Die") && blood_particle == false)
         {
-            GameObject floor_blood = SpawnPrefabFromPos("Particle_FloorBlood", transform.GetGlobalPosition(), transform.GetRotation(), new Vector3(0, 0.1f, 10));
+            GameObject floor_blood = SpawnPrefabFromPos("Floor_Blood", transform.GetGlobalPosition(), transform.GetRotation(), new Vector3(0, 0.1f, 5));
             blood_particle = true;
-            Destroy(floor_blood);
             Debug.Log("I'M DEAD", Department.PLAYER, Color.PINK);
         }
 

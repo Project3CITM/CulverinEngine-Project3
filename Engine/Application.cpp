@@ -1354,6 +1354,12 @@ void Application::MakeBuild(std::string build_name, std::string Initial_scene, s
 	std::string temp_player = App->fs->GetMainDirectory();
 	temp_player += "/player_action.json";
 	App->fs->CopyPasteFile(temp_player.c_str(), desktop_library.c_str());
+	// Player Actions Default
+	desktop_library = desktop + "/";
+	desktop_library += "Library/JSON/player_action_default.json";
+	temp_player = App->fs->GetMainDirectory();
+	temp_player += "/player_action_default.json";
+	App->fs->CopyPasteFile(temp_player.c_str(), desktop_library.c_str());
 
 	// Then all files (no Folders) in Game.
 	std::vector<std::string> files_game;
