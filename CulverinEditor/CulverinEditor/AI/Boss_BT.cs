@@ -148,7 +148,6 @@ public class Boss_BT : BT
 
     public override void MakeDecision()
     {
-        Debug.Log("Here");
         if (next_action.action_type != Action.ACTION_TYPE.NO_ACTION)
         {
             current_action = next_action;

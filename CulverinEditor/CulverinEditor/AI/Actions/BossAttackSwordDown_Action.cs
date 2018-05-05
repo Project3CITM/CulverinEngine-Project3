@@ -30,7 +30,7 @@ public class BossAttackSwordDown_Action : Action
 
     public float rumble_power = 0.5f;
     public int rumble_time = 200;
-    private bool ground_hit = true;
+    private bool ground_hit = false;
     //CharactersManager player = null;
 
     private CompAudio audio;
@@ -55,7 +55,6 @@ public class BossAttackSwordDown_Action : Action
             ground_hit = false;
         }
 
-        ground_hit = true;
         return true;
     }
 
@@ -108,10 +107,11 @@ public class BossAttackSwordDown_Action : Action
         }
         else if (ground_hit == false && GetComponent<CompAnimation>().IsAnimOverXTime(hit_ground_point))
         {
-            audio.PlayEvent("BossHitGround");
+            Debug.Log("Ground Hit!!");
+            GetComponent<CompAudio>().PlayEvent("BossHitGround");
             Input.RumblePlay(rumble_power, rumble_time);
             ground_hit = true;
-            Debug.Log("Ground Hit!!");
+            
         }
         else if (state == BASD_STATE.POST_APPLY && GetComponent<CompAnimation>().IsAnimationStopped("SwordDownAttack"))
         {
