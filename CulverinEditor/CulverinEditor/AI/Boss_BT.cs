@@ -75,7 +75,7 @@ public class Boss_BT : BT
 
         //Phase1Textures();
         current_action = GetComponent<Idle_Action>();
-        GetComponent<CompAnimation>().PlayAnimation("Idle");
+        GetComponent<CompAnimation>().PlayAnimation("Presentation");
 
         current_hp = total_hp;
         boss_active = false;
@@ -91,6 +91,8 @@ public class Boss_BT : BT
         boss_title.SetActive(false);
 
         base.Start();
+
+        SetEnabled(false);
     }
 
     public override void Update()
