@@ -57,8 +57,10 @@ class PhaseChange_Action : Action
         Debug.Log("Combat starts");
         GetLinkedObject("player_obj").GetComponent<CharactersManager>().SetCurrentCharacterState(CharacterController.State.IDLE);
         interupt = false;
-        play_audio = false;
-        
+        first_hit = false;
+        second_hit = false;
+        third_hit = false;
+
         return true;
     }
 
