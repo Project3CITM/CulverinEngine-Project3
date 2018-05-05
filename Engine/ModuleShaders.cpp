@@ -624,8 +624,8 @@ Material * ModuleShaders::LoadMaterial(std::string str_path, bool load_vars)
 			material->m_source_type = json_object_dotget_number_with_std(object, name + "Source Blend:");
 			material->m_destiny_type = json_object_dotget_number_with_std(object, name + "Destiny Blend:");
 
-			material->SetDestinyBlendMode();
-			material->SetSourceBlendMode();
+			//material->SetDestinyBlendMode();
+			//material->SetSourceBlendMode();
 
 			if (load_vars) {
 				for (int i = 0; i < num_textures; i++)
