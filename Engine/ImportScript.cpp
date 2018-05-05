@@ -1188,7 +1188,7 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.Audio::ResumeAllSounds", (const void*)ResumeAllSounds);
 	mono_add_internal_call("CulverinEditor.Audio::SetAudioVariableValue", (const void*)ChangeRTPC);
 	mono_add_internal_call("CulverinEditor.Audio::ChangeState", (const void*)ChangeState);
-	mono_add_internal_call("CulverinEditor.Audio::GetVolum", (const void*)GetVolume);
+	mono_add_internal_call("CulverinEditor.Audio::GetVolume", (const void*)GetVolume);
 
 	mono_add_internal_call("CulverinEditor.Audio::ChangeVolume", (const void*)ChangeVolume);
 	mono_add_internal_call("CulverinEditor.Audio::Mute", (const void*)Mute);
@@ -2076,7 +2076,7 @@ void ImportScript::ChangeState(MonoString * group_name, MonoString * state_name)
 	App->audio->ChangeState(mono_string_to_utf8(group_name), mono_string_to_utf8(state_name));
 	//LOG("State: %s  Value %s", mono_string_to_utf8(group_name), mono_string_to_utf8(state_name))
 }
-float ImportScript::GetVolume(MonoString * group_name)
+float ImportScript::GetVolume()
 {
 	return App->audio->GetVolume();
 	//LOG("State: %s  Value %s", mono_string_to_utf8(group_name), mono_string_to_utf8(state_name))

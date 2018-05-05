@@ -6,23 +6,19 @@ using CulverinEditor.Debug;
 
 public class Volume : CulverinBehaviour
 {
-    public GameObject audio_sl;
-    public GameObject mute_cb;
-    public bool mute = false;
+
     public float audio_multiplier = 100;
     float value = 0.0f;
     float last_value = 0.0f;
 
     bool update = false;
+
     void Start()
     {
         update = true;
-        audio_sl = GetLinkedObject("audio_sl");
-        mute_cb = GetLinkedObject("mute_cb");
-
         value= Audio.GetVolume()/ audio_multiplier;
         last_value = value;
-
+        GetComponent<CompSlider>().SetFill(value);
     }
 
     void Update()
@@ -36,7 +32,7 @@ public class Volume : CulverinBehaviour
 
     public void SetVolume()
     {
-        value = audio_sl.GetComponent<CompSlider>().GetFill();
+        value = GetComponent<CompSlider>().GetFill();
         if (value == last_value)
             return;
         Audio.ChangeVolume(value * audio_multiplier);
