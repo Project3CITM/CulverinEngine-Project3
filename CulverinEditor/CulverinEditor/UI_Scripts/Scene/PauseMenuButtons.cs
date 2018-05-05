@@ -32,25 +32,27 @@ public class PauseMenuButtons : CulverinBehaviour
                 EventSystem.SendInteractiveSelected(menu_button);
             }
         }
-
-        if (Input.GetInput_KeyDown("Menu", "Player"))
+        if (Input.GetInputManagerActive("GUI"))
         {
-            if(pop_up_menu.IsActive())
+            if (Input.GetInput_KeyDown("Menu", "Player"))
             {
-                menu_button.GetComponent<CompButton>().SetInteractivity(true);
-                return_button.GetComponent<CompButton>().SetInteractivity(true);
-                pop_up_menu.SetActive(false);
-            }
-            else
-            {
-                if (SceneManager.CheckMultiSceneReady())
+                if (pop_up_menu.IsActive())
                 {
-                    GetComponent<CompAudio>().PlayEvent("Push");
-
-                    SceneManager.ChangeToSecondaryScene();
+                    menu_button.GetComponent<CompButton>().SetInteractivity(true);
+                    return_button.GetComponent<CompButton>().SetInteractivity(true);
+                    pop_up_menu.SetActive(false);
                 }
+                else
+                {
+                    if (SceneManager.CheckMultiSceneReady())
+                    {
+                        GetComponent<CompAudio>().PlayEvent("Push");
+
+                        SceneManager.ChangeToSecondaryScene();
+                    }
+                }
+
             }
-          
         }
 
     }
