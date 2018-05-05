@@ -12,6 +12,7 @@ public class LevelMap : CulverinBehaviour
     public int map_width = 0;
     public int map_height = 0;
 
+    //[Obsolete("Change: Leve_map.map[index, index2] -> Leve_map[index, index2]", false)]
     public int[,] map
     {
         get
@@ -70,7 +71,6 @@ public class LevelMap : CulverinBehaviour
     /// <param name="y"></param>
     /// <param name="value"></param>
     /// 
-
     public void UpdateMap(int x, int y, int value)
     {
         level_map[x, y] = value;
