@@ -61,6 +61,13 @@ public class Boss_BT : BT
 
     private CompText boss_title_text;
 
+    public float phase2_mov_accel = 50.0f;
+    public float phase2_rot_accel = 50.0f;
+    public float phase2_wide_damage = 50.0f;
+    public float phase2_down_damage = 50.0f;
+    public float phase2_wide_time = 1.0f;
+    public float phase2_down_time = 1.0f;
+
     public override void Start()
     {
         hp_bar_boss = GetLinkedObject("hp_bar_boss");
@@ -290,11 +297,16 @@ public class Boss_BT : BT
                 next_action = GetComponent<PhaseChange_Action>();
 
                 //Change the boss values
-                //GetComponent<Movement_Action>().max_vel = 80;
-                //Phase2Textures();
-            }
+                //mov vel/ attack / damages
+                GetComponent<Movement_Action>().max_accel = phase2_mov_accel;
+                GetComponent<Movement_Action>().max_rot_accel = phase2_rot_accel;
+                GetComponent<BossAttackSwordDown_Action>().damage = phase2_down_damage;
+                GetComponent<BossAttackSwordDown_Action>().preparation_time = phase2_down_time;
+                GetComponent<BossWideAttack_Action>().damage = phase2_wide_damage;
+                GetComponent<BossWideAttack_Action>().preparation_time = phase2_wide_time;
+        }
 
-            Debug.Log(current_hp);
+        Debug.Log(current_hp);
 
             return true;
         }
