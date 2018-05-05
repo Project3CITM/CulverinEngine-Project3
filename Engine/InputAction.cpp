@@ -15,7 +15,6 @@ InputAction::~InputAction()
 }
 
 
-
 bool MouseButtonAction::ProcessEventAction(SDL_Event * input_event)
 {
 
