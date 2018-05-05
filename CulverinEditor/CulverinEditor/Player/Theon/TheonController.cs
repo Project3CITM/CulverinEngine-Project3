@@ -152,7 +152,7 @@ public class TheonController : CharacterController
 
     public override void ControlCharacter()
     {
-        //Debug.Log(state, Department.PLAYER);
+        Debug.Log(state, Department.PLAYER, Color.BLUE);
         curr_hp = health.GetCurrentHealth();
         
         // First check if you are alive
@@ -314,10 +314,10 @@ public class TheonController : CharacterController
         // SET HIT ANIMATION
         if (health.GetCurrentHealth() > 0)
         {
-            if (GetState() == 0)
+            if (GetState() == 0 && characters_manager.changing == false)
             {
                 Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("Hit");
-                SetAnimationTransition("ToHit", true);
+                anim_controller.PlayAnimationNode("Hit");
                 SetState(State.HIT);
             }
 
@@ -330,7 +330,7 @@ public class TheonController : CharacterController
         else
         {
             Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("T_Death");
-            SetAnimationTransition("ToDeath", true);
+            anim_controller.PlayAnimationNode("Death");
             SetState(State.DEAD);
 
             PlayFx("TheonDead");
@@ -350,7 +350,7 @@ public class TheonController : CharacterController
             if (GetState() == 0)
             {
                 Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("Hit");
-                SetAnimationTransition("ToHit", true);
+                anim_controller.PlayAnimationNode("Hit");
                 SetState(State.HIT);
             }
 
@@ -363,18 +363,13 @@ public class TheonController : CharacterController
         else
         {
             Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("T_Death");
-            SetAnimationTransition("ToDeath", true);
+            anim_controller.PlayAnimationNode("Death");
             SetState(State.DEAD);
 
             PlayFx("TheonDead");
         }
 
         return true;
-    }
-
-    public override void SetAnimationTransition(string name, bool value)
-    {
-        anim_controller.SetTransition(name, value);
     }
 
     public override void UpdateHUD(bool active, bool left)
@@ -524,7 +519,7 @@ public class TheonController : CharacterController
 
         //Set Attack Animation
         Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("T_Attack");
-        SetAnimationTransition("ToAttack1", true);
+        anim_controller.PlayAnimationNode("Attack1");
         CrossBow.GetComponent<CompAnimation>().PlayAnimation("Attack");
 
         PlayFx("CrossbowShot");
@@ -548,7 +543,7 @@ public class TheonController : CharacterController
 
                     PlayFx("TheonMeleShout");
                     Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("T_Push");
-                    SetAnimationTransition("ToAttack2", true);
+                    anim_controller.PlayAnimationNode("Attack2");
 
                     do_push_attack = true;
 

@@ -325,10 +325,6 @@ public class CharacterController : CulverinBehaviour
         return true;
     }
 
-    public virtual void SetAnimationTransition(string name, bool value)
-    {
-    }
-
     public virtual bool IsAnimationStopped(string name)
     {
         return true;

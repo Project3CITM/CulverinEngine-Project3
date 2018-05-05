@@ -144,7 +144,7 @@ public class JaimeController : CharacterController
 
     public override void ControlCharacter()
     {
-        //Debug.Log(state, Department.PLAYER);
+        Debug.Log(state, Department.PLAYER, Color.GREEN);
         curr_hp = health.GetCurrentHealth();
         
         // First check if you are alive
@@ -308,7 +308,7 @@ public class JaimeController : CharacterController
     {
         if (state == State.COVER)
         {
-            SetAnimationTransition("ToBlock", true);
+            anim_controller.PlayAnimationNode("Block");
             Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("J_Block");
 
             PlayFx("MetalHit");       
@@ -324,13 +324,12 @@ public class JaimeController : CharacterController
         else
         {
             health.GetDamage(dmg);
-            curr_hp -= dmg;
             if (health.GetCurrentHealth() > 0)
             {
-                if (GetState() == 0)
+                if (GetState() == 0 && characters_manager.changing == false)
                 {
                     Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("Hit");
-                    SetAnimationTransition("ToHit", true);
+                    anim_controller.PlayAnimationNode("Hit");
                     SetState(State.HIT);
                 }
 
@@ -343,7 +342,8 @@ public class JaimeController : CharacterController
             else
             {
                 Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("J_Death");
-                SetAnimationTransition("ToDeath", true);
+                Debug.Log("JAIME DEAD", Department.PLAYER, Color.YELLOW);
+                anim_controller.PlayAnimationNode("Death");
                 SetState(State.DEAD);
                 if(dmg != 0.0f)
                     PlayFx("JaimeDead");
@@ -360,7 +360,7 @@ public class JaimeController : CharacterController
     {
         if (state == State.COVER)
         {
-            SetAnimationTransition("ToBlock", true);
+            anim_controller.PlayAnimationNode("Block");
             Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("J_Block");
             movement.MovePush(tile);
 
@@ -377,7 +377,6 @@ public class JaimeController : CharacterController
         else
         {
             health.GetDamage(dmg);
-            curr_hp -= dmg;
             movement.MovePush(tile);
 
             if (health.GetCurrentHealth() > 0)
@@ -385,7 +384,7 @@ public class JaimeController : CharacterController
                 if (GetState() == 0)
                 {
                     Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("Hit");
-                    SetAnimationTransition("ToHit", true);
+                    anim_controller.PlayAnimationNode("Hit");
                     SetState(State.HIT);
                 }
 
@@ -398,7 +397,7 @@ public class JaimeController : CharacterController
             else
             {
                 Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("J_Death");
-                SetAnimationTransition("ToDeath", true);
+                anim_controller.PlayAnimationNode("Death");
                 SetState(State.DEAD);
 
                 PlayFx("JaimeDead");
@@ -409,11 +408,6 @@ public class JaimeController : CharacterController
 
             return true;
         }
-    }
-
-    public override void SetAnimationTransition(string name, bool value)
-    {
-        anim_controller.SetTransition(name, value);
     }
 
     public override void UpdateHUD(bool active, bool left)
@@ -522,18 +516,18 @@ public class JaimeController : CharacterController
 
                     // Set Attacking Animation depending on the hit_streak
                     current_anim = anim_name[combo_controller.GetHitStreak()];
-                    SetAnimationTransition("To" + current_anim, true);
-                    if(current_anim == "Attack1")
+                    anim_controller.PlayAnimationNode(current_anim);
+                    if (current_anim == "Attack1")
                     {
-                        anim_controller.PlayAnimationNode("J_Attack1");
+                        Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("J_Attack1");
                     }
                     if(current_anim == "Attack2")
                     {
-                        anim_controller.PlayAnimationNode("J_Attack2");
+                        Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("J_Attack2");
                     }
                     if(current_anim == "Attack3")
                     {
-                        anim_controller.PlayAnimationNode("J_Attack3");
+                        Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("J_Attack3");
                     }
                     do_left_attack = true;
 
@@ -619,7 +613,7 @@ public class JaimeController : CharacterController
                     sword_particles.EnableWallCollision(true);
 
                     //Set FailAttack Transition & Audio
-                    SetAnimationTransition("ToFail", true);
+                    anim_controller.PlayAnimationNode("FailAttack");
 
                     PlayFx("JaimeImpact");
 
@@ -641,7 +635,7 @@ public class JaimeController : CharacterController
                 sword_particles.EnableWallCollision(true);
 
                 //Set FailAttack Transition & Audio
-                SetAnimationTransition("ToFail", true);
+                anim_controller.PlayAnimationNode("FailAttack");
 
                 Debug.Log(transform.GetGlobalPosition(), Department.PLAYER);
                 SpawnPrefabFromPos("Particle_RockCollision", transform.GetGlobalPosition(), player.transform.GetRotation(),new Vector3(0,7,5));
@@ -702,7 +696,7 @@ public class JaimeController : CharacterController
     public void DoRightAbility()
     {
         //Set Animation
-        SetAnimationTransition("ToCoverIn", true);
+        anim_controller.PlayAnimationNode("CoverIn");
         cover_timer = 0.0f;
 
         // Set Covering State

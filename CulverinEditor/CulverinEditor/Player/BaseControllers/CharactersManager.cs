@@ -300,23 +300,23 @@ public class CharactersManager : CulverinBehaviour
 
                     if (health.GetCurrentHealth() <= 0)
                     {
-
+                        Debug.Log("CHARACTER DIYNG", Department.PLAYER, Color.GREEN);
                         if (IsDead(left_character) == false)
                         {
+                            Debug.Log("left", Department.PLAYER, Color.GREEN);
                             GetLinkedObject("player_obj").GetComponent<DamageFeedback>().CharacterDie();
                             state = State.CHANGING_LEFT;
-                            CurrentToOut();
                         }
                         else if (IsDead(right_character) == false)
                         {
+                            Debug.Log("right", Department.PLAYER, Color.GREEN);
                             GetLinkedObject("player_obj").GetComponent<DamageFeedback>().CharacterDie();
                             state = State.CHANGING_RIGHT;
-                            CurrentToOut();
                         }
                         else
                         {
+                            Debug.Log("U FUCKED", Department.PLAYER, Color.GREEN);
                             GetLinkedObject("player_obj").GetComponent<DamageFeedback>().TotalDefeat();
-                            CurrentToOut();
                         }
                     }
 
@@ -465,7 +465,7 @@ public class CharactersManager : CulverinBehaviour
         {
             left_character.GetComponent<JaimeController>().SetPosition(CharacterController.Position.CURRENT);
             left_character.GetComponent<JaimeController>().UpdateHUD(true, true);
-            left_character.GetComponent<JaimeController>().SetAnimationTransition("ToIn", true);
+            left_character.GetComponent<CompAnimation>().PlayAnimationNode("In");
             left_character.GetComponent<JaimeController>().ToggleMesh(true);
             left_character.GetComponent<JaimeController>().jaime_sword_obj.GetComponent<CompCollider>().CollisionActive(true);
             left_character.GetComponent<JaimeController>().force_audio = true;
@@ -475,7 +475,7 @@ public class CharactersManager : CulverinBehaviour
         {
             left_character.GetComponent<DaenerysController>().SetPosition(CharacterController.Position.CURRENT);
             left_character.GetComponent<DaenerysController>().UpdateHUD(true, true);
-            left_character.GetComponent<DaenerysController>().SetAnimationTransition("ToIn", true);
+            left_character.GetComponent<CompAnimation>().PlayAnimationNode("In");
             left_character.GetComponent<DaenerysController>().ToggleMesh(true);
             left_character.GetComponent<DaenerysController>().force_audio = true;
             GetLinkedObject("this_obj_lasthp").GetComponent<CompImage>().FillAmount(left_character.GetComponent<DaenerysController>().curr_hp / 100.0f);
@@ -485,7 +485,7 @@ public class CharactersManager : CulverinBehaviour
             left_character.GetComponent<TheonController>().SetPosition(CharacterController.Position.CURRENT);
             left_character.GetComponent<TheonController>().UpdateHUD(true, true);
             left_character.GetComponent<TheonController>().ToggleMesh(true);
-            left_character.GetComponent<TheonController>().SetAnimationTransition("ToIn", true);
+            left_character.GetComponent<CompAnimation>().PlayAnimationNode("In");
             left_character.GetComponent<TheonController>().force_audio = true;
             GetLinkedObject("this_obj_lasthp").GetComponent<CompImage>().FillAmount(left_character.GetComponent<TheonController>().curr_hp / 100.0f);
         }
@@ -519,7 +519,7 @@ public class CharactersManager : CulverinBehaviour
         {
             right_character.GetComponent<JaimeController>().SetPosition(CharacterController.Position.CURRENT);
             right_character.GetComponent<JaimeController>().UpdateHUD(true, false);
-            right_character.GetComponent<JaimeController>().SetAnimationTransition("ToIn", true);
+            right_character.GetComponent<CompAnimation>().PlayAnimationNode("In");
             right_character.GetComponent<JaimeController>().ToggleMesh(true);
             right_character.GetComponent<JaimeController>().jaime_sword_obj.GetComponent<CompCollider>().CollisionActive(true);
             right_character.GetComponent<JaimeController>().force_audio = true;
@@ -529,7 +529,7 @@ public class CharactersManager : CulverinBehaviour
         {
             right_character.GetComponent<DaenerysController>().SetPosition(CharacterController.Position.CURRENT);
             right_character.GetComponent<DaenerysController>().UpdateHUD(true, false);
-            right_character.GetComponent<DaenerysController>().SetAnimationTransition("ToIn", true);
+            right_character.GetComponent<CompAnimation>().PlayAnimationNode("In");
             right_character.GetComponent<DaenerysController>().ToggleMesh(true);
             right_character.GetComponent<DaenerysController>().force_audio = true;
             GetLinkedObject("this_obj_lasthp").GetComponent<CompImage>().FillAmount(right_character.GetComponent<DaenerysController>().curr_hp / 100.0f);
@@ -538,7 +538,7 @@ public class CharactersManager : CulverinBehaviour
         {
             right_character.GetComponent<TheonController>().SetPosition(CharacterController.Position.CURRENT);
             right_character.GetComponent<TheonController>().UpdateHUD(true, false);
-            right_character.GetComponent<TheonController>().SetAnimationTransition("ToIn", true);
+            right_character.GetComponent<CompAnimation>().PlayAnimationNode("In");
             right_character.GetComponent<TheonController>().ToggleMesh(true);
             right_character.GetComponent<TheonController>().force_audio = true;
             GetLinkedObject("this_obj_lasthp").GetComponent<CompImage>().FillAmount(right_character.GetComponent<TheonController>().curr_hp / 100.0f);
@@ -559,10 +559,11 @@ public class CharactersManager : CulverinBehaviour
         DaenerysController dcontroller;
         TheonController tcontroller;
 
+        current_character.GetComponent<CompAnimation>().PlayAnimationNode("Out");
+
         if (current_character.GetName() == "Jaime")
         {
             jcontroller = current_character.GetComponent<JaimeController>();
-            jcontroller.SetAnimationTransition("ToOut", true);
             if (right_character.GetName() == "Daenerys")
             {
                 dcontroller = right_character.GetComponent<DaenerysController>();
@@ -583,7 +584,6 @@ public class CharactersManager : CulverinBehaviour
         else if (current_character.GetName() == "Daenerys")
         {
             dcontroller = current_character.GetComponent<DaenerysController>();
-            dcontroller.SetAnimationTransition("ToOut", true);
             if (right_character.GetName() == "Jaime")
             {
                 jcontroller = right_character.GetComponent<JaimeController>();
@@ -604,7 +604,6 @@ public class CharactersManager : CulverinBehaviour
         else if (current_character.GetName() == "Theon")
         {
             tcontroller = current_character.GetComponent<TheonController>();
-            tcontroller.SetAnimationTransition("ToOut", true);
             if (right_character.GetName() == "Jaime")
             {
                 jcontroller = right_character.GetComponent<JaimeController>();

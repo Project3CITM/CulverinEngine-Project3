@@ -146,7 +146,7 @@ public class DaenerysController : CharacterController
 
     public override void ControlCharacter()
     {
-        //Debug.Log(state, Department.PLAYER);
+        Debug.Log(state, Department.PLAYER, Color.PINK);
         curr_hp = health.GetCurrentHealth();
 
         // First check if you are alive
@@ -331,14 +331,14 @@ public class DaenerysController : CharacterController
     public override bool GetDamage(float dmg)
     {
         health.GetDamage(dmg);
-        curr_hp -= dmg;
+
         // SET HIT ANIMATION
         if (health.GetCurrentHealth() > 0)
         {
             if (GetState() == 0)
             {
                 Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("Hit");
-                SetAnimationTransition("ToHit", true);
+                anim_controller.PlayAnimationNode("Hit");
                 SetState(State.HIT);
             }
 
@@ -350,7 +350,7 @@ public class DaenerysController : CharacterController
         }
         else
         {
-            SetAnimationTransition("ToDeath", true);
+            anim_controller.PlayAnimationNode("Death");
             Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("D_Death");
             SetState(State.DEAD);
 
@@ -363,16 +363,14 @@ public class DaenerysController : CharacterController
     public override bool Push(float dmg, PathNode tile)
     {
         health.GetDamage(dmg);
-        curr_hp -= dmg;
         movement.MovePush(tile);
-
         // SET HIT ANIMATION
         if (health.GetCurrentHealth() > 0)
         {
-            if (GetState() == 0)
+            if (GetState() == 0 && characters_manager.changing == false)
             {
                 Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("Hit");
-                SetAnimationTransition("ToHit", true);
+                anim_controller.PlayAnimationNode("Hit");
                 SetState(State.HIT);
             }
 
@@ -384,7 +382,7 @@ public class DaenerysController : CharacterController
         }
         else
         {
-            SetAnimationTransition("ToDeath", true);
+            anim_controller.PlayAnimationNode("Death");
             Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("D_Death");
             SetState(State.DEAD);
 
@@ -392,11 +390,6 @@ public class DaenerysController : CharacterController
         }
 
         return true;
-    }
-
-    public override void SetAnimationTransition(string name, bool value)
-    {
-        anim_controller.SetTransition(name, value);
     }
 
     public override void UpdateHUD(bool active, bool left)
@@ -517,7 +510,7 @@ public class DaenerysController : CharacterController
                     DoLeftAbility();
 
                     // Set Attacking Animation
-                    SetAnimationTransition("ToAttackLeft", true);
+                    anim_controller.PlayAnimationNode("AttackLeft");
 
                     Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("D_Firebreath");
 
@@ -609,7 +602,7 @@ public class DaenerysController : CharacterController
 
                         // Set Animation
                         Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("D_Firewall");
-                        SetAnimationTransition("ToAttackRight", true);
+                        anim_controller.PlayAnimationNode("AttackRight");
 
                         return true;
                     }
