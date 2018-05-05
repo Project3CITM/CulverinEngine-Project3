@@ -201,7 +201,8 @@ float dist = (length(_cameraPosition - vec3(model * vec4(ourPos,1)))-  norm_min)
 dist = abs(clamp(dist, 0.0, 1.0)-1);
 
 
-color = vec4(col* dist, color_texture_alpha.w);
+color = vec4(color_texture_alpha);
+
 
 
 }
