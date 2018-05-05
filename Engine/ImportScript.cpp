@@ -1501,7 +1501,7 @@ float ImportScript::PopLoadInfo()
 		App->scene->infoPlayer.pop_back();
 		return ret;
 	}
-	return 0.0f;
+	return  1503.0f;
 }
 
 void ImportScript::SendInteractiveSelected(MonoObject * interactive)
