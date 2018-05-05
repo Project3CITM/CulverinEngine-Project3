@@ -34,15 +34,16 @@ public class Attack_Action : Action
         {
             Debug.Log("[error] Attack Action Start: Player is null!");
         }
+
         anim_comp = GetComponent<CompAnimation>();
         audio_comp = GetComponent<CompAudio>();
 
-            if (player.dying == false)
-            {
-                anim_comp.SetClipDuration("Attack", attack_duration);
-                anim_comp.PlayAnimationNode("Attack");
-                audio_comp.PlayEvent("Enemy1_Slash");
-            }
+        if (player.dying == false)
+        {
+            anim_comp.SetClipDuration("Attack", attack_duration);
+            anim_comp.PlayAnimationNode("Attack");
+            audio_comp.PlayEvent("Enemy1_Slash");
+        }
       
 
         damage_done = false;

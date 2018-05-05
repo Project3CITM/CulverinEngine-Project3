@@ -396,6 +396,7 @@ void ModuleEventSystemV2::IterateDrawAlphaV(float dt)
 
 				if (LastUsedMaterial != ActualMaterial)
 				{
+					glBlendFunc(ActualMaterial->m_source_type, ActualMaterial->m_destiny_type);
 					LastUsedMaterial = ActualMaterial;
 					glBindTexture(GL_TEXTURE_2D, 0);
 					glActiveTexture(GL_TEXTURE0);

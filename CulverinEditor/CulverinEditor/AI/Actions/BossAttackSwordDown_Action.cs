@@ -31,21 +31,23 @@ public class BossAttackSwordDown_Action : Action
     public float rumble_power = 0.5f;
     public int rumble_time = 200;
     private bool ground_hit = false;
-    //CharactersManager player = null;
+    public GameObject target = null;
+    CharactersManager player = null;
 
     private CompAudio audio;
 
     public override bool ActionStart()
     {
         state = BASD_STATE.PRE_APPLY;
-        //player = GetLinkedObject("player_obj").GetComponent<CharactersManager>();
+        target = GetLinkedObject("target");
+        player = target.GetComponent<CharactersManager>();
 
-        /*if (player == null)
+        if (player == null)
         {
             Debug.Log("[error] Attack Action Start: Player is null!");
-        }*/
+        }
 
-        //if (player.dying == false)
+        if (player.dying == false)
         {
             state = BASD_STATE.PRE_APPLY;
             GetComponent<CompAnimation>().SetTransition("ToSwordDownAttack");
@@ -60,11 +62,16 @@ public class BossAttackSwordDown_Action : Action
 
     public override ACTION_RESULT ActionUpdate()
     {
-        /*if (player.dying)
+        if(player == null)
+        {
+            Debug.Log("PLAYER NULL", Department.PLAYER, Color.YELLOW);
+        }
+
+        if (player.dying)
         {
             Debug.Log("DON'T ATTACK PLAYER", Department.PLAYER, Color.ORANGE);
             return ACTION_RESULT.AR_FAIL; //Player is dead, don't attack
-        }*/
+        }
 
         if (state == BASD_STATE.PRE_APPLY && GetComponent<CompAnimation>().IsAnimOverXTime(apply_damage_point))
         {

@@ -496,8 +496,7 @@ void Particle::DrawParticle(uint program_id)
 	glDrawElements(GL_TRIANGLES, Mesh.num_indices, GL_UNSIGNED_INT, NULL);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
-	glDisable(GL_TEXTURE_2D);
-	glDisable(GL_BLEND);
+	glDisable(GL_TEXTURE_2D);	
 	glDisable(GL_NORMALIZE);
 	glDepthMask(GL_TRUE);
 
