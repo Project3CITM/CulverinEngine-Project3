@@ -24,12 +24,11 @@ public class ChargeAttack_Action : Action
 
     enum Charge_Phase
     {
-        CP_POSITIONING,
-        CP_CHARGEING,
+        CP_CHARGE,
         CP_ATTACK
     }
 
-    Charge_Phase phase = Charge_Phase.CP_POSITIONING;
+    Charge_Phase phase = Charge_Phase.CP_CHARGE;
 
     public ChargeAttack_Action()
     {
@@ -70,12 +69,11 @@ public class ChargeAttack_Action : Action
 
         //Set Anim Duration
         float duration = GetDuration();
-        GetComponent<CompAnimation>().SetTransition("ToChargeAttack");
-        GetComponent<CompAnimation>().SetClipDuration("ChargeAttack", duration);
+        GetComponent<CompAnimation>().SetTransition("ToCharge");
 
         pushed = false;
 
-        phase = Charge_Phase.CP_POSITIONING;
+        phase = Charge_Phase.CP_CHARGE;
 
         return true;
     }
@@ -85,12 +83,7 @@ public class ChargeAttack_Action : Action
     {
         switch(phase)
         {
-            case Charge_Phase.CP_POSITIONING:
-                if (GetComponent<CompAnimation>().IsAnimationStopped("ChargePositioning"))
-                    phase = Charge_Phase.CP_CHARGEING;
-                break;
-
-            case Charge_Phase.CP_CHARGEING:
+            case Charge_Phase.CP_CHARGE:
                 Vector3 pos = new Vector3(trans.position);
                 pos.x = pos.x + speed_x * Time.deltaTime;
                 pos.z = pos.z + speed_z * Time.deltaTime;
