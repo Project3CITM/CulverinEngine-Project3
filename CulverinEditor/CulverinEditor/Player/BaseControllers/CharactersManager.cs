@@ -300,6 +300,7 @@ public class CharactersManager : CulverinBehaviour
 
                     if (health.GetCurrentHealth() <= 0)
                     {
+
                         if (IsDead(left_character) == false)
                         {
                             GetLinkedObject("player_obj").GetComponent<DamageFeedback>().CharacterDie();
@@ -562,7 +563,6 @@ public class CharactersManager : CulverinBehaviour
         {
             jcontroller = current_character.GetComponent<JaimeController>();
             jcontroller.SetAnimationTransition("ToOut", true);
-
             if (right_character.GetName() == "Daenerys")
             {
                 dcontroller = right_character.GetComponent<DaenerysController>();
@@ -584,7 +584,6 @@ public class CharactersManager : CulverinBehaviour
         {
             dcontroller = current_character.GetComponent<DaenerysController>();
             dcontroller.SetAnimationTransition("ToOut", true);
-
             if (right_character.GetName() == "Jaime")
             {
                 jcontroller = right_character.GetComponent<JaimeController>();
@@ -606,7 +605,6 @@ public class CharactersManager : CulverinBehaviour
         {
             tcontroller = current_character.GetComponent<TheonController>();
             tcontroller.SetAnimationTransition("ToOut", true);
-
             if (right_character.GetName() == "Jaime")
             {
                 jcontroller = right_character.GetComponent<JaimeController>();
@@ -721,7 +719,8 @@ public class CharactersManager : CulverinBehaviour
     public bool GetDamage(float dmg)
     {
         //Rumble Gamepad
-        Input.RumblePlay(0.5f, 200);
+        if(dmg != 0.0f)
+            Input.RumblePlay(0.5f, 200);
 
         // Shield Ability Consumable
         if (player_obj.GetComponent<Shield>().IsActive())
@@ -758,7 +757,8 @@ public class CharactersManager : CulverinBehaviour
                             jaime_s_button.Deactivate();
                             jaime_s_script.Die();
 
-                            jaime_controller.PlayFx("JaimeDead");
+                            if(dmg != 0.0f)
+                                jaime_controller.PlayFx("JaimeDead");
                         }
                         return true;
                     }
@@ -783,8 +783,8 @@ public class CharactersManager : CulverinBehaviour
                         //Deactivate Secondary ability button
                         daenerys_s_button.Deactivate();
                         daenerys_s_script.Die();
-
-                        daenerys_controller.PlayFx("DaenerysDead");
+                        if (dmg != 0.0f)
+                            daenerys_controller.PlayFx("DaenerysDead");
                     }
                     return true;
                 }
@@ -804,8 +804,8 @@ public class CharactersManager : CulverinBehaviour
                         //Deactivate Secondary ability button
                         theon_s_button.Deactivate();
                         theon_s_script.Die();
-
-                        theon_controller.PlayFx("TheonDead");
+                        if (dmg != 0.0f)
+                            theon_controller.PlayFx("TheonDead");
                     }
                     return true;
                 }
@@ -977,6 +977,22 @@ public class CharactersManager : CulverinBehaviour
         else
         {
             return false;
+        }
+    }
+
+    public void PlayerDie(GameObject character)
+    {
+        if (character.GetName() == "Jaime")
+        {
+          character.GetComponent<JaimeController>().SetState(CharacterController.State.DEAD);  
+        }
+        else if (character.GetName() == "Daenerys")
+        {
+            character.GetComponent<DaenerysController>().SetState(CharacterController.State.DEAD);
+        }
+        else if (character.GetName() == "Theon")
+        {
+            character.GetComponent<TheonController>().SetState(CharacterController.State.DEAD);
         }
     }
 
@@ -1437,6 +1453,16 @@ public class CharactersManager : CulverinBehaviour
             daenerysinfo = 100.0f;
         }
 
+        if (theoninfo == 0.0f)
+        {
+            LeftCharacterDie();
+        }
+        if (daenerysinfo == 0.0f)
+        {
+            RightCharacterDie();
+        }
+        
+
         current_character.GetComponent<JaimeController>().curr_hp = jaimeinfo;
         left_character.GetComponent<TheonController>().curr_hp = theoninfo;
         right_character.GetComponent<DaenerysController>().curr_hp = daenerysinfo;
@@ -1446,11 +1472,66 @@ public class CharactersManager : CulverinBehaviour
         GetLinkedObject("daenerys_icon_obj_hp").GetComponent<CompImage>().FillAmount(right_character.GetComponent<DaenerysController>().curr_hp / 100.0f);
         GetLinkedObject("theon_icon_obj_hp").GetComponent<CompImage>().FillAmount(left_character.GetComponent<TheonController>().curr_hp / 100.0f);
 
+
+        if (jaimeinfo <= 0.0f)
+        {
+            GetDamage(0.0f);
+            current_character.GetComponent<JaimeController>().SetState(CharacterController.State.DEAD);
+            if (theoninfo > 0.0f)
+            {
+                ChangeLeft();
+
+                temporal_change = current_character;
+                current_character = left_character;
+                left_character = temporal_change;
+
+                state = State.IDLE;
+            }
+            else
+            {
+                ChangeRight();
+
+                temporal_change = current_character;
+                current_character = right_character;
+                right_character = temporal_change;
+
+                state = State.IDLE;
+            }
+        }
     }
 
     public string GetCurrentCharacterName()
     {
         return current_character.GetName();
+    }
+
+    public void RightCharacterDie()
+    {
+            StatsScore.CharacterDead();
+
+            DaenerysController daenerys_controller = right_character.GetComponent<DaenerysController>();
+            daenerys_controller.SetState(CharacterController.State.DEAD);
+            daenerys_controller.daenerys_icon_obj.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+            daenerys_controller.daenerys_icon_obj_mana.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+            daenerys_controller.daenerys_icon_obj_mana.GetComponent<CompImage>().SetRender(false);
+
+            //Deactivate Secondary ability button
+            daenerys_s_button.Deactivate();
+            daenerys_s_script.Die();
+    }
+    public void LeftCharacterDie()
+    {
+        StatsScore.CharacterDead();
+
+        TheonController theon_controller = left_character.GetComponent<TheonController>();
+        theon_controller.SetState(CharacterController.State.DEAD);
+        theon_controller.theon_icon_obj.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+        theon_controller.theon_icon_obj_stamina.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+        theon_controller.theon_icon_obj_stamina.GetComponent<CompImage>().SetRender(false);
+
+        //Deactivate Secondary ability button
+        theon_s_button.Deactivate();
+        theon_s_script.Die();
     }
 }
 

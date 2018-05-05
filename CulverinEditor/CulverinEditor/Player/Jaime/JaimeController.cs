@@ -345,8 +345,8 @@ public class JaimeController : CharacterController
                 Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("J_Death");
                 SetAnimationTransition("ToDeath", true);
                 SetState(State.DEAD);
-
-                PlayFx("JaimeDead");
+                if(dmg != 0.0f)
+                    PlayFx("JaimeDead");
             }
 
             //Reset hit count
@@ -622,6 +622,8 @@ public class JaimeController : CharacterController
                     SetAnimationTransition("ToFail", true);
 
                     PlayFx("JaimeImpact");
+
+                    SpawnPrefabFromPos("Particle_MetalCollision", transform.GetGlobalPosition(), player.transform.GetRotation(), new Vector3(0, 7, 5));
 
                     SetState(State.FAIL_ATTACK);
                 }
