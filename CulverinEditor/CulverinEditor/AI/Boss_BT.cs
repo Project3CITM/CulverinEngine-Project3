@@ -91,8 +91,6 @@ public class Boss_BT : BT
         boss_title.SetActive(false);
 
         base.Start();
-
-        SetEnabled(false);
     }
 
     public override void Update()

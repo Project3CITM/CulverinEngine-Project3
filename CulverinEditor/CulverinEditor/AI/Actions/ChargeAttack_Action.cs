@@ -167,8 +167,6 @@ public class ChargeAttack_Action : Action
         int vec_x = player_x - origin.GetTileX();
         int vec_y = player_y - origin.GetTileY();
 
-        Debug.Log("player-Boss vec: " + vec_x + "," + vec_y);
-
         float delta = Mathf.Atan2(vec_y, vec_x);
 
         delta = Mathf.Rad2deg(delta);
