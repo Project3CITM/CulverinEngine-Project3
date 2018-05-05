@@ -1429,39 +1429,9 @@ public class CharactersManager : CulverinBehaviour
         right_character.GetComponent<DaenerysController>().curr_hp = daenerysinfo;
 
         GetLinkedObject("health_obj").GetComponent<Hp>().SetHP(current_character.GetComponent<JaimeController>().curr_hp, current_character.GetComponent<JaimeController>().max_hp);
-
-
-        //GameObject temp;
-        //GameObject temp1;
-        //GameObject temp2;
-
-        //if (jaimeinfo.y == 0)
-        //{
-        //    temp = left_character;
-        //}
-        //else if (jaimeinfo.y == 2)
-        //{
-        //    temp = right_character;
-        //}
-
-        //if (daenerysinfo.y == 0)
-        //{
-        //    temp1 = left_character;
-        //}
-        //else if (daenerysinfo.y == 1)
-        //{
-        //    temp1 = current_character;
-        //}
-
-        //else if (theoninfo.y == 1)
-        //{
-
-        //}
-        //else if (theoninfo.y == 2)
-        //{
-
-        //}
-
+        GetLinkedObject("this_obj_lasthp").GetComponent<CompImage>().FillAmount(current_character.GetComponent<JaimeController>().curr_hp / 100.0f);
+        GetLinkedObject("daenerys_icon_obj_hp").GetComponent<CompImage>().FillAmount(right_character.GetComponent<DaenerysController>().curr_hp / 100.0f);
+        GetLinkedObject("theon_icon_obj_hp").GetComponent<CompImage>().FillAmount(left_character.GetComponent<TheonController>().curr_hp / 100.0f);
 
     }
 
