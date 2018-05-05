@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <SoundBanksInfo Platform="Windows" BasePlatform="Windows" SchemaVersion="11" SoundbankVersion="128">
 	<RootPaths>
-		<ProjectRoot>C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\</ProjectRoot>
-		<SourceFilesRoot>C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\</SourceFilesRoot>
-		<SoundBanksRoot>C:\Users\Kay\Documents\GitHub\TempMotor3D_P3\Engine\Game\AudioBanks\</SoundBanksRoot>
+		<ProjectRoot>F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\</ProjectRoot>
+		<SourceFilesRoot>F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\</SourceFilesRoot>
+		<SoundBanksRoot>F:\Escritorio\Proyectos GitHub\CulverinEngine-Project3\Engine\Game\AudioBanks\</SoundBanksRoot>
 		<ExternalSourcesInputFile></ExternalSourcesInputFile>
-		<ExternalSourcesOutputRoot>C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\GeneratedSoundBanks\Windows</ExternalSourcesOutputRoot>
+		<ExternalSourcesOutputRoot>F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\GeneratedSoundBanks\Windows</ExternalSourcesOutputRoot>
 	</RootPaths>
 	<DialogueEvents/>
 	<StreamedFiles/>
@@ -334,6 +334,7 @@
 				<Event Id="1746793429" Name="BossGrowl" ObjectPath="\Events\Boss\BossGrowl"/>
 				<Event Id="3928559768" Name="BossHitGround" ObjectPath="\Events\Boss\BossHitGround"/>
 				<Event Id="1437879705" Name="BossHurt" ObjectPath="\Events\Boss\BossHurt"/>
+				<Event Id="58265312" Name="BossIntro" ObjectPath="\Events\Boss\BossIntro"/>
 				<Event Id="385405090" Name="BossSoldierFalls" ObjectPath="\Events\Boss\BossSoldierFalls"/>
 				<Event Id="3748885507" Name="BossSoldierScream" ObjectPath="\Events\Boss\BossSoldierScream"/>
 				<Event Id="843639065" Name="BossSwordSwing" ObjectPath="\Events\Boss\BossSwordSwing"/>
@@ -376,6 +377,10 @@
 				<File Id="475114885" Language="SFX">
 					<ShortName>Boss_sword_falls.wav</ShortName>
 					<Path>SFX\Boss_sword_falls_1C9C67B2.wem</Path>
+				</File>
+				<File Id="488505454" Language="SFX">
+					<ShortName>Boss_Intro_Short.wav</ShortName>
+					<Path>SFX\Boss_Intro_Short_1C9C67B2.wem</Path>
 				</File>
 				<File Id="495546356" Language="SFX">
 					<ShortName>Boss_attack_preparation.wav</ShortName>
