@@ -5,6 +5,7 @@ using CulverinEditor.Pathfinding;
 public class ChargeAttack_Action : Action
 {
     PathNode objective;
+    PathNode origin;
     float movement_x = 0.0f;
     float movement_z = 0.0f;
     float speed_x = 0.0f;
@@ -49,6 +50,8 @@ public class ChargeAttack_Action : Action
         float player_transform_x = player.GetComponent<Transform>().position.x;
         float player_transform_z = player.GetComponent<Transform>().position.z;
         objective = new PathNode(player_x, player_y);
+
+        origin = GetComponent<Movement_Action>().GetCurrentTile();        
 
         movement_x = player_transform_x - trans.position.x;
         movement_z = player_transform_z - trans.position.z;
@@ -100,6 +103,8 @@ public class ChargeAttack_Action : Action
                 if (current_x == player_x && current_y == player_y && pushed == false)
                 {
                     PathNode push_tile = GetPushTile();
+                    Debug.Log("Pushing player from: " + current_x + "," + current_y + " to " + push_tile.GetTileX() + "," + push_tile.GetTileY());
+                    Debug.Log("Boss ends charge in: " + objective.GetTileX() + "," + objective.GetTileY());                    
                     pushed = true;
                     if (player.GetComponent<CharactersManager>().Push(damage, push_tile) == true)
                         GetComponent<CompAudio>().PlayEvent("SwordHit");
@@ -143,14 +148,17 @@ public class ChargeAttack_Action : Action
 
     private PathNode GetPushTile()
     {
-        Vector3 player_boss_vec = new Vector3(player.GetComponent<Transform>().position - trans.position);
+        int vec_x = player_x - origin.GetTileX();
+        int vec_y = player_y - origin.GetTileY();
 
-        float delta = Mathf.Atan2(player_boss_vec.x, player_boss_vec.z);
+        Debug.Log("player-Boss vec: " + vec_x + "," + vec_y);
 
-        if (delta > Mathf.PI)
+        float delta = Mathf.Atan2(vec_y, vec_x);
+
+        /*if (delta > Mathf.PI)
             delta = delta - 2 * Mathf.PI;
         if (delta < (-Mathf.PI))
-            delta = delta + 2 * Mathf.PI;
+            delta = delta + 2 * Mathf.PI;*/
 
         delta = Mathf.Rad2deg(delta);
 
