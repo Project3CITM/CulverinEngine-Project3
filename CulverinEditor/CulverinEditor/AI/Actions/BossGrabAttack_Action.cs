@@ -33,12 +33,14 @@ public class BossGrabAttack_Action : Action
     public float second_hit_point = 0.7f;
     public float third_hit_point = 0.9f;
     public float attack_duration = 5.0f;
+    public GameObject target = null;
     CharactersManager player = null;
 
     public override bool ActionStart()
     {
         state = BGA_STATE.PRE_APPLY;
-        player = GetLinkedObject("target").GetComponent<CharactersManager>();
+        target = GetLinkedObject("target");
+        player = target.GetComponent<CharactersManager>();
 
         if (player == null)
         {

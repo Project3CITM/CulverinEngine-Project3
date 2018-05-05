@@ -26,7 +26,8 @@ public class BossWideAttack_Action : Action
     public float apply_damage_point = 0.5f;
     public float preparation_time = 0.8f;
     public float attack_duration = 1.0f;
-    //CharactersManager player = null;
+    public GameObject target = null;
+    CharactersManager player = null;
 
     private CompAudio audio;
     private CompAnimation anim;
@@ -39,17 +40,19 @@ public class BossWideAttack_Action : Action
         anim = GetComponent<CompAnimation>();
         audio = GetComponent<CompAudio>();
         move = GetComponent<Movement_Action>();
+
         movement_ctrl = GetLinkedObject("player_obj").GetComponent<MovementController>();
         characters_manager = GetLinkedObject("player_obj").GetComponent<CharactersManager>();
         state = BWA_STATE.PRE_APPLY;
-        //player = GetLinkedObject("target").GetComponent<CharactersManager>();
+        target = GetLinkedObject("target");
+        player = target.GetComponent<CharactersManager>();
 
-       /* if (player == null)
+        if (player == null)
         {
             Debug.Log("[error] Attack Action Start: Player is null!");
-        }*/
+        }
 
-        //if (player.dying == false)
+        if (player.dying == false)
         {
             state = BWA_STATE.PRE_APPLY;
             GetComponent<CompAnimation>().SetTransition("ToWideAttack");
@@ -62,11 +65,11 @@ public class BossWideAttack_Action : Action
 
     public override ACTION_RESULT ActionUpdate()
     {
-        /*if (player.dying)
+        if (player.dying)
         {
             Debug.Log("DON'T ATTACK PLAYER", Department.PLAYER, Color.ORANGE);
             return ACTION_RESULT.AR_FAIL; //Player is dead, don't attack
-        }*/
+        }
 
         if (state == BWA_STATE.PRE_APPLY && GetComponent<CompAnimation>().IsAnimOverXTime(apply_damage_point))
         {
