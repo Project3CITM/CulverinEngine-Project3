@@ -106,6 +106,9 @@ https://github.com/Project3CITM/CulverinEngine-Project3/issues
 Web Site: https://github.com/Project3CITM/CulverinEngine-Project3
 
 ## 8) CHANGELOG
+### Pre Alpha 2 V 0.4
+ 	*
+	*
 
 ### Alpha V 0.3
 
