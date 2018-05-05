@@ -790,4 +790,9 @@ public class Movement_Action : Action
     {
         return blocking;
     }
+
+    public void ClearPath()
+    {
+        path.Clear();
+    }
 }

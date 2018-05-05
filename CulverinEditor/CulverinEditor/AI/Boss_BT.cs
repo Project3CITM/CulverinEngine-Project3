@@ -159,14 +159,15 @@ public class Boss_BT : BT
 
         if (current_action.action_type != Action.ACTION_TYPE.IDLE_ACTION && current_action.action_type != Action.ACTION_TYPE.DIE_ACTION)
         {
-            int distance_x = GetDistanceXToPlayer();
-            int distance_y = GetDistanceYToPlayer();
             cooldown -= Time.deltaTime;
 
             bool in_cd = cooldown <= 0.0;
 
             if (in_cd == true)
             {
+                int distance_x = GetDistanceXToPlayer();
+                int distance_y = GetDistanceYToPlayer();
+
                 if (GetComponent<Movement_Action>().LookingAtPlayer() == true)
                 {
                     if (distance_x <= 2 && distance_y == 0 || distance_x == 0 && distance_y <= 2)
@@ -216,7 +217,7 @@ public class Boss_BT : BT
                             }
                         }
                     }
-                    else if (distance_x + distance_y >= 3)
+                    else if (GetDistanceToPlayer() >= 3)
                     {
                         if (phase == BOSS_STATE.BOSS_PHASE2)
                         {
@@ -228,6 +229,7 @@ public class Boss_BT : BT
                         }
                         else
                         {
+                            Debug.Log("Chase");
                             GetComponent<InfiniteChasePlayer_Action>().SetChaseRange(2);
                             current_action = GetComponent<InfiniteChasePlayer_Action>();
                             current_action.ActionStart();
@@ -236,6 +238,7 @@ public class Boss_BT : BT
                     }
                     else
                     {
+                        Debug.Log("Chase");
                         GetComponent<InfiniteChasePlayer_Action>().SetChaseRange(2);
                         current_action = GetComponent<InfiniteChasePlayer_Action>();
                         current_action.ActionStart();
@@ -244,6 +247,7 @@ public class Boss_BT : BT
                 }
                 else
                 {
+                    Debug.Log("Face");
                     current_action = GetComponent<FacePlayer_Action>();
                     current_action.ActionStart();
                     return;
@@ -353,6 +357,13 @@ public class Boss_BT : BT
         GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerPos(out int x, out int y);
         int distance_y = Mathf.Abs(y - GetComponent<Movement_Action>().GetCurrentTileY());
         return distance_y;
+    }
+
+    public int GetDistanceToPlayer()
+    {
+        GetLinkedObject("player_obj").GetComponent<MovementController>().GetPlayerPos(out int x, out int y);
+        int distance = Mathf.Abs(y - GetComponent<Movement_Action>().GetCurrentTileY()) + Mathf.Abs(x - GetComponent<Movement_Action>().GetCurrentTileX());
+        return distance;
     }
 
     void OnTriggerEnter()
