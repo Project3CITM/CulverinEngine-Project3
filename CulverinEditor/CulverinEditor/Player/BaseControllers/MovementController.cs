@@ -131,7 +131,7 @@ public class MovementController : CulverinBehaviour
             //Calculate endPosition
             if ((tile_mov_x != 0 || tile_mov_y != 0))
             {
-                if (level_map.map[curr_x + tile_mov_x, curr_y + tile_mov_y] == 0)
+                if (level_map[curr_x + tile_mov_x, curr_y + tile_mov_y] == 0)
                 {
                     audio = GetComponent<CompAudio>();
                     audio.PlayEvent("Footsteps");
@@ -141,7 +141,7 @@ public class MovementController : CulverinBehaviour
                     char_manager.SetCurrentPosition();
                     moving = true;
                 }
-                else if (level_map.map[curr_x + tile_mov_x, curr_y + tile_mov_y] == 3) //Valryian Fire!
+                else if (level_map[curr_x + tile_mov_x, curr_y + tile_mov_y] == 3) //Valryian Fire!
                 {
                     StatsScore.PuzzleTry();
                     audio = GetComponent<CompAudio>();
@@ -551,29 +551,29 @@ public class MovementController : CulverinBehaviour
 
     void CheckIsWalkable()
     {
-        if (level_map.map[curr_x, curr_y] == 1) // no walkable
+        if (level_map[curr_x, curr_y] == 1) // no walkable
         {
             int temp_x = curr_x;
             int temp_y = curr_y;
-            if (level_map.map[temp_x + 1, temp_y] == 0)
+            if (level_map[temp_x + 1, temp_y] == 0)
             {
                 endPosition = new Vector3(GetComponent<Transform>().local_position.x + distanceToMove * (float)1, GetComponent<Transform>().local_position.y, GetComponent<Transform>().local_position.z + distanceToMove * (float)0);
                 curr_x += 1;
                 curr_y += 0;
             }
-            else if (level_map.map[temp_x - 1, temp_y] == 0)
+            else if (level_map[temp_x - 1, temp_y] == 0)
             {
                 endPosition = new Vector3(GetComponent<Transform>().local_position.x + distanceToMove * (float)-1, GetComponent<Transform>().local_position.y, GetComponent<Transform>().local_position.z + distanceToMove * (float)0);
                 curr_x -= 1;
                 curr_y += 0;
             }
-            else if (level_map.map[temp_x, temp_y + 1] == 0)
+            else if (level_map[temp_x, temp_y + 1] == 0)
             {
                 endPosition = new Vector3(GetComponent<Transform>().local_position.x + distanceToMove * (float)0, GetComponent<Transform>().local_position.y, GetComponent<Transform>().local_position.z + distanceToMove * (float)1);
                 curr_x += 0;
                 curr_y += 1;
             }
-            else if (level_map.map[temp_x, temp_y - 1] == 0)
+            else if (level_map[temp_x, temp_y - 1] == 0)
             {
                 endPosition = new Vector3(GetComponent<Transform>().local_position.x + distanceToMove * (float)0, GetComponent<Transform>().local_position.y, GetComponent<Transform>().local_position.z + distanceToMove * (float)-1);
                 curr_x += 0;
@@ -584,7 +584,7 @@ public class MovementController : CulverinBehaviour
 
     public bool CheckIsWalkable(int x, int y)
     {
-        if (level_map.map[x, y] == 1)
+        if (level_map[x, y] == 1)
         {
             return false;
         }
@@ -820,7 +820,7 @@ public class MovementController : CulverinBehaviour
     {
         if (x >= 0 && x < map_width && y >= 0 && y < map_height)
         {
-            level_map.map[x, y] = value;
+            level_map.UpdateMap(x, y, value);
         }
     }
 
@@ -828,7 +828,7 @@ public class MovementController : CulverinBehaviour
     {
         if (x >= 0 && x < map_width && y >= 0 && y < map_height)
         {
-            return level_map.map[x, y];
+            return level_map[x, y];
         }
 
         return -1;
@@ -936,7 +936,7 @@ public class MovementController : CulverinBehaviour
 
     public void CheckDrawning()
     {
-        if (level_map.map[curr_x, curr_y] == 3) //Valryian Fire!
+        if (level_map[curr_x, curr_y] == 3) //Valryian Fire!
         {
             StatsScore.PuzzleTry();
 
