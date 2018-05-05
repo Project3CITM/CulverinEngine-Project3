@@ -47,25 +47,21 @@ public class ChargeAttack_Action : Action
     public override bool ActionStart()
     {
         player.GetComponent<MovementController>().GetPlayerPos(out player_x, out player_y);
-        float player_transform_x = player.GetComponent<Transform>().position.x;
-        float player_transform_z = player.GetComponent<Transform>().position.z;
         objective = new PathNode(player_x, player_y);
 
         origin = GetComponent<Movement_Action>().GetCurrentTile();        
 
-        movement_x = player_transform_x - trans.position.x;
-        movement_z = player_transform_z - trans.position.z;
+        movement_x = player_x * GetComponent<Movement_Action>().tile_size - trans.position.x;
+        movement_z = player_y * GetComponent<Movement_Action>().tile_size - trans.position.z;
 
-        float x_factor = movement_x / (movement_x + movement_z);
-        float z_factor = movement_z / (movement_x + movement_z);
+        float x_factor = movement_x / (Mathf.Abs(movement_x) + Mathf.Abs(movement_z));
+        float z_factor = movement_z / (Mathf.Abs(movement_x) + Mathf.Abs(movement_z));
 
         speed_x = speed * x_factor;
         speed_z = speed * z_factor;
 
-        if (movement_x < 0.0f)
-            speed_x *= -1;
-        if (movement_z < 0.0f)
-            speed_z *= -1;
+        Debug.Log("total movement X: " + movement_x);
+        Debug.Log("total movement Z: " + movement_z);
 
         movement_x = Mathf.Abs(movement_x);
         movement_z = Mathf.Abs(movement_z);
@@ -77,6 +73,12 @@ public class ChargeAttack_Action : Action
         pushed = false;
 
         phase = Charge_Phase.CP_CHARGE;
+       
+        Debug.Log("Speed_x: " + speed_x);
+        Debug.Log("Speed_z: " + speed_z);
+
+        Debug.Log("Boss ends charge in: " + objective.GetTileX() + "," + objective.GetTileY());
+        Debug.Log("Player is in: " + player_x + "," + player_y);
 
         return true;
     }
@@ -102,9 +104,7 @@ public class ChargeAttack_Action : Action
 
                 if (current_x == player_x && current_y == player_y && pushed == false)
                 {
-                    PathNode push_tile = GetPushTile();
-                    Debug.Log("Pushing player from: " + current_x + "," + current_y + " to " + push_tile.GetTileX() + "," + push_tile.GetTileY());
-                    Debug.Log("Boss ends charge in: " + objective.GetTileX() + "," + objective.GetTileY());                    
+                    PathNode push_tile = GetPushTile();           
                     pushed = true;
                     if (player.GetComponent<CharactersManager>().Push(damage, push_tile) == true)
                         GetComponent<CompAudio>().PlayEvent("SwordHit");
@@ -120,6 +120,14 @@ public class ChargeAttack_Action : Action
                     GetComponent<Movement_Action>().tile.SetCoords(objective.GetTileX(), objective.GetTileY());
                     GetComponent<CompAnimation>().SetTransition("ToChargeAttack");
                     phase = Charge_Phase.CP_ATTACK;
+
+                    if (objective.GetTileX() == player_x && objective.GetTileY() == player_y && pushed == false)
+                    {
+                        PathNode push_tile = GetPushTile();
+                        pushed = true;
+                        if (player.GetComponent<CharactersManager>().Push(damage, push_tile) == true)
+                            GetComponent<CompAudio>().PlayEvent("SwordHit");
+                    }
                 }
                 break;
 
@@ -155,11 +163,6 @@ public class ChargeAttack_Action : Action
 
         float delta = Mathf.Atan2(vec_y, vec_x);
 
-        /*if (delta > Mathf.PI)
-            delta = delta - 2 * Mathf.PI;
-        if (delta < (-Mathf.PI))
-            delta = delta + 2 * Mathf.PI;*/
-
         delta = Mathf.Rad2deg(delta);
 
         Debug.Log("Delta: " + delta);
@@ -168,13 +171,13 @@ public class ChargeAttack_Action : Action
         PathNode ret = new PathNode(-1, -1);
          
         //Charging from North
-        if (delta > -50.0f && delta < 50.0f)
+        if (delta >= 45.0 && delta < 135.0)
         {
             ret = new PathNode(player_x, player_y + 1);
 
             if (pf.IsWalkableTile(ret) == false || (ret.GetTileX() == objective.GetTileX() && ret.GetTileY() == objective.GetTileY()))
             {
-                if (delta < 0.0)
+                if (delta < 90.0)
                 {
                     ret = new PathNode(player_x - 1, player_y);
                     if (pf.IsWalkableTile(ret) == false || (ret.GetTileX() == objective.GetTileX() && ret.GetTileY() == objective.GetTileY()))
@@ -189,13 +192,13 @@ public class ChargeAttack_Action : Action
             }
         }
         //Charging from East
-        else if (delta > 50.0f && delta < 140.0f)
+        else if (delta >= 135.0f && delta < 225.0f)
         {
             ret = new PathNode(player_x + 1, player_y);
 
             if (pf.IsWalkableTile(ret) == false || (ret.GetTileX() == objective.GetTileX() && ret.GetTileY() == objective.GetTileY()))
             {
-                if (delta < 90.0)
+                if (delta < 180)
                 {
                     ret = new PathNode(player_x, player_y - 1);
                     if (pf.IsWalkableTile(ret) == false || (ret.GetTileX() == objective.GetTileX() && ret.GetTileY() == objective.GetTileY()))
@@ -210,13 +213,13 @@ public class ChargeAttack_Action : Action
             }
         }
         //Charging from West
-        else if (delta > -140.0f && delta < -50.0f)
+        else if (delta >= 315.0f && delta < 45.0f)
         {
             ret = new PathNode(player_x - 1, player_y);
 
             if (pf.IsWalkableTile(ret) == false || (ret.GetTileX() == objective.GetTileX() && ret.GetTileY() == objective.GetTileY()))
             {
-                if (delta < -90.0)
+                if (delta < 0.0)
                 {
                     ret = new PathNode(player_x, player_y + 1);
                     if (pf.IsWalkableTile(ret) == false || (ret.GetTileX() == objective.GetTileX() && ret.GetTileY() == objective.GetTileY()))
@@ -231,13 +234,13 @@ public class ChargeAttack_Action : Action
             }
         }
         //Charging from South
-        else if (delta < -140.0f || delta > 140.0f)
+        else if (delta >= 225.0f || delta < 315.0f)
         {
             ret = new PathNode(player_x, player_y - 1);
 
             if (pf.IsWalkableTile(ret) == false || (ret.GetTileX() == objective.GetTileX() && ret.GetTileY() == objective.GetTileY()))
             {
-                if (delta < 0.0)
+                if (delta < 270.0)
                 {
                     ret = new PathNode(player_x + 1, player_y);
                     if (pf.IsWalkableTile(ret) == false || (ret.GetTileX() == objective.GetTileX() && ret.GetTileY() == objective.GetTileY()))
