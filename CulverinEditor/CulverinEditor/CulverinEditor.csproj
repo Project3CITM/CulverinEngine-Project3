@@ -80,6 +80,7 @@
     <Compile Include="AI\Actions\Movement_Action.cs" />
     <Compile Include="AI\Actions\ShieldBlock_Action.cs" />
     <Compile Include="AI\Enemy_EasyValueChanges.cs" />
+    <Compile Include="AI\SoldierDiesTrigger.cs" />
     <Compile Include="AI\SpearGuard_Listener.cs" />
     <Compile Include="AI\SwordGuard_Listener.cs" />
     <Compile Include="AI\PerceptionEmitter.cs" />

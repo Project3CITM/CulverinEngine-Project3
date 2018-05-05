@@ -4,7 +4,12 @@ using CulverinEditor.Debug;
 class PhaseChange_Action : Action
 {
     public float duration = 1.0f;
-    bool play_audio = false;
+    public float first_hit_fx = 0.2f;
+    public float second_hit_fx = 0.4f;
+    public float third_hit_fx = 0.6f;
+    private bool first_hit = false;
+    private bool second_hit = false;
+    private bool third_hit = false;
 
     public PhaseChange_Action()
     {
@@ -21,10 +26,22 @@ class PhaseChange_Action : Action
 
     public override ACTION_RESULT ActionUpdate()
     {
-        if (GetComponent<CompAnimation>().IsAnimOverXTime(0.2f) && play_audio == false)
+        if (GetComponent<CompAnimation>().IsAnimOverXTime(first_hit_fx) && first_hit == false)
         {
-            GetComponent<CompAudio>().PlayEvent("Enemy_SwordDraw");
-            play_audio = true;
+            GetComponent<CompAudio>().PlayEvent("BossHitGround");
+            first_hit = true;
+        }
+
+        if (GetComponent<CompAnimation>().IsAnimOverXTime(second_hit_fx) && second_hit == false)
+        {
+            GetComponent<CompAudio>().PlayEvent("BossHitGround");
+            second_hit = true;
+        }
+
+        if (GetComponent<CompAnimation>().IsAnimOverXTime(third_hit_fx) && third_hit == false)
+        {
+            GetComponent<CompAudio>().PlayEvent("BossHitGround");
+            third_hit = true;
         }
 
         if (GetComponent<CompAnimation>().IsAnimationStopped("PhaseChange"))
@@ -40,8 +57,10 @@ class PhaseChange_Action : Action
         Debug.Log("Combat starts");
         GetLinkedObject("player_obj").GetComponent<CharactersManager>().SetCurrentCharacterState(CharacterController.State.IDLE);
         interupt = false;
-        play_audio = false;
-        
+        first_hit = false;
+        second_hit = false;
+        third_hit = false;
+
         return true;
     }
 

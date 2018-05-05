@@ -1498,10 +1498,14 @@ float ImportScript::PopLoadInfo()
 	if (App->scene->infoPlayer.size() > 0)
 	{
 		float ret = App->scene->infoPlayer[App->scene->infoPlayer.size() - 1];
+		if (App->scene->infoPlayer.size() - 1 == -1)
+		{
+			return  1503.0f;
+		}
 		App->scene->infoPlayer.pop_back();
 		return ret;
 	}
-	return 0.0f;
+	return  1503.0f;
 }
 
 void ImportScript::SendInteractiveSelected(MonoObject * interactive)
