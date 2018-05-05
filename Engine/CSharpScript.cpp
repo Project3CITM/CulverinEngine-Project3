@@ -35,6 +35,11 @@ ScriptVariable::~ScriptVariable()
 		delete[](char*)value;
 		value = nullptr;
 	}
+	RELEASE_ARRAY(name);
+	game_object = nullptr;
+	mono_field = nullptr;
+	mono_type = nullptr;
+	script = nullptr;
 }
 
 void ScriptVariable::SetMonoValue(void* newVal)
@@ -742,8 +747,12 @@ void CSharpScript::Clear()
 	App->importer->iScript->RemoveCSharpScriptFromMonoScript(this);
 	for (uint i = 0; i < variables.size(); i++)
 	{
-		RELEASE(variables[i]);
+		RELEASE(variables[i]); 
 	}
+	variables.clear();
+	methods.clear();
+	field_type.clear();
+	re_load_values.clear();
 }
 
 //Release memory allocated from old variables
