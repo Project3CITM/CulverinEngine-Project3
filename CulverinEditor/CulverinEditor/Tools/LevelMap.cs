@@ -20,6 +20,21 @@ public class LevelMap : CulverinBehaviour
         }
     }
 
+    /// <summary>  
+    ///     Like int[,] map but this return a number and check if outside array! 
+    ///     Change: Leve_map.map[index, index2] -> Leve_map[index, index2]
+    /// </summary>  
+    /// 
+    public int this[int index, int index2]
+    {
+        get
+        {
+            if (index >= 0 && index2 >= 0 && index < map_width && index2 < map_height)
+                return level_map[index, index2];
+            return 1;
+        }
+    }
+
     void Start()
     {
         map_width = Map.GetWidthMap();
