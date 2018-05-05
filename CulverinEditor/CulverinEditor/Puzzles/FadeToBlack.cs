@@ -47,10 +47,6 @@ public class FadeToBlack : CulverinBehaviour
             actual_alpha = 1.0f;
             image_fade.SetActive(true);
             image_fade.GetComponent<CompImage>().SetAlpha(actual_alpha);
-            if (load_playerinfo)
-            {
-                saveinfo_player.GetComponent<CharactersManager>().LoadInfoPlayer();
-            }
             go_normal = false;
             fadeing = true;
         }
@@ -105,6 +101,11 @@ public class FadeToBlack : CulverinBehaviour
             {
                 image_fade.GetComponent<CompImage>().SetAlpha(actual_alpha);
             }
+        }
+        if (load_playerinfo)
+        {
+            saveinfo_player.GetComponent<CharactersManager>().LoadInfoPlayer();
+            load_playerinfo = false;
         }
     }
 
