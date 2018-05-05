@@ -623,6 +623,8 @@ public class JaimeController : CharacterController
 
                     PlayFx("JaimeImpact");
 
+                    SpawnPrefabFromPos("Particle_MetalCollision", transform.GetGlobalPosition(), player.transform.GetRotation(), new Vector3(0, 7, 5));
+
                     SetState(State.FAIL_ATTACK);
                 }
                 /* ----------------------------------------------------------------------------------- */
