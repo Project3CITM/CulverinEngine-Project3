@@ -1519,8 +1519,13 @@ void ImportScript::SendInteractiveSelected(MonoObject * interactive)
 
 		Event pass_selected;
 		pass_selected.Set_event_data(EventType::EVENT_PASS_SELECTED);
-		pass_selected.pass_selected.component = (CompInteractive*)go->FindComponentByType(Comp_Type::C_BUTTON);
+		CompInteractive* to_send = (CompInteractive*)go->FindComponentByType(Comp_Type::C_BUTTON);
+		if(to_send == nullptr)
+			to_send = (CompInteractive*)go->FindComponentByType(Comp_Type::C_CHECK_BOX);
+		if (to_send == nullptr)
+			to_send = (CompInteractive*)go->FindComponentByType(Comp_Type::C_SLIDER);
 
+		pass_selected.pass_selected.component = to_send;
 		if (pass_selected.pass_selected.component == nullptr)
 			return;
 
