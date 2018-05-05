@@ -92,6 +92,7 @@
     <Compile Include="AI\Actions\Seek_Steering.cs" />
     <Compile Include="AI\Actions\Attack_Action.cs" />
     <Compile Include="AI\ShieldGuard_Listener.cs" />
+    <Compile Include="Miscellanea\FloorBlood.cs" />
     <Compile Include="Miscellanea\MusicController.cs" />
     <Compile Include="Puzzles\Level 2\BarrelPuzzle\ChainMove.cs" />
     <Compile Include="UI_Scripts\Component\CompSlider.cs" />
