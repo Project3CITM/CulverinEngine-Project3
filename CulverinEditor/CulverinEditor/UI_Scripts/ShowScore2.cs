@@ -5,24 +5,10 @@ using CulverinEditor.Debug;
 
 public class ShowScore2 : CulverinBehaviour
 {
-
-    public GameObject time_title;
-    public GameObject time_title_gold;
-    public GameObject survivors_title;
-    public GameObject survivors_title_gold;
-    public GameObject combat_title;
-    public GameObject combat_title_gold;
-    public GameObject skill_level_title;
-    public GameObject skill_level_title_gold;
-    public GameObject grade_title;
-    public GameObject grade_title_gold;
-
     public GameObject time_text;
     public GameObject survivors_count;
     public GameObject combat_point;
-    public GameObject skill_bronze_coin;
-    public GameObject skill_silver_coin;
-    public GameObject skill_gold_coin;
+    public GameObject skill_display;
     public GameObject grade_mark_S;
     public GameObject grade_mark_A;
     public GameObject grade_mark_B;
@@ -43,29 +29,10 @@ public class ShowScore2 : CulverinBehaviour
 
     void Start()
     {
-        time_title = GetLinkedObject("time_title");
-        time_title_gold = GetLinkedObject("time_title_gold");
-        survivors_title = GetLinkedObject("survivors_title");
-        survivors_title_gold = GetLinkedObject("survivors_title_gold");
-        combat_title = GetLinkedObject("combat_title");
-        combat_title_gold = GetLinkedObject("combat_title_gold");
-        skill_level_title = GetLinkedObject("skill_level_title");
-        skill_level_title_gold = GetLinkedObject("skill_level_title_gold");
-
-        time_title_gold.SetActive(false);
-        survivors_title_gold.SetActive(false);
-        combat_title_gold.SetActive(false);
-        skill_level_title_gold.SetActive(false);
-
         time_text = GetLinkedObject("time_text");
         survivors_count = GetLinkedObject("survivors_count");
         combat_point = GetLinkedObject("combat_point");
-        skill_bronze_coin = GetLinkedObject("skill_bronze_coin");
-        skill_silver_coin = GetLinkedObject("skill_silver_coin");
-        skill_gold_coin = GetLinkedObject("skill_gold_coin");
-        skill_bronze_coin.SetActive(false);
-        skill_silver_coin.SetActive(false);
-        skill_gold_coin.SetActive(false);
+        skill_display = GetLinkedObject("skill_display");
 
         grade_mark_S = GetLinkedObject("grade_mark_S");
         grade_mark_A = GetLinkedObject("grade_mark_A");
@@ -107,8 +74,7 @@ public class ShowScore2 : CulverinBehaviour
 
         if(StatsScore.time < gold_time)
         {
-            time_title.SetActive(false);
-            time_title_gold.SetActive(true);
+            time_text.GetComponent<CompText>().SetColor(new Vector3(1.0f, 1.0f, 0.0f), 1.0f);
         }
 
     }
@@ -118,8 +84,7 @@ public class ShowScore2 : CulverinBehaviour
         survivors_count.GetComponent<CompText>().SetText(StatsScore.characters_alive.ToString() + "/3");
         if(StatsScore.characters_alive == 3)
         {
-            survivors_title.SetActive(false);
-            survivors_title_gold.SetActive(true);
+            survivors_count.GetComponent<CompText>().SetColor(new Vector3(1.0f, 1.0f, 0.0f), 1.0f);
         }
     }
 
@@ -128,26 +93,18 @@ public class ShowScore2 : CulverinBehaviour
         combat_point.GetComponent<CompText>().SetText(StatsScore.combat_points.ToString() + "/500");
         if(StatsScore.combat_points > gold_combat_points)
         {
-            combat_title.SetActive(false);
-            combat_title_gold.SetActive(true);
+            combat_point.GetComponent<CompText>().SetColor(new Vector3(1.0f, 1.0f, 0.0f), 1.0f);
         }
     }
 
     void DisplaySkillLevel()
     {
-        if (skill_coins >= 1)
-        {
-            skill_bronze_coin.SetActive(true);
-        }
-        if (skill_coins >= 2)
-        {
-            skill_silver_coin.SetActive(true);
-        }
+    
+        skill_display.GetComponent<CompText>().SetText(skill_coins.ToString() + "/3");
+      
         if (skill_coins == 3)
         {
-            skill_gold_coin.SetActive(true);
-            skill_level_title.SetActive(false);
-            skill_level_title_gold.SetActive(true);
+            skill_display.GetComponent<CompText>().SetColor(new Vector3(1.0f, 1.0f, 0.0f), 1.0f);
         }
     }
 
@@ -157,8 +114,6 @@ public class ShowScore2 : CulverinBehaviour
         {
             Debug.Log("Grade S", Department.GENERAL, Color.PINK);
             grade_mark_S.SetActive(true);
-            grade_title.SetActive(false);
-            grade_title_gold.SetActive(true);
         }
         else if (grade_points < 400 && grade_points >= 350)
         {
