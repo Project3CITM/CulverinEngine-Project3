@@ -218,12 +218,13 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 						switch (this_event.Get_event_data_type())
 						{
 						case EventType::EVENT_BUTTON_DOWN:
-							(*it)->OnPointDown(this_event);
 							if ((*it)->GetNavigationMode() != Navigation::NavigationMode::NAVIGATION_NONE)
 							{
 								PassSelected((*it));
 								(*it)->OnInteractiveSelected(this_event);
 							}
+							(*it)->OnPointDown(this_event);
+						
 							focus = (*it);
 							mouse_down = true;
 							break;
