@@ -56,6 +56,8 @@ bool ModuleFS::Init(JSON_Object* node)
 	CreateFolder("Screenshots/GifFull");
 	CreateFolder("Screenshots/GifPortion");
 
+	CreateFolder("RealNormalMaps");
+
 	return true;
 }
 
