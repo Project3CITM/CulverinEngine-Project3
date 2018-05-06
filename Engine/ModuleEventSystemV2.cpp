@@ -432,6 +432,7 @@ void ModuleEventSystemV2::IterateDrawAlphaV(float dt)
 				if ((NewProgramID != LastBindedProgram) && (NewProgramID != 0))
 				{
 					LastBindedProgram = NewProgramID;
+					LastUsedMaterial = nullptr;
 					App->renderer3D->particles_shader->Bind();
 				}
 				((Particle*)item._Ptr->_Myval.second.particle_draw.ToDraw)->DrawParticle(App->renderer3D->particles_shader->programID);
@@ -648,7 +649,7 @@ void ModuleEventSystemV2::PushEvent(Event& event)
 				EventPushedWhileIteratingMaps_DrawAlphaV = true;
 			}
 			*/
-			DrawAlphaV.insert(std::pair<float, Event>(DistanceCamToObject, event));
+			DrawAlphaV.insert(std::pair<float, Event>(-DistanceCamToObject, event));
 			break;
 		case event.draw.DRAW_2D: 
 			//MM2DCanvasDrawEvent.insert(std::pair<float, Event>(DistanceCamToObject, event)); 
