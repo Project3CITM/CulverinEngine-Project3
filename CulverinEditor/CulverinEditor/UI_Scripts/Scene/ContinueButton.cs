@@ -4,9 +4,13 @@ using CulverinEditor.Debug;
 
 public class ContinueButton : CulverinBehaviour
 {
+
+    public bool reset = false;
+
     public void Play()
-    {       
-        StatsScore.ResetScore();
+    {
+        if (reset)
+            StatsScore.ResetScore();
         Input.SetInputManagerActive("GUI", false);
         SceneManager.RemoveNoDestroy();        
     }
