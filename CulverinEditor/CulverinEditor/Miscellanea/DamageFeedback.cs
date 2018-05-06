@@ -120,7 +120,7 @@ public class DamageFeedback : CulverinBehaviour
                 float decrease_val = Time.deltaTime / dying_time;
                 you_died_value += decrease_val;
                 you_died_image.GetComponent<CompImage>().SetAlpha(you_died_value);
-                if (last_dying_current_timer >= last_dying_timer)
+                if (last_dying_current_timer >= last_dying_timer && you_died_value >= 1.5f)
                 {
                     if (SceneManager.CheckMultiSceneReady())
                     {
