@@ -54,7 +54,7 @@ public class SwordParticles : CulverinBehaviour
         GameObject obj = col.GetCollidedObject();
 
         if (obj != null)
-        {      
+        {
             if (enemy_collision && obj.CompareTag("Enemy") && sword_enemy_particle != null)
             {
                 col = GetComponent<CompCollider>();
@@ -63,6 +63,15 @@ public class SwordParticles : CulverinBehaviour
                 col = GetComponent<CompCollider>();
                 Vector3 normal = col.GetContactNormal();
 
+                ShieldBlock_Action shield_block = obj.GetComponent<ShieldBlock_Action>();
+
+                if (shield_block != null)
+                {
+                    if (shield_block.IsBlocking() == true)
+                    {
+                        return;
+                    }
+                }
                 sword_enemy_particle.GetComponent<Transform>().SetUpVector(normal);
                 point = point + normal * 2;
                 sword_enemy_particle.GetComponent<Transform>().SetPosition(point);
@@ -94,6 +103,7 @@ public class SwordParticles : CulverinBehaviour
 
                 //Disable Enemy Collisions
                 EnableEnemyCollision(false);
+
             }
         }
     }
