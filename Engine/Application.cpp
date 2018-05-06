@@ -283,6 +283,21 @@ void Application::FinishUpdate()
 		want_to_save = false;
 		want_to_save_binary = false;
 	}
+	if (remove_secondary_scene)
+	{
+		render_gui->focus = nullptr;
+		render_gui->selected = nullptr;
+		render_gui->ClearInteractiveVector();
+
+		scene->DeleteAllGameObjects(scene->secondary_root, false);
+
+		if (engine_state != EngineState::STOP)
+		{
+			change_to_game = true;
+		}
+
+		remove_secondary_scene = false;
+	}
 
 	if (want_to_load == true || want_to_load_binary == true || want_to_load_json == true)
 	{
@@ -480,22 +495,7 @@ void Application::FinishUpdate()
 		load_multi_scene = false;
 	}
 
-	if (remove_secondary_scene)
-	{
-		render_gui->focus = nullptr;
-		render_gui->selected = nullptr;
-		render_gui->ClearInteractiveVector();
-
-		scene->DeleteAllGameObjects(scene->secondary_root,false);
-
-		if (engine_state != EngineState::STOP)
-		{
-			change_to_game = true;
-		}
-
-		remove_secondary_scene = false;
-	}
-
+	
 	if (change_to_secondary_scene)
 	{
 		if (scene->secondary_root->GetChildsVec().size() > 0)

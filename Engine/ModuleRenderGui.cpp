@@ -138,8 +138,7 @@ void ModuleRenderGui::ChangeSelected(Event & this_event)
 void ModuleRenderGui::OnEvent(Event & this_event)
 {
 	BROFILER_CATEGORY("OnEvent: ModuleRenderGui", Profiler::Color::Blue);
-	if (focus != nullptr)
-		this_event.pointer.focus = focus->GetParent();
+
 
 	switch (this_event.Get_event_data_type())
 	{
@@ -191,6 +190,8 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 	case EventType::EVENT_BUTTON_DOWN:
 	case EventType::EVENT_BUTTON_UP:
 	case EventType::EVENT_MOUSE_MOTION:
+		if (focus != nullptr)
+			this_event.pointer.focus = focus->GetParent();
 		if (App->engine_state != EngineState::STOP)
 		{
 			
