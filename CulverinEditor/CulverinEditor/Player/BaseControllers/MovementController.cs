@@ -449,7 +449,7 @@ public class MovementController : CulverinBehaviour
 
     public void MoveForward(out int tile_mov_x, out int tile_mov_y)
     {
-        characters_camera.GetComponent<CompAnimation>().PlayAnimation("Walk");
+        characters_camera.GetComponent<CompAnimation>().PlayAnimationNode("Walk");
         tile_mov_x = 0;
         tile_mov_y = 0;
         if (curr_dir == Direction.NORTH)
@@ -472,7 +472,7 @@ public class MovementController : CulverinBehaviour
 
     public void MovePush(PathNode obj)
     {
-        characters_camera.GetComponent<CompAnimation>().PlayAnimation("Walk");
+        characters_camera.GetComponent<CompAnimation>().PlayAnimationNode("Walk");
         endPosition = new Vector3(obj.GetTileX() * distanceToMove, GetComponent<Transform>().local_position.y, obj.GetTileY() * distanceToMove);
         curr_x = obj.GetTileX();
         curr_y = obj.GetTileY();
@@ -482,7 +482,7 @@ public class MovementController : CulverinBehaviour
 
     public void MoveRight(out int tile_mov_x, out int tile_mov_y)
     {
-        characters_camera.GetComponent<CompAnimation>().PlayAnimation("Walk");
+        characters_camera.GetComponent<CompAnimation>().PlayAnimationNode("Walk");
         tile_mov_x = 0;
         tile_mov_y = 0;
         if (curr_dir == Direction.NORTH)
@@ -505,7 +505,7 @@ public class MovementController : CulverinBehaviour
 
     public void MoveBackward(out int tile_mov_x, out int tile_mov_y)
     {
-        characters_camera.GetComponent<CompAnimation>().PlayAnimation("Walk");
+        characters_camera.GetComponent<CompAnimation>().PlayAnimationNode("Walk");
         tile_mov_x = 0;
         tile_mov_y = 0;
         if (curr_dir == Direction.NORTH)
@@ -528,7 +528,7 @@ public class MovementController : CulverinBehaviour
 
     public void MoveLeft(out int tile_mov_x, out int tile_mov_y)
     {
-        characters_camera.GetComponent<CompAnimation>().PlayAnimation("Walk");
+        characters_camera.GetComponent<CompAnimation>().PlayAnimationNode("Walk");
         tile_mov_x = 0;
         tile_mov_y = 0;
         if (curr_dir == Direction.NORTH)
