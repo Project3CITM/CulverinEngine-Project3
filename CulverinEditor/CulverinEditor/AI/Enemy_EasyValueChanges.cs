@@ -3,7 +3,6 @@ using CulverinEditor.Debug;
 
 public class Enemy_EasyValueChanges : CulverinBehaviour
 {
-
     public float vel_rotation = 0.05f;
     public float vel_movement = 40.0f;
     public float total_hp = 70.0f;
@@ -41,9 +40,7 @@ public class Enemy_EasyValueChanges : CulverinBehaviour
             bt.attack_damage = attack_damage;
             bt.attack_cooldown = attack_cooldown;
             Debug.Log("attack cooldown: " + bt.attack_cooldown, Department.IA, Color.PINK);
-
         }
-
     }
 
     public void Update()
@@ -54,8 +51,6 @@ public class Enemy_EasyValueChanges : CulverinBehaviour
 
         if (movement != null)
             movement.max_accel = vel_movement;
-
-
 
         if (gameObject.GetComponent<EnemySword_BT>() != null)
         {
@@ -73,7 +68,6 @@ public class Enemy_EasyValueChanges : CulverinBehaviour
 
         if (bt != null)
         {
-
             bt.total_hp = total_hp;
             bt.attack_damage = attack_damage;
             bt.attack_cooldown = attack_cooldown;
@@ -84,11 +78,5 @@ public class Enemy_EasyValueChanges : CulverinBehaviour
         {
             Debug.Log("BT NULL", Department.IA, Color.PINK);
         }
-                
-
-
-
     }
-
-
 }
