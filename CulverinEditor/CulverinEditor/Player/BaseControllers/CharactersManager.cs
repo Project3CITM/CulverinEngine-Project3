@@ -1554,7 +1554,7 @@ public class CharactersManager : CulverinBehaviour
 
         if(theoninfo == 1503.0f)
         {
-            current_character.GetComponent<TheonController>().curr_hp = current_character.GetComponent<TheonController>().max_hp;
+            left_character.GetComponent<TheonController>().curr_hp = left_character.GetComponent<TheonController>().max_hp;
         }
         if (jaimeinfo == 1503.0f)
         {
@@ -1562,7 +1562,7 @@ public class CharactersManager : CulverinBehaviour
         }
         if (daenerysinfo == 1503.0f)
         {
-            current_character.GetComponent<DaenerysController>().curr_hp = current_character.GetComponent<DaenerysController>().max_hp;
+            right_character.GetComponent<DaenerysController>().curr_hp = right_character.GetComponent<DaenerysController>().max_hp;
         }
 
         if (theoninfo == 0.0f)
