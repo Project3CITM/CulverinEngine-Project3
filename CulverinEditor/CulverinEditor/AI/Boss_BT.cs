@@ -147,7 +147,7 @@ public class Boss_BT : BT
                 StatsScore.combat_points += GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetTotalHP();
                 if (SceneManager.CheckMultiSceneReady())
                     SceneManager.RemoveSecondaryScene();
-                SceneManager.LoadScene("ScoreMenu");
+                SceneManager.LoadScene("ScoreScenev2");
             }
         }
         base.Update();
