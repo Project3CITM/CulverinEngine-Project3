@@ -186,6 +186,8 @@ public class TheonController : CharacterController
                             if (anim_controller.IsAnimationStopped("Attack"))
                             {
                                 CrossBow.GetComponent<CompAnimation>().PlayAnimation("Reload");
+                                anim_controller.PlayAnimationNode("Reload");
+                                PlayFx("CrossbowRecharge");
                                 state = State.RELOADING;
                                 reloading = true;
                             }
@@ -202,7 +204,6 @@ public class TheonController : CharacterController
                             {
                                 //Activate arrow Placement
                                 Arrow.GetComponent<CompMesh>().SetEnabled(true);                       
-                                PlayFx("CrossbowRecharge");
                                 state = State.IDLE;
                             }
                             else
@@ -519,7 +520,7 @@ public class TheonController : CharacterController
 
         //Set Attack Animation
         Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("T_Attack");
-        anim_controller.PlayAnimationNode("Attack1");
+        anim_controller.PlayAnimationNode("Attack");
         CrossBow.GetComponent<CompAnimation>().PlayAnimation("Attack");
 
         PlayFx("CrossbowShot");
