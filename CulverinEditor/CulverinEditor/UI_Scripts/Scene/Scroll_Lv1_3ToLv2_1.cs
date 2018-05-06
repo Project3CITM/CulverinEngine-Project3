@@ -38,7 +38,7 @@ public class Scroll_Lv1_3ToLv2_1 : CulverinBehaviour
             end_scroll = true;
             start_load = true;
             SceneManager.LoadNewWalkableMap("LVL2_Zone1");
-            SceneManager.LoadMultiSceneNoDestroy("LVL2_zone1", "PauseMenu");
+            SceneManager.LoadMultiSceneNoDestroy("LVL2_zone_1", "PauseMenu");
         }
         if (start_load)
         {
