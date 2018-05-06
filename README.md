@@ -34,11 +34,11 @@ nJoy Game uses and requires Microsoft DirectX 11.0.
 
 ### Minimum Hardware Requirements
 
-	1.2 GHz Intel core i3
-	1Gb of RAM
-	500 MB of free hard disk space
+	2 GHz Intel core i5
+	4Gb of RAM
+	1 500 MB of free hard disk space
 	video card support OpenGL 3.3
-	Keyboard
+	Keyboard or Gamepad
 	Mouse
  
 ## 2) INSTALLATION
@@ -68,9 +68,10 @@ We recommend manufacturer distributed drivers for Windows 10 (i.e. drivers that 
 ### Sound Provider:
 We use Wwise for the sound management.
 & provided some audios from https://freesound.org/
+and ___________
 
 ### Screen Resolution:
-For this release, is recommended to not rescale the window, UI not rescaled yet.
+For this release, is recommended to not rescale the window
 
 ## 5) CONTROLS
 As a player you can execute the following controls:
@@ -114,6 +115,7 @@ Web Site: https://github.com/Project3CITM/CulverinEngine-Project3
 	* Improved and added particles
 	* Added new Visual Effects
 	* New options menu
+	* Anchor points for UI
 
 ### Alpha V 0.3
 
