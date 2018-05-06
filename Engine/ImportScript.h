@@ -146,6 +146,7 @@ private:
 
 	/* Time */
 	static float GetDeltaTime();
+	static float GetDeltaTimeSpecial();
 	static float RealtimeSinceStartup();
 	static float TimeScale();
 	static void TimeScaleSet(float time);

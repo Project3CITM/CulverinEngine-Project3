@@ -1170,6 +1170,7 @@ void ImportScript::LinkFunctions()
 
 	//TIME FUNCTIONS -------------------
 	mono_add_internal_call("CulverinEditor.Time::DeltaTime()", (const void*)GetDeltaTime);
+	mono_add_internal_call("CulverinEditor.Time::DeltaTimeSpecial()", (const void*)GetDeltaTimeSpecial);
 	mono_add_internal_call("CulverinEditor.Time::RealtimeSinceStartup()", (const void*)RealtimeSinceStartup);
 	mono_add_internal_call("CulverinEditor.Time::TimeScale()", (const void*)TimeScale);
 	mono_add_internal_call("CulverinEditor.Time::TimeScale(single)", (const void*)TimeScaleSet);
@@ -1731,6 +1732,11 @@ void ImportScript::RumblePlay(float intensity, int milliseconds)
 float ImportScript::GetDeltaTime()
 {
 	return App->game_time.time_scale * App->real_time.dt;
+}
+
+float ImportScript::GetDeltaTimeSpecial()
+{
+	return App->real_time.dt;
 }
 
 float ImportScript::RealtimeSinceStartup()

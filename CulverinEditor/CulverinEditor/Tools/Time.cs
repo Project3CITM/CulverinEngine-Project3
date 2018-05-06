@@ -12,14 +12,26 @@ namespace CulverinEditor
         public Time() { }
 
         /// <summary>  
-        ///     Returns a random float number between and min [inclusive] and max [exclusive]
-        ///     (Read Only).
+        ///     time?
+        ///     
         /// </summary>  
         public static float deltaTime
         {
             get
             {
                 return DeltaTime();
+            }
+        }
+
+        /// <summary>  
+        ///     time?
+        ///     
+        /// </summary>  
+        public static float deltaTimespecial
+        {
+            get
+            {
+                return DeltaTimeSpecial();
             }
         }
 
@@ -66,6 +78,9 @@ namespace CulverinEditor
         [Obsolete("Now use variable deltaTime. Example: Time.deltaTime;", false)]
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern float DeltaTime();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern float DeltaTimeSpecial();
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         private static extern float RealtimeSinceStartup();
