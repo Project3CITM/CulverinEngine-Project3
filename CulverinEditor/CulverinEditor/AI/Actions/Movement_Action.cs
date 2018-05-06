@@ -131,12 +131,12 @@ public class Movement_Action : Action
     {
         if (chase == false)
         {
-            anim_comp.SetTransition("ToPatrol");
+            anim_comp.PlayAnimationNode("Patrol");
             anim_comp.SetFirstActiveBlendingClip("Idle");
         }
         else
         {
-            anim_comp.SetTransition("ToChase");
+            anim_comp.PlayAnimationNode("Chase");
             anim_comp.SetFirstActiveBlendingClip("IdleAttack");
 
             if (moving_sideways == true)
@@ -178,7 +178,7 @@ public class Movement_Action : Action
                 if (moving_sideways == true)
                 {
                     moving_sideways = false;
-                    anim_comp.SetTransition("ToChase");
+                    anim_comp.PlayAnimationNode("Chase");
                 }
 
                 if (interupt != true)
@@ -238,9 +238,9 @@ public class Movement_Action : Action
     public override bool ActionEnd()
     {
         if (chase == false)
-            anim_comp.SetTransition("ToIdle");
+            anim_comp.PlayAnimationNode("Idle");
         else
-            anim_comp.SetTransition("ToIdleAttack");
+            anim_comp.PlayAnimationNode("IdleAttack");
 
         if (chase != false)
             chase = false;
@@ -734,10 +734,10 @@ public class Movement_Action : Action
             Debug.Log("Going west", Department.IA, Color.PINK);
             switch (dir)
             {
-                case Direction.DIR_EAST: anim_comp.SetTransition("ToWalkBack"); break;
-                case Direction.DIR_NORTH: anim_comp.SetTransition("ToWalkLeft"); break;
-                case Direction.DIR_SOUTH: anim_comp.SetTransition("ToWalkRight"); break;
-                case Direction.DIR_WEST: anim_comp.SetTransition("ToWalkFront"); break;
+                case Direction.DIR_EAST: anim_comp.PlayAnimationNode("WalkBack"); break;
+                case Direction.DIR_NORTH: anim_comp.PlayAnimationNode("WalkLeft"); break;
+                case Direction.DIR_SOUTH: anim_comp.PlayAnimationNode("WalkRight"); break;
+                case Direction.DIR_WEST: anim_comp.PlayAnimationNode("WalkFront"); break;
             }
         }
 
@@ -747,10 +747,10 @@ public class Movement_Action : Action
             Debug.Log("Going east", Department.IA, Color.PINK);
             switch (dir)
             {
-                case Direction.DIR_EAST: anim_comp.SetTransition("ToWalkFront"); break;
-                case Direction.DIR_NORTH: anim_comp.SetTransition("ToWalkRight"); break;
-                case Direction.DIR_SOUTH: anim_comp.SetTransition("ToWalkLeft"); break;
-                case Direction.DIR_WEST: anim_comp.SetTransition("ToWalkBack"); break;
+                case Direction.DIR_EAST: anim_comp.PlayAnimationNode("WalkFront"); break;
+                case Direction.DIR_NORTH: anim_comp.PlayAnimationNode("WalkRight"); break;
+                case Direction.DIR_SOUTH: anim_comp.PlayAnimationNode("WalkLeft"); break;
+                case Direction.DIR_WEST: anim_comp.PlayAnimationNode("WalkBack"); break;
             }
         }
 
@@ -760,10 +760,10 @@ public class Movement_Action : Action
             Debug.Log("Going north", Department.IA, Color.PINK);
             switch (dir)
             {
-                case Direction.DIR_EAST: anim_comp.SetTransition("ToWalkLeft"); break;
-                case Direction.DIR_NORTH: anim_comp.SetTransition("ToWalkFront"); break;
-                case Direction.DIR_SOUTH: anim_comp.SetTransition("ToWalkBack"); break;
-                case Direction.DIR_WEST: anim_comp.SetTransition("ToWalkRight"); break;
+                case Direction.DIR_EAST: anim_comp.PlayAnimationNode("WalkLeft"); break;
+                case Direction.DIR_NORTH: anim_comp.PlayAnimationNode("WalkFront"); break;
+                case Direction.DIR_SOUTH: anim_comp.PlayAnimationNode("WalkBack"); break;
+                case Direction.DIR_WEST: anim_comp.PlayAnimationNode("WalkRight"); break;
             }
         }
 
@@ -773,10 +773,10 @@ public class Movement_Action : Action
             Debug.Log("Going south", Department.IA, Color.PINK);
             switch (dir)
             {
-                case Direction.DIR_EAST: anim_comp.SetTransition("ToWalkRight"); break;
-                case Direction.DIR_NORTH: anim_comp.SetTransition("ToWalkBack"); break;
-                case Direction.DIR_SOUTH: anim_comp.SetTransition("ToWalkFront"); break;
-                case Direction.DIR_WEST: anim_comp.SetTransition("ToWalkLeft"); break;
+                case Direction.DIR_EAST: anim_comp.PlayAnimationNode("WalkRight"); break;
+                case Direction.DIR_NORTH: anim_comp.PlayAnimationNode("WalkBack"); break;
+                case Direction.DIR_SOUTH: anim_comp.PlayAnimationNode("WalkFront"); break;
+                case Direction.DIR_WEST: anim_comp.PlayAnimationNode("WalkLeft"); break;
             }
         }
     }
