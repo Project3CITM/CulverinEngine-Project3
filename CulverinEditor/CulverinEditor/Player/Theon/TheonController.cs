@@ -519,7 +519,6 @@ public class TheonController : CharacterController
         Arrow.GetComponent<CompMesh>().SetEnabled(false);
 
         //Set Attack Animation
-        Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("T_Attack");
         anim_controller.PlayAnimationNode("Attack");
         CrossBow.GetComponent<CompAnimation>().PlayAnimation("Attack");
 
