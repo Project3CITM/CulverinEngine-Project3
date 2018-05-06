@@ -16,7 +16,7 @@ class Engage_Action : Action
     {
         comp_animation = GetComponent<CompAnimation>();
         comp_audio = GetComponent<CompAudio>();
-        comp_animation.SetTransition("ToDraw");
+        comp_animation.PlayAnimationNode("Draw");
         comp_animation.SetClipDuration("Draw", duration);
         return true;
     }
