@@ -356,6 +356,59 @@ public class JaimeController : CharacterController
         }
     }
 
+    public bool GetDamageProj(float dmg)
+    {
+        if (state == State.COVER)
+        {
+            health.GetDamage(dmg/2);
+            anim_controller.PlayAnimationNode("Block");
+            Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("J_Block");
+
+            PlayFx("MetalHit");
+            //PlayFx("MetalClash");
+            PlayFx("JaimeBlock");
+            damage_feedback.SetDamage(health.GetCurrentHealth(), max_hp);
+            DecreaseStamina(right_ability_cost);
+
+            SetState(State.BLOCKING);
+
+            return false;
+        }
+        else
+        {
+            health.GetDamage(dmg);
+            if (health.GetCurrentHealth() > 0)
+            {
+                if (GetState() == 0 && characters_manager.changing == false)
+                {
+                    Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("Hit");
+                    anim_controller.PlayAnimationNode("Hit");
+                    SetState(State.HIT);
+                }
+
+                PlayFx("JaimeHurt");
+                play_breathing_audio = true;
+
+                //Damage Feedback
+                damage_feedback.SetDamage(health.GetCurrentHealth(), max_hp);
+            }
+            else
+            {
+                Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("J_Death");
+                Debug.Log("JAIME DEAD", Department.PLAYER, Color.YELLOW);
+                anim_controller.PlayAnimationNode("Death");
+                SetState(State.DEAD);
+                if (dmg != 0.0f)
+                    PlayFx("JaimeDead");
+            }
+
+            //Reset hit count
+            combo_controller.ResetHitStreak();
+
+            return true;
+        }
+    }
+
     public override bool Push(float dmg, PathNode tile)
     {
         if (state == State.COVER)

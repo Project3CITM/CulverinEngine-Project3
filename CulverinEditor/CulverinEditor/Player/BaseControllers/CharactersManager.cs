@@ -828,6 +828,104 @@ public class CharactersManager : CulverinBehaviour
         }
     }
 
+    public bool GetDamageProjectile(float dmg)
+    {
+        //Rumble Gamepad
+        if (dmg != 0.0f)
+            Input.RumblePlay(0.5f, 200);
+
+        // Shield Ability Consumable
+        if (player_obj.GetComponent<Shield>().IsActive())
+        {
+            player_obj.GetComponent<Shield>().Break();
+            return false;
+        }
+        else
+        {
+            // 0 DAMAGE TAKEN IN GOD MODE
+            if (god_mode || no_damage)
+            {
+                dmg = 0;
+            }
+
+            // CURRENT CHARACTER -------------------------------
+            if (GetCurrCharacterState() != (int)CharacterController.State.DEAD)
+            {
+                if (current_character.GetName() == "Jaime")
+                {
+                    if (current_character.GetComponent<JaimeController>().GetDamageProj(dmg))
+                    {
+                        if (health.GetCurrentHealth() <= 0)
+                        {
+                            StatsScore.CharacterDead();
+
+                            JaimeController jaime_controller = current_character.GetComponent<JaimeController>();
+                            jaime_controller.SetState(CharacterController.State.DEAD);
+                            jaime_controller.jaime_icon_obj.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+                            jaime_controller.jaime_icon_obj_stamina.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+                            jaime_controller.jaime_icon_obj_stamina.GetComponent<CompImage>().SetRender(false);
+
+                            //Deactivate Secondary ability button
+                            jaime_s_button.Deactivate();
+                            jaime_s_script.Die();
+
+                            if (dmg != 0.0f)
+                                jaime_controller.PlayFx("JaimeDead");
+                        }
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else if (current_character.GetName() == "Daenerys")
+                {
+                    current_character.GetComponent<DaenerysController>().GetDamage(dmg);
+                    if (health.GetCurrentHealth() <= 0)
+                    {
+                        StatsScore.CharacterDead();
+
+                        DaenerysController daenerys_controller = current_character.GetComponent<DaenerysController>();
+                        daenerys_controller.SetState(CharacterController.State.DEAD);
+                        daenerys_controller.daenerys_icon_obj.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+                        daenerys_controller.daenerys_icon_obj_mana.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+                        daenerys_controller.daenerys_icon_obj_mana.GetComponent<CompImage>().SetRender(false);
+
+                        //Deactivate Secondary ability button
+                        daenerys_s_button.Deactivate();
+                        daenerys_s_script.Die();
+                        if (dmg != 0.0f)
+                            daenerys_controller.PlayFx("DaenerysDead");
+                    }
+                    return true;
+                }
+                else if (current_character.GetName() == "Theon")
+                {
+                    current_character.GetComponent<TheonController>().GetDamage(dmg);
+                    if (health.GetCurrentHealth() <= 0)
+                    {
+                        StatsScore.CharacterDead();
+
+                        TheonController theon_controller = current_character.GetComponent<TheonController>();
+                        theon_controller.SetState(CharacterController.State.DEAD);
+                        theon_controller.theon_icon_obj.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+                        theon_controller.theon_icon_obj_stamina.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+                        theon_controller.theon_icon_obj_stamina.GetComponent<CompImage>().SetRender(false);
+
+                        //Deactivate Secondary ability button
+                        theon_s_button.Deactivate();
+                        theon_s_script.Die();
+                        if (dmg != 0.0f)
+                            theon_controller.PlayFx("TheonDead");
+                    }
+                    return true;
+                }
+            }
+            return true;
+        }
+    }
+
     //Call thius function to deal damage to the current character
     public bool Push(float dmg, PathNode tile)
     {
