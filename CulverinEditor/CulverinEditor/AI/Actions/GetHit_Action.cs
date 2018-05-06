@@ -57,22 +57,22 @@ class GetHit_Action: Action
                     if (dif_x < 0)
                     {
                         animation_clip = "HitBack";
-                        anim_comp.SetTransition("ToHitBack");
+                        anim_comp.PlayAnimationNode("HitBack");
                     }
                     else if (dif_x > 0)
                     {
                         animation_clip = "HitFront";
-                        anim_comp.SetTransition("ToHitFront");
+                        anim_comp.PlayAnimationNode("HitFront");
                     }
                     else if (dif_y < 0)
                     {
                         animation_clip = "HitLeft";
-                        anim_comp.SetTransition("ToHitLeft");
+                        anim_comp.PlayAnimationNode("HitLeft");
                     }
                     else if (dif_y > 0)
                     {
                         animation_clip = "HitRight";
-                        anim_comp.SetTransition("ToHitRight");
+                        anim_comp.PlayAnimationNode("HitRight");
                     }
                     break;
 
@@ -80,22 +80,22 @@ class GetHit_Action: Action
                     if (dif_x < 0)
                     {
                         animation_clip = "HitLeft";
-                        anim_comp.SetTransition("ToHitLeft");
+                        anim_comp.PlayAnimationNode("HitLeft");
                     }
                     else if (dif_x > 0)
                     {
                         animation_clip = "HitRight";
-                        anim_comp.SetTransition("ToHitRight");
+                        anim_comp.PlayAnimationNode("HitRight");
                     }
                     else if (dif_y < 0)
                     {
                         animation_clip = "HitFront";
-                        anim_comp.SetTransition("ToHitFront");
+                        anim_comp.PlayAnimationNode("HitFront");
                     }
                     else if (dif_y > 0)
                     {
                         animation_clip = "HitBack";
-                        anim_comp.SetTransition("ToHitBack");
+                        anim_comp.PlayAnimationNode("HitBack");
                     }
                     break;
 
@@ -103,23 +103,23 @@ class GetHit_Action: Action
                     if (dif_x < 0)
                     {
                         animation_clip = "HitRight";
-                        anim_comp.SetTransition("ToHitRight");
+                        anim_comp.PlayAnimationNode("HitRight");
                     }
                     else if (dif_x > 0)
                     {
                         animation_clip = "HitLeft";
-                        anim_comp.SetTransition("ToHitLeft");
+                        anim_comp.PlayAnimationNode("HitLeft");
                     }
                     else if (dif_y < 0)
                     {
                         animation_clip = "HitBack";
-                        anim_comp.SetTransition("ToHitBack");
+                        anim_comp.PlayAnimationNode("HitBack");
 
                     }
                     else if (dif_y > 0)
                     {
                         animation_clip = "HitFront";
-                        anim_comp.SetTransition("ToHitFront");
+                        anim_comp.PlayAnimationNode("HitFront");
                     }
                     break;
 
@@ -127,22 +127,22 @@ class GetHit_Action: Action
                     if (dif_x < 0)
                     {
                         animation_clip = "HitFront";
-                        anim_comp.SetTransition("ToHitFront");
+                        anim_comp.PlayAnimationNode("HitFront");
                     }
                     else if (dif_x > 0)
                     {
                         animation_clip = "HitBack";
-                        anim_comp.SetTransition("ToHitBack");
+                        anim_comp.PlayAnimationNode("HitBack");
                     }
                     else if (dif_y < 0)
                     {
                         animation_clip = "HitRight";
-                        anim_comp.SetTransition("ToHitRight");
+                        anim_comp.PlayAnimationNode("HitRight");
                     }
                     else if (dif_y > 0)
                     {
                         animation_clip = "HitLeft";
-                        anim_comp.SetTransition("ToHitLeft");
+                        anim_comp.PlayAnimationNode("HitLeft");
                     }
                     break;
             }
