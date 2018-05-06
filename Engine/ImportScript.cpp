@@ -1320,8 +1320,11 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.Random::Range(int,int,int)", (const void*)RangeIntNoRepeat);
 	//SCREEN FUNCTRIONS ---------------------------
 	mono_add_internal_call("CulverinEditor.Screen.Screen::SetFullScreen", (const void*)SetFullScreen);
+	mono_add_internal_call("CulverinEditor.Screen.Screen::GetFullScreen", (const void*)GetFullScreen);
 	mono_add_internal_call("CulverinEditor.Screen.Screen::SetWindowed", (const void*)SetWindowed);
+	mono_add_internal_call("CulverinEditor.Screen.Screen::GetWindowed", (const void*)GetWindowed);
 	mono_add_internal_call("CulverinEditor.Screen.Screen::SetBordeless", (const void*)SetBordeless);
+	mono_add_internal_call("CulverinEditor.Screen.Screen::GetBordeless", (const void*)GetBordeless);
 	mono_add_internal_call("CulverinEditor.Screen.Screen::SetVSync", (const void*)SetVSync);
 	mono_add_internal_call("CulverinEditor.Screen.Screen::ShowFPS", (const void*)ShowFPS);
 	mono_add_internal_call("CulverinEditor.Screen.Screen::SwapControllerVibration", (const void*)SwapControllerVibration);
@@ -2563,15 +2566,32 @@ void ImportScript::SetFullScreen(MonoObject * object)
 	App->SetFullScreen();
 }
 
+bool ImportScript::GetFullScreen(MonoObject * object)
+{
+	return App->GetFullScreen();
+}
+
 void ImportScript::SetWindowed(MonoObject * object)
 {
 	App->SetWindowed();
+}
+
+bool ImportScript::GetWindowed(MonoObject * object)
+{
+	return App->GetWindowed();
 }
 
 void ImportScript::SetBordeless(MonoObject * object)
 {
 	App->SetBordeless();
 }
+
+bool ImportScript::GetBordeless(MonoObject * object)
+{
+	return App->GetBordeless();
+}
+
+
 
 void ImportScript::SetVSync(MonoObject * object)
 {

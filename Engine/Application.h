@@ -119,8 +119,11 @@ public:
 
 	//
 	void SetFullScreen();
+	bool GetFullScreen();
 	void SetWindowed();
+	bool GetWindowed();
 	void SetBordeless();
+	bool GetBordeless();
 	void SetVSync();
 	void ShowFPS();
 	void SwapControllerVibration();

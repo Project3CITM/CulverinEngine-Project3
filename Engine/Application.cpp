@@ -1456,16 +1456,43 @@ void Application::SetFullScreen()
 	SDL_SetWindowFullscreen(App->window->window, SDL_WINDOW_FULLSCREEN);
 }
 
+bool Application::GetFullScreen()
+{
+	Uint32 flag = SDL_GetWindowFlags(App->window->window);
+	if (flag == SDL_WINDOW_FULLSCREEN)
+		return true;
+	else
+		return false;
+}
+
 void Application::SetWindowed()
 {
 	LOG("Setting to Windowed");
-	SDL_SetWindowFullscreen(App->window->window, 0);
+	SDL_SetWindowFullscreen(App->window->window, SDL_WINDOW_RESIZABLE);
+}
+
+bool Application::GetWindowed()
+{
+	Uint32 flag = SDL_GetWindowFlags(App->window->window);
+	if (flag == SDL_WINDOW_RESIZABLE)
+		return true;
+	else
+		return false;
 }
 
 void Application::SetBordeless()
 {
 	LOG("Setting to Bordeless");
 	SDL_SetWindowFullscreen(App->window->window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+}
+
+bool Application::GetBordeless()
+{
+	Uint32 flag = SDL_GetWindowFlags(App->window->window);
+	if (flag == SDL_WINDOW_FULLSCREEN_DESKTOP)
+		return true;
+	else
+		return false;
 }
 
 void Application::SetVSync()

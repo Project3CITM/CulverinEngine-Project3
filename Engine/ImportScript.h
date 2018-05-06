@@ -284,8 +284,11 @@ private:
 	static void SetColor(MonoObject* object, MonoObject* color, float alpha);
 	/*Screen*/
 	static void SetFullScreen(MonoObject * object);
+	static bool GetFullScreen(MonoObject * object);
 	static void SetWindowed(MonoObject * object);
+	static bool GetWindowed(MonoObject * object);
 	static void SetBordeless(MonoObject * object);
+	static bool GetBordeless(MonoObject * object);
 	static void SetVSync(MonoObject * object);
 	static void ShowFPS(MonoObject * object);
 	static void SwapControllerVibration(MonoObject * object);

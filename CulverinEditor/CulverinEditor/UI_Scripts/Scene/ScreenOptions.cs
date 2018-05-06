@@ -38,6 +38,10 @@ public class ScreenOptions : CulverinBehaviour
         showfps_cb = GetLinkedObject("showfps_cb");
         vibration_cb = GetLinkedObject("vibration_cb");
         screenoptions_menu.SetActive(false);
+
+        IsFullScreen();
+        IsBorderless();
+        IsWindowed();
     }
 
     public void OpenScreenOptions()
@@ -91,6 +95,27 @@ public class ScreenOptions : CulverinBehaviour
     {
         GetComponent<CompAudio>().PlayEvent("Push");
         Screen.SwapControllerVibration();
+    }
+    public void IsFullScreen()
+    {
+        if (Screen.GetFullScreen())
+            return;
+        else
+            fullscreen_cb.GetComponent<CompCheckBox>().HideTick();
+    }
+    public void IsWindowed()
+    {
+        if (Screen.GetWindowed())
+            return;
+        else
+            windowed_cb.GetComponent<CompCheckBox>().HideTick();
+    }
+    public void IsBorderless()
+    {
+        if (Screen.GetBordeless())
+            return;
+        else
+            bordeless_cb.GetComponent<CompCheckBox>().HideTick();
     }
 
 }
