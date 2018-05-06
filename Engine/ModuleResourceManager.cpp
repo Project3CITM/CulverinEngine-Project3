@@ -756,9 +756,9 @@ void ModuleResourceManager::ShowAllResources(bool& active)
 			ImGui::EndPopup();
 		}
 		ImGui::Separator();
-		ImGui::Text("Only used:"); 
+		ImGui::Text("Only with number of objects > 0: "); 
 		static bool onlyused = false;
-		ImGui::Checkbox("#ousne", &onlyused);
+		ImGui::SameLine(); ImGui::Checkbox(":D", &onlyused);
 		Resource::Type typeResource = Resource::Type::UNKNOWN;
 		if (selected_type != -1)
 		{
