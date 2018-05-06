@@ -67,7 +67,7 @@ public class ChargeAttack_Action : Action
 
         //Set Anim Duration
         float duration = GetDuration();
-        GetComponent<CompAnimation>().SetTransition("ToCharge");
+        GetComponent<CompAnimation>().PlayAnimationNode("Charge");
 
         pushed = false;
 
@@ -118,7 +118,7 @@ public class ChargeAttack_Action : Action
 
                     GetComponent<Movement_Action>().tile.SetCoords(objective.GetTileX(), objective.GetTileY());
                     GetComponent<Movement_Action>().ClearPath();
-                    GetComponent<CompAnimation>().SetTransition("ToChargeAttack");
+                    GetComponent<CompAnimation>().PlayAnimationNode("ChargeAttack");
                     phase = Charge_Phase.CP_ATTACK;
 
                     if (objective.GetTileX() == player_x && objective.GetTileY() == player_y && pushed == false)
@@ -143,7 +143,7 @@ public class ChargeAttack_Action : Action
     public override bool ActionEnd()
     {
         interupt = false;
-        GetComponent<CompAnimation>().SetTransition("ToIdleAttack");
+        GetComponent<CompAnimation>().PlayAnimationNode("IdleAttack");
         pushed = false;
         return true;
     }
