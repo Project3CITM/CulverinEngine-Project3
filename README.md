@@ -95,7 +95,6 @@ As a player you can execute the following controls:
 * Press F9 To Put GodMode, Habilities without cost
 * Press F10 To Put the secundary hability cooldown in 1 seg
 * Press F11 to quit damage
-* Press P to pass to lvl 3
 
 ## 6) KNOWN ISSUES
 
@@ -107,8 +106,12 @@ Web Site: https://github.com/Project3CITM/CulverinEngine-Project3
 
 ## 8) CHANGELOG
 ### Pre Alpha 2 V 0.4
- 	*
-	*
+ 	* the maps have been changed to 7 different maps
+	* New Assets at the stages
+	* New boss AI
+	* New Transitions between stages
+	* Bug Fixing
+	
 
 ### Alpha V 0.3
 
