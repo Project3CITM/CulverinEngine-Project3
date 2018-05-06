@@ -1371,6 +1371,20 @@ void Application::MakeBuild(std::string build_name, std::string Initial_scene, s
 		App->fs->CopyPasteFile(files_game[i].c_str(), files_game_new.c_str());
 	}
 
+	files_game.clear();
+
+	// Finally move all materials .dds RealNormalMaps to Library/Materials
+	std::string real_normal_maps = App->fs->GetGameDirectory();
+	real_normal_maps += "/RealNormalMaps";
+	App->fs->GetOnlyFilesFromFolder(real_normal_maps, files_game);
+	for (int i = 0; i < files_game.size(); i++)
+	{
+		std::string files_game_new = desktop + "/Library/Materials/";
+		files_game_new += App->fs->GetOnlyName(files_game[i]);
+		App->fs->CopyPasteFile(files_game[i].c_str(), files_game_new.c_str());
+	}
+	files_game.clear();
+
 	LOG("Copy all files (Game)");
 	App->SaveLogs();
 
