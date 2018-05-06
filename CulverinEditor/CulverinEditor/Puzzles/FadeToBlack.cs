@@ -137,11 +137,7 @@ public class FadeToBlack : CulverinBehaviour
         {
             case SceneToLoad.TUTORIAL:
                 {
-                    //   SceneManager.LoadNewWalkableMap("Map_Level_Tutorial");
-                    if (SceneManager.CheckMultiSceneReady())
-                    {
-                        SceneManager.RemoveSecondaryScene();
-                    }
+                    SceneManager.LoadNewWalkableMap("Map_Level_Tutorial");
                     SceneManager.LoadScene("Tutorial Real Scene");
                     break;
                 }
@@ -157,22 +153,14 @@ public class FadeToBlack : CulverinBehaviour
                 }
             case SceneToLoad.ALPHA2_LEVEL_1_2:
                 {
-                    //   SceneManager.LoadNewWalkableMap("Map_Level_1_2");
-                    if (SceneManager.CheckMultiSceneReady())
-                    {
-                        SceneManager.RemoveSecondaryScene();
-                    }
-                    SceneManager.LoadScene("Lvl1_1ToLvl1_2");
+                    SceneManager.LoadNewWalkableMap("Map_Level_1_2");
+                    SceneManager.LoadScene("Alpha2_Level_1_2");
                     break;
                 }
             case SceneToLoad.ALPHA2_LEVEL_1_3:
                 {
-                    //   SceneManager.LoadNewWalkableMap("Map_Level_1_3");
-                    if (SceneManager.CheckMultiSceneReady())
-                    {
-                        SceneManager.RemoveSecondaryScene();
-                    }
-                    SceneManager.LoadScene("Lvl1_2ToLvl1_3");
+                    SceneManager.LoadNewWalkableMap("Map_Level_1_3");
+                    SceneManager.LoadScene("Alpha2_Level_1_3");
                     break;
                 }
             case SceneToLoad.LVL2_ZONE1:
@@ -187,22 +175,14 @@ public class FadeToBlack : CulverinBehaviour
                 }
             case SceneToLoad.LVL2_ZONE2:
                 {
-                   // SceneManager.LoadNewWalkableMap("LVL2_Zone2");
-                    if (SceneManager.CheckMultiSceneReady())
-                    {
-                        SceneManager.RemoveSecondaryScene();
-                    }
-                    SceneManager.LoadScene("Lvl2_1ToLvl2_2");
+                    SceneManager.LoadNewWalkableMap("LVL2_Zone2");
+                    SceneManager.LoadScene("LVL2_Zone_2");
                     break;
                 }
             case SceneToLoad.LVL2_ZONE3:
                 {
-                    //SceneManager.LoadNewWalkableMap("LVL2_Zone3");
-                    if (SceneManager.CheckMultiSceneReady())
-                    {
-                        SceneManager.RemoveSecondaryScene();
-                    }
-                    SceneManager.LoadScene("Lvl2_2ToLvl2_3");
+                    SceneManager.LoadNewWalkableMap("LVL2_Zone3");
+                    SceneManager.LoadScene("LVL2_Zone_3");
                     break;
                 }
         }
