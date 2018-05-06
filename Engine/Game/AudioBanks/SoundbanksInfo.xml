@@ -521,10 +521,6 @@
 					<ShortName>Enemy\Enemy_2\E2_Dead_1.wav</ShortName>
 					<Path>SFX\Enemy\Enemy_2\E2_Dead_1_1C9C67B2.wem</Path>
 				</File>
-				<File Id="788695252" Language="SFX">
-					<ShortName>Enemy\Enemy_1\Enemy1_Dead4.wav</ShortName>
-					<Path>SFX\Enemy\Enemy_1\Enemy1_Dead4_ADBB1C68.wem</Path>
-				</File>
 				<File Id="885694415" Language="SFX">
 					<ShortName>Enemy_SwordDraw.wav</ShortName>
 					<Path>SFX\Enemy_SwordDraw_1C9C67B2.wem</Path>
