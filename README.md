@@ -47,10 +47,6 @@ Download our latest build at https://github.com/Project3CITM/CulverinEngine-Proj
 
 Just download the release, unpack it, open the NjoyGames_VerticalSlice3 folders and open the NjoyGames_VerticalSlice1.exe file. 
 
-### Save Games:
-
-	Not yet implemented.
-
 ## 3) GENERAL INFORMATION
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
