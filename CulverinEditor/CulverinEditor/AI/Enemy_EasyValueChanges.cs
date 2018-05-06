@@ -19,8 +19,30 @@ public class Enemy_EasyValueChanges : CulverinBehaviour
 
         align = gameObject.GetComponent<Align_Steering>();
         movement = gameObject.GetComponent<Movement_Action>();
-       
-        
+
+        if (gameObject.GetComponent<EnemySword_BT>() != null)
+        {
+            bt = gameObject.GetComponent<EnemySword_BT>();
+        }
+        else if (gameObject.GetComponent<EnemySpear_BT>() != null)
+        {
+            Debug.Log("SPEAR ENEMY!", Department.IA, Color.PINK);
+            bt = gameObject.GetComponent<EnemySpear_BT>();
+        }
+        else if (gameObject.GetComponent<EnemyShield_BT>() != null)
+        {
+            bt = gameObject.GetComponent<EnemyShield_BT>();
+        }
+
+        if (bt != null)
+        {
+            bt.current_hp = total_hp;
+            bt.total_hp = total_hp;
+            bt.attack_damage = attack_damage;
+            bt.attack_cooldown = attack_cooldown;
+            Debug.Log("attack cooldown: " + bt.attack_cooldown, Department.IA, Color.PINK);
+
+        }
 
     }
 

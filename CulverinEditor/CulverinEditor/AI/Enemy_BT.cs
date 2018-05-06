@@ -31,7 +31,7 @@ public class Enemy_BT : BT
     public float dmg_alpha = 0.0f;
 
     public float total_hp = 100;
-    protected float current_hp;
+    public float current_hp = 0;
     public ENEMY_STATE life_state = ENEMY_STATE.ENEMY_ALIVE;
 
     public float max_anim_speed = 1.5f;
@@ -352,7 +352,11 @@ public class Enemy_BT : BT
 
     public virtual void UpdateHUD()
     {
+        Debug.Log("current" + current_hp, Department.STAGE, Color.BLUE);
+        Debug.Log("total" + total_hp, Department.STAGE, Color.RED);
+
         float calc_hp = current_hp / total_hp;
+        Debug.Log("calc_hp" + calc_hp, Department.STAGE, Color.PINK);
         enemy_hp_bar.GetComponent<CompImage>().FillAmount(calc_hp);
         hp_timer = 0.0f;
     }
