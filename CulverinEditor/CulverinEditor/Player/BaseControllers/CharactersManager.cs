@@ -317,6 +317,21 @@ public class CharactersManager : CulverinBehaviour
                         {
                             Debug.Log("U FUCKED", Department.PLAYER, Color.GREEN);
                             GetLinkedObject("player_obj").GetComponent<DamageFeedback>().TotalDefeat();
+                            if (current_character.GetName() == "Theon")
+                            {
+                                TheonController theon = current_character.GetComponent<TheonController>();
+                                theon.StopBreathing("TheonBreathing");
+                            }
+                            else if (current_character.GetName() == "Jaime")
+                            {
+                                JaimeController jaime = current_character.GetComponent<JaimeController>();
+                                jaime.StopBreathing("JaimeBreathing");
+                            }
+                            else if (current_character.GetName() == "Daenerys")
+                            {
+                                DaenerysController daenerys = current_character.GetComponent<DaenerysController>();
+                                daenerys.StopBreathing("DaenerysBreathing");
+                            }
                         }
                     }
 
@@ -1466,6 +1481,7 @@ public class CharactersManager : CulverinBehaviour
         left_character.GetComponent<TheonController>().curr_hp = theoninfo;
         right_character.GetComponent<DaenerysController>().curr_hp = daenerysinfo;
 
+        Debug.Log("INFO PLAYER", Department.PLAYER, Color.RED);
         GetLinkedObject("health_obj").GetComponent<Hp>().SetHP(current_character.GetComponent<JaimeController>().curr_hp, current_character.GetComponent<JaimeController>().max_hp);
         GetLinkedObject("this_obj_lasthp").GetComponent<CompImage>().FillAmount(current_character.GetComponent<JaimeController>().curr_hp / 100.0f);
         GetLinkedObject("daenerys_icon_obj_hp").GetComponent<CompImage>().FillAmount(right_character.GetComponent<DaenerysController>().curr_hp / 100.0f);

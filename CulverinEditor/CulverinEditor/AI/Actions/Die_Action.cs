@@ -35,13 +35,31 @@ class Die_Action : Action
 
         //Play Dead Audio
         if (GetComponent<EnemyShield_BT>() != null)
+        {
             audio_comp.PlayEvent("Enemy3_Dead");
-
-        if (GetComponent<EnemySpear_BT>() != null)
+        }
+        else if (GetComponent<EnemySpear_BT>() != null)
+        {
             audio_comp.PlayEvent("Enemy2_Dead");
-
-        if (GetComponent<EnemySword_BT>() != null)
+        }
+        else if (GetComponent<EnemySword_BT>() != null)
+        {
             audio_comp.PlayEvent("Enemy1_Dead");
+        }
+
+        //Deactivate Listener
+        if (GetComponent<SpearGuard_Listener>() != null)
+        {
+            GetComponent<SpearGuard_Listener>().SetEnabled(false);
+        }
+        else if (GetComponent<ShieldGuard_Listener>() != null)
+        {
+            GetComponent<ShieldGuard_Listener>().SetEnabled(false);
+        }
+        else if (GetComponent<SwordGuard_Listener>() != null)
+        {
+            GetComponent<SwordGuard_Listener>().SetEnabled(false);
+        }
 
         anim_comp.SetClipDuration("Die", duration);
         GetComponent<CompCollider>().CollisionActive(false);

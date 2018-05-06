@@ -539,4 +539,11 @@ public class CharacterController : CulverinBehaviour
     {
         return new Vector3(enemy_pos - player_pos).Normalized;
     }
+
+    public void StopBreathing(string name)
+    {
+        audio.StopEvent(name);
+        audio.StopEvent("PlayHeartbeat");
+        Debug.Log("Stopped breathing audio");
+    }
 }
