@@ -15,7 +15,7 @@ public class ShowScore2 : CulverinBehaviour
     public GameObject grade_mark_C;
     public GameObject grade_mark_D;
 
-
+    public int max_combat_points = 500;
     public int fountain_uses = 3;
     public int max_puzzle_hits = 5;
     public int boss_time_sec = 85;
@@ -90,7 +90,7 @@ public class ShowScore2 : CulverinBehaviour
 
     void DisplayCombatPoints()
     {
-        combat_point.GetComponent<CompText>().SetText(StatsScore.combat_points.ToString() + "/500");
+        combat_point.GetComponent<CompText>().SetText(StatsScore.combat_points.ToString() + "/" + max_combat_points);
         if(StatsScore.combat_points > gold_combat_points)
         {
             combat_point.GetComponent<CompText>().SetColor(new Vector3(1.0f, 1.0f, 0.0f), 1.0f);
