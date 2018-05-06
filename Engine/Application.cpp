@@ -1373,7 +1373,7 @@ void Application::MakeBuild(std::string build_name, std::string Initial_scene, s
 
 	files_game.clear();
 
-	// Finally move all materials .dds RealNormalMaps to Library/Materials
+	// Finally move all materials .dds RealNormalMaps to Library/Materials 
 	std::string real_normal_maps = App->fs->GetGameDirectory();
 	real_normal_maps += "/RealNormalMaps";
 	App->fs->GetOnlyFilesFromFolder(real_normal_maps, files_game);
