@@ -635,10 +635,10 @@ update_status Application::Update()
 
 	if (mode_game)
 	{
-		//if (App->input->GetKey(SDL_SCANCODE_F4) == KEY_DOWN)
-		//{
-		//	active_fps = !active_fps;
-		//}
+		if (App->input->GetKey(SDL_SCANCODE_F4) == KEY_DOWN)
+		{
+			active_fps = !active_fps;
+		}
 		if (active_fps)
 		{
 			ImGui::SetNextWindowPos(ImVec2(20, 20));
