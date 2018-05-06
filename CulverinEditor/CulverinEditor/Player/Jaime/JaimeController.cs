@@ -645,6 +645,7 @@ public class JaimeController : CharacterController
 
                     PlayFx("Enemy_Flesh_Hit");
 
+
                     if (hit_streak == 0)
                     {
                         //Start combo time controller to manage hit streaks
@@ -667,8 +668,6 @@ public class JaimeController : CharacterController
 
                     //Set FailAttack Transition & Audio
                     anim_controller.PlayAnimationNode("FailAttack");
-
-                    PlayFx("JaimeImpact");
 
                     SpawnPrefabFromPos("Particle_MetalCollision", transform.GetGlobalPosition(), player.transform.GetRotation(), new Vector3(0, 7, 5));
 
