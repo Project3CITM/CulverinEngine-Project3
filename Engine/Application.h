@@ -125,8 +125,12 @@ public:
 	void SetBordeless();
 	bool GetBordeless();
 	void SetVSync();
+	bool GetVSync();
 	void ShowFPS();
+	bool GetFPS();
 	void SwapControllerVibration();
+
+	bool GetControllerVibration();
 
 private:
 

@@ -290,8 +290,11 @@ private:
 	static void SetBordeless(MonoObject * object);
 	static bool GetBordeless(MonoObject * object);
 	static void SetVSync(MonoObject * object);
+	static bool GetVSync(MonoObject * object);
 	static void ShowFPS(MonoObject * object);
+	static bool GetFPS(MonoObject * object);
 	static void SwapControllerVibration(MonoObject * object);
+	static bool GetControllerVibration(MonoObject * object);
 	/*Component Collier*/
 	static MonoObject*	GetCollidedObject(MonoObject * object);
 	static MonoObject*	GetContactPoint(MonoObject* object);

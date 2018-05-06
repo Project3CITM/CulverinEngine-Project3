@@ -1500,15 +1500,31 @@ void Application::SetVSync()
 	vsync = !vsync;
 }
 
+bool Application::GetVSync()
+{
+	return vsync;
+}
+
 void Application::ShowFPS()
 {
 	active_fps = !active_fps;
+}
+
+bool Application::GetFPS()
+{
+	return active_fps;
 }
 
 void Application::SwapControllerVibration()
 {
 	App->input->SwapVibration();
 }
+
+bool Application::GetControllerVibration()
+{
+	return App->input->GetRumblePlay();
+}
+
 
 static void *counted_malloc(size_t size) {
 	void *res = malloc(size);

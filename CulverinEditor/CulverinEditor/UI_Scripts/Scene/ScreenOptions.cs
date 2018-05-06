@@ -42,6 +42,7 @@ public class ScreenOptions : CulverinBehaviour
         IsFullScreen();
         IsBorderless();
         IsWindowed();
+        IsVSync();
     }
 
     public void OpenScreenOptions()
@@ -116,6 +117,27 @@ public class ScreenOptions : CulverinBehaviour
             return;
         else
             bordeless_cb.GetComponent<CompCheckBox>().HideTick();
+    }
+    public void IsVSync()
+    {
+        if (Screen.GetVSync())
+            return;
+        else
+            vsync_cb.GetComponent<CompCheckBox>().HideTick();
+    }
+    public void IsFPS()
+    {
+        if (Screen.GetFPS())
+            return;
+        else
+            showfps_cb.GetComponent<CompCheckBox>().HideTick();
+    }
+    public void IsVibration()
+    {
+        if (Screen.GetControllerVibration())
+            return;
+        else
+            vibration_cb.GetComponent<CompCheckBox>().HideTick();
     }
 
 }
