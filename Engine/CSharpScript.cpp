@@ -35,7 +35,7 @@ ScriptVariable::~ScriptVariable()
 		delete[](char*)value;
 		value = nullptr;
 	}
-	RELEASE_ARRAY(name);
+	//RELEASE_ARRAY(name);
 	game_object = nullptr;
 	mono_field = nullptr;
 	mono_type = nullptr;
