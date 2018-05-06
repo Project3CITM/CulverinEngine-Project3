@@ -330,7 +330,7 @@ public class TheonController : CharacterController
         }
         else
         {
-            Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("T_Death");
+            Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("D_Death");
             anim_controller.PlayAnimationNode("Death");
             SetState(State.DEAD);
 
@@ -363,7 +363,7 @@ public class TheonController : CharacterController
         }
         else
         {
-            Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("T_Death");
+            Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("D_Death");
             anim_controller.PlayAnimationNode("Death");
             SetState(State.DEAD);
 

@@ -1554,15 +1554,15 @@ public class CharactersManager : CulverinBehaviour
 
         if(theoninfo == 1503.0f)
         {
-            theoninfo = 100.0f;
+            current_character.GetComponent<TheonController>().curr_hp = current_character.GetComponent<TheonController>().max_hp;
         }
         if (jaimeinfo == 1503.0f)
         {
-            jaimeinfo = 100.0f;
+            current_character.GetComponent<JaimeController>().curr_hp = current_character.GetComponent<JaimeController>().max_hp;
         }
         if (daenerysinfo == 1503.0f)
         {
-            daenerysinfo = 100.0f;
+            current_character.GetComponent<DaenerysController>().curr_hp = current_character.GetComponent<DaenerysController>().max_hp;
         }
 
         if (theoninfo == 0.0f)
