@@ -108,11 +108,11 @@ bool KeyBinding::InitKeyBinding()
 	key_binding_relations.push_back(KeyRelation(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_LEFT, "CPadLeft", "controller", KeyBindingType::CONTROLLER_BUTTON_DEVICE));
 	key_binding_relations.push_back(KeyRelation(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_RIGHT, "CPadRight", "controller", KeyBindingType::CONTROLLER_BUTTON_DEVICE));
 
-	key_binding_relations.push_back(KeyRelation(SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_TRIGGERLEFT, "L1", "controller", KeyBindingType::CONTROLLER_AXIS_DEVICE));
-	key_binding_relations.push_back(KeyRelation(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_LEFTSHOULDER, "R1", "controller", KeyBindingType::CONTROLLER_BUTTON_DEVICE));
+	key_binding_relations.push_back(KeyRelation(SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_TRIGGERLEFT, "L2", "controller", KeyBindingType::CONTROLLER_AXIS_DEVICE));
+	key_binding_relations.push_back(KeyRelation(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_LEFTSHOULDER, "L1", "controller", KeyBindingType::CONTROLLER_BUTTON_DEVICE));
 
-	key_binding_relations.push_back(KeyRelation(SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_TRIGGERRIGHT, "L2", "controller", KeyBindingType::CONTROLLER_AXIS_DEVICE));
-	key_binding_relations.push_back(KeyRelation(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_RIGHTSHOULDER, "R2", "controller", KeyBindingType::CONTROLLER_BUTTON_DEVICE));
+	key_binding_relations.push_back(KeyRelation(SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_TRIGGERRIGHT, "R2", "controller", KeyBindingType::CONTROLLER_AXIS_DEVICE));
+	key_binding_relations.push_back(KeyRelation(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_RIGHTSHOULDER, "R1", "controller", KeyBindingType::CONTROLLER_BUTTON_DEVICE));
 
 	key_binding_relations.push_back(KeyRelation(SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_RIGHTX, "CRightX", "controller", KeyBindingType::CONTROLLER_AXIS_DEVICE));
 	key_binding_relations.push_back(KeyRelation(SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_RIGHTY, "CRightY", "controller", KeyBindingType::CONTROLLER_AXIS_DEVICE));
@@ -136,7 +136,7 @@ KeyRelation * KeyBinding::FindKeyBinding(const char * name)
 	for (int i = 0; i < key_binding_relations.size(); i++)
 	{
 
-		if (key_binding_relations[i].name == name)
+		if (strcmp(key_binding_relations[i].name.c_str(),name)==0)
 		{
 			return &key_binding_relations[i];
 		}
