@@ -32,9 +32,18 @@ namespace CulverinEditor.Screen
         public static extern bool SetVSync();
 
         [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern bool GetVSync();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern bool ShowFPS();
 
         [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern bool GetFPS();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern bool SwapControllerVibration();
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern bool GetControllerVibration();
     }
 }

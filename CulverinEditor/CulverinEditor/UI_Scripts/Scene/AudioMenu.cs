@@ -50,6 +50,5 @@ public class AudioMenu : CulverinBehaviour
         GetComponent<CompAudio>().PlayEvent("Push");
         mute = !mute;
         Audio.Mute(mute);
-    }
-   
+    }  
 }

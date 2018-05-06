@@ -117,6 +117,10 @@ public:
 	{
 		return press_any_key;
 	}
+	bool GetRumblePlay()const 
+	{
+		return rumble_active;
+	}
 	void SetMotionGlobal(int x, int y)
 	{
 		mouse_x_global = x;
