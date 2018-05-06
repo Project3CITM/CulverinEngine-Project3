@@ -105,13 +105,15 @@ https://github.com/Project3CITM/CulverinEngine-Project3/issues
 Web Site: https://github.com/Project3CITM/CulverinEngine-Project3
 
 ## 8) CHANGELOG
-### Pre Alpha 2 V 0.4
+### Pre Alpha 2 V 0.5
  	* the maps have been changed to 7 different maps
 	* New Assets at the stages
 	* New boss AI
 	* New Transitions between stages
 	* Bug Fixing
-	
+	* Improved and added particles
+	* Added new Visual Effects
+	* New options menu
 
 ### Alpha V 0.3
 
