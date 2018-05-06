@@ -5,8 +5,8 @@ Event	ID	Name			Wwise Object Path	Notes
 	3753593413	Hover			\UI\Hover	
 
 In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
-	299845700	HoverFX	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\UI\Button_Hover_1C9C67B2.wem		\Actor-Mixer Hierarchy\UI\HoverFX		164236
-	375248599	Defeat_Screen	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Defeat_Screen_F17FB28C.wem		\Interactive Music Hierarchy\Default Work Unit\LoseMusic\Defeat_Screen\Defeat_Screen		7354176
-	761312164	Main_Menu	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Main_Menu_F17FB28C.wem		\Interactive Music Hierarchy\Default Work Unit\IntroMusic\Main_Menu\Main_Menu		7138112
-	948936751	PushFX	F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\UI\Button_Push_1C9C67B2.wem		\Actor-Mixer Hierarchy\UI\PushFX		173168
+	299845700	HoverFX	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\UI\Button_Hover_1C9C67B2.wem		\Actor-Mixer Hierarchy\UI\HoverFX		164236
+	375248599	Defeat_Screen	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Defeat_Screen_F17FB28C.wem		\Interactive Music Hierarchy\Default Work Unit\LoseMusic\Defeat_Screen\Defeat_Screen		7354176
+	761312164	Main_Menu	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\Main_Menu_F17FB28C.wem		\Interactive Music Hierarchy\Default Work Unit\IntroMusic\Main_Menu\Main_Menu		7138112
+	948936751	PushFX	C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\SFX\UI\Button_Push_1C9C67B2.wem		\Actor-Mixer Hierarchy\UI\PushFX		173168
 

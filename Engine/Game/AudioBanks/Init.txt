@@ -6,8 +6,10 @@ State Group	ID	Name			Wwise Object Path	Notes
 State	ID	Name	State Group			Notes
 	0	None	MusicState			
 	2147352708	FinalBoss	MusicState			
+	2280944873	AlternateCombat	MusicState			
 	2678230381	Level2	MusicState			
 	2764240573	Combat	MusicState			
+	3269554222	AlternateBoss	MusicState			
 	0	None	PuzzleCountDownState			
 	1208172673	State1	PuzzleCountDownState			
 	1208172674	State2	PuzzleCountDownState			
