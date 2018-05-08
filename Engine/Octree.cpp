@@ -264,12 +264,16 @@ int OctreeNode::CollectIntersections(std::vector<GameObject*>& nodes, const Frus
 		{
 			int iTotalIn = 0;
 			bool is_in = true;
-			for (int p = 0; p < 6; ++p) {
-				int iInCount = 8;
+			for (int p = 0; p < 4; ++p) {
+				int iInCount = 4;
 				int iPtIn = 1;
-				for (int i = 0; i < 8; ++i) {
+				for (int j = 2; j < 8; j+=4) {
 					// test this point against the planes
-					if (planes[p].normal.Dot(Box.CornerPoint(i)) >= planes[p].d) {
+					if (planes[p].normal.Dot(Box.CornerPoint(j)) >= planes[p].d) {
+						iPtIn = 0;
+						--iInCount;
+					}
+					if (planes[p].normal.Dot(Box.CornerPoint(j+1)) >= planes[p].d) {
 						iPtIn = 0;
 						--iInCount;
 					}
