@@ -37,7 +37,7 @@ CompCamera::CompCamera(Comp_Type t, GameObject* parent) : Component(t, parent)
 	frustum.verticalFov = vertical_fov * DEGTORAD;
 	frustum.horizontalFov = Atan(aspect_ratio*Tan(frustum.verticalFov / 2)) * 2;
 	frustum_center = frustum.CenterPoint();
-	frustum_halfdistance_squared = frustum.MinimalEnclosingAABB().HalfSize().LengthSq();
+	frustum_halfdistance_squared = 170*170;
 
 	name_component = "Camera";
 }
@@ -116,7 +116,7 @@ void CompCamera::UpdateFrustum()
 	frustum.front = trans.Col3(2).Normalized();
 	frustum.up = trans.Col3(1).Normalized();
 	frustum_center = frustum.CenterPoint();
-	frustum_halfdistance_squared = frustum.MinimalEnclosingAABB().HalfSize().LengthSq();
+	frustum_halfdistance_squared = 170 * 170;
 }
 
 void CompCamera::Draw()
