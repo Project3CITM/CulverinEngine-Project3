@@ -1573,11 +1573,6 @@ public class CharactersManager : CulverinBehaviour
         {
             RightCharacterDie();
         }
-        
-
-        current_character.GetComponent<JaimeController>().curr_hp = jaimeinfo;
-        left_character.GetComponent<TheonController>().curr_hp = theoninfo;
-        right_character.GetComponent<DaenerysController>().curr_hp = daenerysinfo;
 
         Debug.Log("INFO PLAYER", Department.PLAYER, Color.RED);
         GetLinkedObject("health_obj").GetComponent<Hp>().SetHP(current_character.GetComponent<JaimeController>().curr_hp, current_character.GetComponent<JaimeController>().max_hp);
