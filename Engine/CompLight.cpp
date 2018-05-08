@@ -156,6 +156,7 @@ void CompLight::Update(float dt)
 	{
 		parent->box_fixed.SetFromCenterAndSize(GetGameObjectPos(), float3(radius, radius, radius));
 	}
+
 }
 
 void CompLight::Draw()
@@ -296,6 +297,13 @@ void CompLight::Load(const JSON_Object * object, std::string name)
 	parent->box_fixed.SetFromCenterAndSize(GetGameObjectPos(), float3(radius, radius, radius));
 
 	if (radius == 0) radius = 50;
+
+	if (properties[3] > 0.0001f) {
+		radius = (-properties[2] + sqrt(properties[2] - 4 * (properties[1] - 100) * properties[3]) / (2 * properties[3]));
+	}
+	else {
+		radius = (properties[1] - 100) / -properties[2];
+	}
 }
 
 void CompLight::GetOwnBufferSize(uint& buffer_size)
@@ -351,6 +359,14 @@ void CompLight::LoadBinary(char** cursor)
 	parent->box_fixed.SetFromCenterAndSize(GetGameObjectPos(), float3(radius, radius, radius));
 
 	if (radius == 0) radius = 50;
+
+	float k = 0.1f;
+	if (properties[3] > 0.0001f) {
+		radius = (-(properties[2] * k) + sqrt(properties[2] * k - 4 * (properties[1]*k -properties[0]) * properties[3]*k) / (2 * properties[3] * k));
+	}
+	else {
+		radius = 1-(properties[1] * k) / properties[2]*k;
+	}
 }
 
 void CompLight::UpdateFrustum()
