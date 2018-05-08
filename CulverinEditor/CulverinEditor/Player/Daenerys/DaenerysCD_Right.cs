@@ -5,10 +5,19 @@ public class DaenerysCD_Right : CoolDown
 {
     public GameObject daenerys_right_cd_text;
 
-    void Start()
+    DaenerysController daenerys_controller;
+
+    public override void Start()
     {
         daenerys_right_cd_text = GetLinkedObject("daenerys_right_cd_text");
-        ResetTextTimer(daenerys_right_cd_text);
+
+        LinkTextTimer(daenerys_right_cd_text);
+        ResetTextTimer();
+
+        //Link to the external daenerys_obj 
+        daenerys_controller = GetLinkedObject("daenerys_obj").GetComponent<DaenerysController>();
+
+        base.Start();
     }
 
     public override void Update()
@@ -18,25 +27,25 @@ public class DaenerysCD_Right : CoolDown
         //Manage Seconds Counter
         if(in_cd)
         {
-            ManageTextTimer(daenerys_right_cd_text);
+            ManageTextTimer();
         }
 
         //Reset Seconds Counter
         if(reset_timer)
         {
-            ResetTextTimer(daenerys_right_cd_text);
+            ResetTextTimer();
             reset_timer = false;
         }
     }
 
     public override void OnClick()
     {
-        if (GetLinkedObject("daenerys_obj").GetComponent<DaenerysController>().GetState() == 0
-            && GetLinkedObject("player_obj").GetComponent<CharactersManager>().changing == false)
+        if (daenerys_controller.GetState() == 0
+            && characters_manager.changing == false)
         {
             if (in_cd == false)
             {               
-                if(GetLinkedObject("daenerys_obj").GetComponent<DaenerysController>().OnRightClick() == true)
+                if(daenerys_controller.OnRightClick() == true)
                 {
                     ActivateAbility();
                 }
@@ -46,10 +55,9 @@ public class DaenerysCD_Right : CoolDown
 
     public override void ActivateAbility()
     {
-        //this_obj.GetComponent
-        button_cd = GetLinkedObject("daenerys_button_right_obj").GetComponent<CompButton>();
         button_cd.Deactivate();
         act_time = 0.0f;
+        cd_time = daenerys_controller.right_ability_cd_time;
         prev_seconds = 1000;
         in_cd = true;
     }

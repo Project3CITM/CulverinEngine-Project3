@@ -11,10 +11,8 @@ public class FireSound : CulverinBehaviour
 
     void Start()
     {
-        actual_time = 0.0f;
-
-        //Play Fire Audio
-        GetComponent<CompAudio>().PlayEvent("DaenerysFire"); //Change This!!
+        actual_time = 0.0f;         
+       
     }
 
     void Update()
@@ -24,14 +22,10 @@ public class FireSound : CulverinBehaviour
         if (is_firebreath && actual_time >= limit_time && stop) 
         {
             GetComponent<CompAudio>().PlayEvent("DaenerysFireballImpact");
-            GetComponent<CompAudio>().StopEvent("DaenerysFire"); //Change This!!
             stop = false;
         }
     }
 
-    public void StopSound()
-    { 
-        GetComponent<CompAudio>().StopEvent("DaenerysFire");
-    }
+  
 
 }

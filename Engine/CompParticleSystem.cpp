@@ -14,6 +14,8 @@
 #include "ModuleGUI.h"
 #include "ModuleParticles.h"
 #include "WindowInspector.h"
+#include "JSONSerialization.h"
+
 
 CompParticleSystem::CompParticleSystem(Comp_Type t, GameObject* parent) : Component(t, parent)
 {
@@ -75,8 +77,11 @@ void CompParticleSystem::Update(float dt)
 		pop_up_save_open = false;
 	}
 		
-
-	part_system->SetEmitterTransform(parent->GetComponentTransform()->GetGlobalTransform().Transposed());	
+	CompTransform* transf = parent->GetComponentTransform();
+	if (transf->GetUpdated())
+	{
+		part_system->SetEmitterTransform(transf->GetGlobalTransform().Transposed());
+	}
 }
 
 void CompParticleSystem::Clear()
@@ -164,6 +169,7 @@ void CompParticleSystem::Save(JSON_Object* object, std::string name, bool saveSc
 {
 	json_object_dotset_string_with_std(object, name + "Component:", name_component);
 	json_object_dotset_number_with_std(object, name + "Type", this->GetType());
+	json_object_dotset_number_with_std(object, name + "UUID", this->GetUUID());
 
 	json_object_dotset_string_with_std(object, name + "ParticleResource:", particle_resource_name.c_str());
 	json_object_dotset_string_with_std(object, name + "EmitterResource:", emitter_resource_name.c_str());
@@ -175,8 +181,6 @@ void CompParticleSystem::Save(JSON_Object* object, std::string name, bool saveSc
 
 	ImGuiSaveParticlePopUp();
 	ImGuiSaveEmitterPopUp();
-
-	
 }
 
 void CompParticleSystem::Load(const JSON_Object* object, std::string name)
@@ -204,7 +208,63 @@ void CompParticleSystem::Load(const JSON_Object* object, std::string name)
 	
 }
 
+void CompParticleSystem::GetOwnBufferSize(uint & buffer_size)
+{
+	Component::GetOwnBufferSize(buffer_size);
+	buffer_size += sizeof(int);			//UID
+	buffer_size += sizeof(int);			//particle_resource_name
+	buffer_size += particle_resource_name.size();
+	buffer_size += sizeof(int);			//emitter_resource_name
+	buffer_size += emitter_resource_name.size();
+	buffer_size += sizeof(bool);			//part_system->preview
+	buffer_size += sizeof(bool);			//part_system->IsEmitterActive
+	buffer_size += sizeof(float);			//part_system->discard_distance
+}
 
+void CompParticleSystem::SaveBinary(char ** cursor, int position) const
+{
+	Component::SaveBinary(cursor, position);
+	App->json_seria->SaveIntBinary(cursor, GetUUID());
+	App->json_seria->SaveStringBinary(cursor, particle_resource_name);
+	App->json_seria->SaveStringBinary(cursor, emitter_resource_name);
+	App->json_seria->SaveBooleanBinary(cursor, part_system->preview);
+	App->json_seria->SaveBooleanBinary(cursor, part_system->IsEmitterActive());
+	App->json_seria->SaveFloatBinary(cursor, part_system->discard_distance);
+
+	ImGuiSaveParticlePopUp();
+	ImGuiSaveEmitterPopUp();
+}
+
+void CompParticleSystem::LoadBinary(char ** cursor)
+{
+	uid = App->json_seria->LoadIntBinary(cursor);
+	particle_resource_name = App->json_seria->LoadStringBinary(cursor);
+	emitter_resource_name = App->json_seria->LoadStringBinary(cursor);
+	part_system->preview = App->json_seria->LoadBooleanBinary(cursor);
+
+	file_to_load = particle_resource_name;
+	ImGuiLoadParticlePopUp();
+
+	file_to_load = emitter_resource_name;
+	ImGuiLoadEmitterPopUp();
+
+	bool active = App->json_seria->LoadBooleanBinary(cursor);
+	if (active)
+		part_system->ActivateEmitter();
+	else
+		part_system->DeactivateEmitter();
+
+	part_system->discard_distance = App->json_seria->LoadFloatBinary(cursor);
+}
+
+void CompParticleSystem::SyncComponent(GameObject * sync_parent)
+{
+	CompTransform* transf = parent->GetComponentTransform();
+	if (transf)
+	{
+		part_system->SetEmitterTransform(transf->GetGlobalTransform().Transposed());
+	}
+}
 
 bool CompParticleSystem::SaveParticleStates(ResourceMaterial* TextureResource, const ParticleTextureData* TexData, const ParticleState* stateI, const ParticleState* stateF) const
 {
@@ -584,7 +644,11 @@ void CompParticleSystem::ShowInspectorInfo()
 		else 
 			part_system->DeactivateEmitter();
 	}
-	ImGui::Checkbox("Preview", &part_system->preview);
+	if (ImGui::Checkbox("Preview", &part_system->preview))
+	{
+		if (part_system->preview)
+			part_system->ResetPreview();
+	}
 
 	ImGui::DragFloat("Discard distance", &part_system->discard_distance, 1.0f, 0, 1000, "%.2f");
 	

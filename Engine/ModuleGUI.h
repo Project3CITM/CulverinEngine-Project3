@@ -105,6 +105,8 @@ public:
 	uint icon_remove;
 	//-----------------
 
+	bool window_Test_renderer = false;
+
 private:
 
 	//WINDOW EXIT -------------
@@ -125,6 +127,8 @@ private:
 	bool window_audio = false;
 	bool window_create_map = false;
 	bool window_create_animation = false;
+
+
 
 	// Build variables
 	bool window_build = false;

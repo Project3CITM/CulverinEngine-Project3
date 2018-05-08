@@ -16,6 +16,10 @@ public class Movement_Action : Action
 
     public PathNode tile = null;
 
+    CompAnimation anim_comp;
+    Transform transform_comp;
+    CompAudio audio_comp;
+
     public enum Direction
     {
         DIR_NO_DIR,
@@ -61,6 +65,15 @@ public class Movement_Action : Action
 
     public float sideways_anim_speed = 1.5f;
 
+    private bool blocking = false;
+
+    bool fx_played = false;
+
+    GameObject player_t;
+
+    public float steps_start_audio_anim = 0.66f;
+    public float steps_finish_audio_anim = 0.98f;
+
     public Movement_Action()
     {
         action_type = ACTION_TYPE.MOVE_ACTION;
@@ -74,9 +87,13 @@ public class Movement_Action : Action
         align = GetComponent<Align_Steering>();
         arrive = GetComponent<Arrive_Steering>();
         seek = GetComponent<Seek_Steering>();
+        anim_comp = GetComponent<CompAnimation>();
+        transform_comp = GetComponent<Transform>();
+        audio_comp = GetComponent<CompAudio>();
 
+        player_t = GetLinkedObject("player_obj");
 
-        BT bt = GetComponent<EnemySword_BT>();
+       BT bt = GetComponent<EnemySword_BT>();
         if (bt == null)
             bt = GetComponent<EnemyShield_BT>();
         if (bt == null)
@@ -90,35 +107,37 @@ public class Movement_Action : Action
         current_max_rot_vel = hurt_max_rot_vel + (max_rot_vel - hurt_max_rot_vel) * interpolation;
         current_max_rot_accel = hurt_max_rot_accel + (max_rot_accel - hurt_max_rot_accel) * interpolation;
 
-        Vector3 fw = GetComponent<Transform>().GetForwardVector();
+        Vector3 fw = transform_comp.GetForwardVector();
         path = new List<PathNode>();
 
         //Set Occupied tile in Pathfinder
         tile = new PathNode(0, 0);
-        tile.SetCoords((int)(GetComponent<Transform>().position.x / tile_size + Mathf.Epsilon), (int)(GetComponent<Transform>().position.z / tile_size + Mathf.Epsilon));
+        tile.SetCoords((int)(transform_comp.position.x / tile_size + Mathf.Epsilon), (int)(transform_comp.position.z / tile_size + Mathf.Epsilon));
         map.GetComponent<Pathfinder>().UpdateOccupiedTiles(gameObject.GetName(), tile);
 
         //Set direction
         SetDirection();
 
         //Sideways animation speeds
-        GetComponent<CompAnimation>().SetClipDuration("WalkRight", sideways_anim_speed);
-        GetComponent<CompAnimation>().SetClipDuration("WalkLeft", sideways_anim_speed);
-        GetComponent<CompAnimation>().SetClipDuration("WalkBack", sideways_anim_speed);
-        GetComponent<CompAnimation>().SetClipDuration("WalkFront", sideways_anim_speed);
+        anim_comp.SetClipDuration("WalkRight", sideways_anim_speed);
+        anim_comp.SetClipDuration("WalkLeft", sideways_anim_speed);
+        anim_comp.SetClipDuration("WalkBack", sideways_anim_speed);
+        anim_comp.SetClipDuration("WalkFront", sideways_anim_speed);
+
+        blocking = false;
     }
 
     public override bool ActionStart()
     {
         if (chase == false)
         {
-            GetComponent<CompAnimation>().SetTransition("ToPatrol");
-            GetComponent<CompAnimation>().SetFirstActiveBlendingClip("Idle");
+            anim_comp.PlayAnimationNode("Patrol");
+            anim_comp.SetFirstActiveBlendingClip("Idle");
         }
         else
         {
-            GetComponent<CompAnimation>().SetTransition("ToChase");
-            GetComponent<CompAnimation>().SetFirstActiveBlendingClip("IdleAttack");
+            anim_comp.PlayAnimationNode("Chase");
+            anim_comp.SetFirstActiveBlendingClip("IdleAttack");
 
             if (moving_sideways == true)
                 MoveSideways(path[0]);
@@ -130,15 +149,26 @@ public class Movement_Action : Action
             tile.SetCoords(path[0].GetTileX(), path[0].GetTileY());
         }
 
+        fx_played = false;
+
         return true;
     }
 
     public override ACTION_RESULT ActionUpdate()
     {
-
         //Movement
         if (translation_finished == false)
         {
+            if (GetComponent<CompAnimation>().IsAnimOverXTime(0.6f) && fx_played == false)
+            {
+                GetComponent<CompAudio>().PlayEvent("BossFootstep");
+                fx_played = true;
+            }
+            if(GetComponent<CompAnimation>().IsAnimOverXTime(0.95f))
+            {
+                fx_played = false;
+            }
+
             UpdateTranslation();
 
             if (arrive.ReachedTile() == true)
@@ -148,7 +178,7 @@ public class Movement_Action : Action
                 if (moving_sideways == true)
                 {
                     moving_sideways = false;
-                    GetComponent<CompAnimation>().SetTransition("ToChase");
+                    anim_comp.PlayAnimationNode("Chase");
                 }
 
                 if (interupt != true)
@@ -188,9 +218,9 @@ public class Movement_Action : Action
                 rotation_finished = true;
                 current_rot_velocity = 0.0f;
                 align.SetEnabled(false);
-                look_at_pos.y = GetComponent<Transform>().position.y;
-                Vector3 obj_vec = new Vector3(look_at_pos - GetComponent<Transform>().position);
-                GetComponent<Transform>().forward = new Vector3(obj_vec.Normalized * GetComponent<Transform>().forward.Length);
+                look_at_pos.y = transform_comp.position.y;
+                Vector3 obj_vec = new Vector3(look_at_pos - transform_comp.position);
+                transform_comp.forward = new Vector3(obj_vec.Normalized * transform_comp.forward.Length);
                 SetDirection();
             }
         }
@@ -208,15 +238,17 @@ public class Movement_Action : Action
     public override bool ActionEnd()
     {
         if (chase == false)
-            GetComponent<CompAnimation>().SetTransition("ToIdle");
+            anim_comp.PlayAnimationNode("Idle");
         else
-            GetComponent<CompAnimation>().SetTransition("ToIdleAttack");
+            anim_comp.PlayAnimationNode("IdleAttack");
 
         if (chase != false)
             chase = false;
 
         if (interupt == true)
             interupt = false;
+
+        blocking = false;
 
         return false;
     }
@@ -242,7 +274,7 @@ public class Movement_Action : Action
 
         float point_in_speed = current_rot_velocity / current_max_rot_vel;
 
-        //GetComponent<CompAnimation>().SetSecondActiveBlendingClipWeight((1.0f - point_in_speed) * (1.0f - point_in_speed));
+        //anim_comp.SetSecondActiveBlendingClipWeight((1.0f - point_in_speed) * (1.0f - point_in_speed));
 
         //Rotate
         align.UpdateRotation(current_rot_velocity * Time.deltaTime);
@@ -265,15 +297,15 @@ public class Movement_Action : Action
         float point_in_speed = current_velocity.Length / current_max_vel;
 
         if (moving_sideways == true)
-            GetComponent<CompAnimation>().SetFirstActiveBlendingClipWeight(1.0f - point_in_speed);
+            anim_comp.SetFirstActiveBlendingClipWeight(1.0f - point_in_speed);
         else
-            GetComponent<CompAnimation>().SetFirstActiveBlendingClipWeight((1.0f - point_in_speed) * (1.0f - point_in_speed));
+            anim_comp.SetFirstActiveBlendingClipWeight((1.0f - point_in_speed) * (1.0f - point_in_speed));
 
         //Translate
-        Vector3 pos = new Vector3(GetComponent<Transform>().position);
+        Vector3 pos = new Vector3(transform_comp.position);
         pos.x = pos.x + current_velocity.x * Time.deltaTime;
         pos.z = pos.z + current_velocity.z * Time.deltaTime;
-        GetComponent<Transform>().position = pos;
+        transform_comp.position = pos;
 
         //Clean
         current_acceleration = new Vector3(Vector3.Zero);
@@ -281,12 +313,16 @@ public class Movement_Action : Action
 
     private void NextTile()
     {
-        Vector3 pos = new Vector3(GetComponent<Transform>().position);
+        //Audio Footsteps
+        //audio_comp.PlayEvent("Footsteps");
+
+
+        Vector3 pos = new Vector3(transform_comp.position);
         if (path.Count > 0)
         {
             pos.x = path[0].GetTileX() * tile_size;
             pos.z = path[0].GetTileY() * tile_size;
-            GetComponent<Transform>().position = pos;
+            transform_comp.position = pos;
 
             //Tiles
             if (path.Count == 1)
@@ -313,6 +349,9 @@ public class Movement_Action : Action
                     }
                 }
             }
+
+            //Debug.Log("footstep audio enemy", Department.PHYSICS, Color.BLUE);
+            //audio_comp.PlayEvent("Footsteps");
 
             tile.SetCoords(path[0].GetTileX(), path[0].GetTileY());
         }
@@ -423,12 +462,12 @@ public class Movement_Action : Action
         if (path.Count > 0)
         {
             result.x = path[0].GetTileX() * tile_size;
-            result.y = GetComponent<Transform>().position.y;
+            result.y = transform_comp.position.y;
             result.z = path[0].GetTileY() * tile_size;
         }
         else
         {
-            result = GetComponent<Transform>().position;
+            result = transform_comp.position;
         }
 
         return result;
@@ -436,8 +475,8 @@ public class Movement_Action : Action
 
     public void LookAt(Vector3 target_position)
     {
-        Vector3 forward = new Vector3(GetComponent<Transform>().GetForwardVector());
-        Vector3 pos = new Vector3(GetComponent<Transform>().position);
+        Vector3 forward = new Vector3(transform_comp.GetForwardVector());
+        Vector3 pos = new Vector3(transform_comp.position);
         Vector3 obj_vec = new Vector3(target_position - pos);
 
         float delta = Vector3.AngleBetweenXZ(forward, obj_vec);
@@ -455,9 +494,9 @@ public class Movement_Action : Action
             align.SetRotation(delta);
 
             /*if (delta < 0.0f)
-                GetComponent<CompAnimation>().SetSecondActiveBlendingClip("RotateRight");
+                anim_comp.SetSecondActiveBlendingClip("RotateRight");
             else
-                GetComponent<CompAnimation>().SetSecondActiveBlendingClip("RotateLeft");*/
+                anim_comp.SetSecondActiveBlendingClip("RotateLeft");*/
         }
     }
 
@@ -471,7 +510,7 @@ public class Movement_Action : Action
 
     public void LookAtTile(PathNode destiny_tile)
     {
-        Vector3 next_tile = new Vector3(GetComponent<Transform>().position);
+        Vector3 next_tile = new Vector3(transform_comp.position);
         next_tile.x = destiny_tile.GetTileX() * tile_size;
         next_tile.z = destiny_tile.GetTileY() * tile_size;
         LookAt(next_tile);
@@ -479,10 +518,10 @@ public class Movement_Action : Action
 
     public void LookAtPlayer()
     {
-        Vector3 target_pos = new Vector3(GetLinkedObject("player_obj").GetComponent<Transform>().position);
+        Vector3 target_pos = new Vector3(player_t.GetComponent<Transform>().position);
 
-        Vector3 forward = new Vector3(GetComponent<Transform>().GetForwardVector());
-        Vector3 pos = new Vector3(GetComponent<Transform>().position);
+        Vector3 forward = new Vector3(transform_comp.GetForwardVector());
+        Vector3 pos = new Vector3(transform_comp.position);
         Vector3 obj_vec = new Vector3(target_pos - pos);
 
         float delta = Vector3.AngleBetweenXZ(forward, obj_vec);
@@ -546,10 +585,10 @@ public class Movement_Action : Action
 
     public bool LookingAtPlayer()
     {
-        Vector3 target_pos = new Vector3(GetLinkedObject("player_obj").GetComponent<Transform>().position);
+        Vector3 target_pos = new Vector3(player_t.GetComponent<Transform>().position);
 
-        Vector3 forward = new Vector3(GetComponent<Transform>().GetForwardVector());
-        Vector3 pos = new Vector3(GetComponent<Transform>().position);
+        Vector3 forward = new Vector3(transform_comp.GetForwardVector());
+        Vector3 pos = new Vector3(transform_comp.position);
         Vector3 obj_vec = new Vector3(target_pos - pos);
 
         float delta = Vector3.AngleBetweenXZ(forward, obj_vec);
@@ -568,7 +607,7 @@ public class Movement_Action : Action
 
     public Direction SetDirection()
     {
-        Vector3 forward = new Vector3(GetComponent<Transform>().GetForwardVector());
+        Vector3 forward = new Vector3(transform_comp.GetForwardVector());
         float delta = Mathf.Atan2(forward.x, forward.z);
 
         if (delta > Mathf.PI)
@@ -630,7 +669,7 @@ public class Movement_Action : Action
 
     public float GetDistanceToTarget()
     {
-        return ((GetComponent<Transform>().position) - (GetTargetPosition())).Length;
+        return ((transform_comp.position) - (GetTargetPosition())).Length;
     }
 
     public void SetCurrentVelocity(Vector3 vel)
@@ -695,10 +734,10 @@ public class Movement_Action : Action
             Debug.Log("Going west", Department.IA, Color.PINK);
             switch (dir)
             {
-                case Direction.DIR_EAST: GetComponent<CompAnimation>().SetTransition("ToWalkBack"); break;
-                case Direction.DIR_NORTH: GetComponent<CompAnimation>().SetTransition("ToWalkLeft"); break;
-                case Direction.DIR_SOUTH: GetComponent<CompAnimation>().SetTransition("ToWalkRight"); break;
-                case Direction.DIR_WEST: GetComponent<CompAnimation>().SetTransition("ToWalkFront"); break;
+                case Direction.DIR_EAST: anim_comp.PlayAnimationNode("WalkBack"); break;
+                case Direction.DIR_NORTH: anim_comp.PlayAnimationNode("WalkLeft"); break;
+                case Direction.DIR_SOUTH: anim_comp.PlayAnimationNode("WalkRight"); break;
+                case Direction.DIR_WEST: anim_comp.PlayAnimationNode("WalkFront"); break;
             }
         }
 
@@ -708,10 +747,10 @@ public class Movement_Action : Action
             Debug.Log("Going east", Department.IA, Color.PINK);
             switch (dir)
             {
-                case Direction.DIR_EAST: GetComponent<CompAnimation>().SetTransition("ToWalkFront"); break;
-                case Direction.DIR_NORTH: GetComponent<CompAnimation>().SetTransition("ToWalkRight"); break;
-                case Direction.DIR_SOUTH: GetComponent<CompAnimation>().SetTransition("ToWalkLeft"); break;
-                case Direction.DIR_WEST: GetComponent<CompAnimation>().SetTransition("ToWalkBack"); break;
+                case Direction.DIR_EAST: anim_comp.PlayAnimationNode("WalkFront"); break;
+                case Direction.DIR_NORTH: anim_comp.PlayAnimationNode("WalkRight"); break;
+                case Direction.DIR_SOUTH: anim_comp.PlayAnimationNode("WalkLeft"); break;
+                case Direction.DIR_WEST: anim_comp.PlayAnimationNode("WalkBack"); break;
             }
         }
 
@@ -721,10 +760,10 @@ public class Movement_Action : Action
             Debug.Log("Going north", Department.IA, Color.PINK);
             switch (dir)
             {
-                case Direction.DIR_EAST: GetComponent<CompAnimation>().SetTransition("ToWalkLeft"); break;
-                case Direction.DIR_NORTH: GetComponent<CompAnimation>().SetTransition("ToWalkFront"); break;
-                case Direction.DIR_SOUTH: GetComponent<CompAnimation>().SetTransition("ToWalkBack"); break;
-                case Direction.DIR_WEST: GetComponent<CompAnimation>().SetTransition("ToWalkRight"); break;
+                case Direction.DIR_EAST: anim_comp.PlayAnimationNode("WalkLeft"); break;
+                case Direction.DIR_NORTH: anim_comp.PlayAnimationNode("WalkFront"); break;
+                case Direction.DIR_SOUTH: anim_comp.PlayAnimationNode("WalkBack"); break;
+                case Direction.DIR_WEST: anim_comp.PlayAnimationNode("WalkRight"); break;
             }
         }
 
@@ -734,11 +773,26 @@ public class Movement_Action : Action
             Debug.Log("Going south", Department.IA, Color.PINK);
             switch (dir)
             {
-                case Direction.DIR_EAST: GetComponent<CompAnimation>().SetTransition("ToWalkRight"); break;
-                case Direction.DIR_NORTH: GetComponent<CompAnimation>().SetTransition("ToWalkBack"); break;
-                case Direction.DIR_SOUTH: GetComponent<CompAnimation>().SetTransition("ToWalkFront"); break;
-                case Direction.DIR_WEST: GetComponent<CompAnimation>().SetTransition("ToWalkLeft"); break;
+                case Direction.DIR_EAST: anim_comp.PlayAnimationNode("WalkRight"); break;
+                case Direction.DIR_NORTH: anim_comp.PlayAnimationNode("WalkBack"); break;
+                case Direction.DIR_SOUTH: anim_comp.PlayAnimationNode("WalkFront"); break;
+                case Direction.DIR_WEST: anim_comp.PlayAnimationNode("WalkLeft"); break;
             }
         }
+    }
+
+    public void SetBlocking(bool value)
+    {
+        blocking = value;
+    }
+
+    public bool IsBlocking()
+    {
+        return blocking;
+    }
+
+    public void ClearPath()
+    {
+        path.Clear();
     }
 }

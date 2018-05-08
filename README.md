@@ -34,11 +34,11 @@ nJoy Game uses and requires Microsoft DirectX 11.0.
 
 ### Minimum Hardware Requirements
 
-	1.2 GHz Intel core i3
-	1Gb of RAM
-	500 MB of free hard disk space
+	2 GHz Intel core i5
+	4Gb of RAM
+	1 500 MB of free hard disk space
 	video card support OpenGL 3.3
-	Keyboard
+	Keyboard or Gamepad
 	Mouse
  
 ## 2) INSTALLATION
@@ -46,10 +46,6 @@ nJoy Game uses and requires Microsoft DirectX 11.0.
 Download our latest build at https://github.com/Project3CITM/CulverinEngine-Project3/releases
 
 Just download the release, unpack it, open the NjoyGames_VerticalSlice3 folders and open the NjoyGames_VerticalSlice1.exe file. 
-
-### Save Games:
-
-	Not yet implemented.
 
 ## 3) GENERAL INFORMATION
 
@@ -68,9 +64,10 @@ We recommend manufacturer distributed drivers for Windows 10 (i.e. drivers that 
 ### Sound Provider:
 We use Wwise for the sound management.
 & provided some audios from https://freesound.org/
+and ___________
 
 ### Screen Resolution:
-For this release, is recommended to not rescale the window, UI not rescaled yet.
+For this release, is recommended to not rescale the window
 
 ## 5) CONTROLS
 As a player you can execute the following controls:
@@ -95,7 +92,6 @@ As a player you can execute the following controls:
 * Press F9 To Put GodMode, Habilities without cost
 * Press F10 To Put the secundary hability cooldown in 1 seg
 * Press F11 to quit damage
-* Press P to pass to lvl 3
 
 ## 6) KNOWN ISSUES
 
@@ -106,6 +102,16 @@ https://github.com/Project3CITM/CulverinEngine-Project3/issues
 Web Site: https://github.com/Project3CITM/CulverinEngine-Project3
 
 ## 8) CHANGELOG
+### Pre Alpha 2 V 0.5
+ 	* the maps have been changed to 7 different maps
+	* New Assets at the stages
+	* New boss AI
+	* New Transitions between stages
+	* Bug Fixing
+	* Improved and added particles
+	* Added new Visual Effects
+	* New options menu
+	* Anchor points for UI
 
 ### Alpha V 0.3
 

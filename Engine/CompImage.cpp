@@ -10,6 +10,7 @@
 #include "CompRectTransform.h"
 #include "CompCanvas.h"
 #include "ModuleFS.h"
+#include "JSONSerialization.h"
 #include "ModuleInput.h"
 
 CompImage::CompImage(Comp_Type t, GameObject * parent) :CompGraphic(t, parent)
@@ -443,23 +444,46 @@ void CompImage::CopyValues(const CompImage * component)
 
 void CompImage::Clear()
 {
+	if (source_image != nullptr)
+	{
+		if (source_image->num_game_objects_use_me > 0)
+		{
+			source_image->num_game_objects_use_me--;
+		}
+	}
 	source_image = nullptr;
+
+	if (overwrite_image != nullptr)
+	{
+		if (overwrite_image->num_game_objects_use_me > 0)
+		{
+			overwrite_image->num_game_objects_use_me--;
+		}
+	}
 	overwrite_image = nullptr;
+
+	if (controller_image != nullptr)
+	{
+		if (controller_image->num_game_objects_use_me > 0)
+		{
+			controller_image->num_game_objects_use_me--;
+		}
+	}
+	controller_image = nullptr;
 	if (my_canvas != nullptr)
 		my_canvas->RemoveGraphic(this);
 	my_canvas = nullptr;
 	my_canvas_render = nullptr;
 	transform = nullptr;
 
-
+	
 	
 }
 
 void CompImage::Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const
 {
-	json_object_dotset_string_with_std(object, name + "Component:", name_component);
-	json_object_dotset_number_with_std(object, name + "Type", this->GetType());
-	json_object_dotset_number_with_std(object, name + "UUID", uid);
+	
+	CompGraphic::Save(object, name, saveScene, countResources);
 
 	if (source_image != nullptr)
 	{
@@ -476,11 +500,6 @@ void CompImage::Save(JSON_Object * object, std::string name, bool saveScene, uin
 	{
 		json_object_dotset_number_with_std(object, name + "Resource Mesh UUID", 0);
 	}
-	json_object_dotset_boolean_with_std(object, name + "Device Swap", device_swap);
-	json_object_dotset_boolean_with_std(object, name + "Device Swap Active", device_swap_active);
-	json_object_dotset_boolean_with_std(object, name + "Invalid", invalid);
-	json_object_dotset_boolean_with_std(object, name + "Can draw", can_draw);
-
 	if (device_swap)
 	{
 		if (controller_image != nullptr)
@@ -499,7 +518,8 @@ void CompImage::Save(JSON_Object * object, std::string name, bool saveScene, uin
 			json_object_dotset_number_with_std(object, name + "Resource Controller UUID", 0);
 		}
 	}
-	json_object_dotset_boolean_with_std(object, name + "RayCast Target", raycast_target);
+	json_object_dotset_boolean_with_std(object, name + "Device Swap", device_swap);
+	json_object_dotset_boolean_with_std(object, name + "Device Swap Active", device_swap_active);
 	json_object_dotset_number_with_std(object, name + "Fill Amount", filled);
 	json_object_dotset_number_with_std(object, name + "Image Type", type);
 	json_object_dotset_number_with_std(object, name + "Fill Method", method);
@@ -513,7 +533,8 @@ void CompImage::Save(JSON_Object * object, std::string name, bool saveScene, uin
 
 void CompImage::Load(const JSON_Object * object, std::string name)
 {
-	uid = json_object_dotget_number_with_std(object, name + "UUID");
+	CompGraphic::Load(object, name);
+
 	//...
 	uint resourceID = json_object_dotget_number_with_std(object, name + "Resource Mesh UUID");
 	if (resourceID > 0)
@@ -533,9 +554,6 @@ void CompImage::Load(const JSON_Object * object, std::string name)
 
 	device_swap = json_object_dotget_boolean_with_std(object, name + "Device Swap");
 	device_swap_active= json_object_dotget_boolean_with_std(object, name + "Device Swap Active");
-
-	invalid = json_object_dotget_boolean_with_std(object, name + "Invalid");
-	can_draw = json_object_dotget_boolean_with_std(object, name + "Can draw");
 	if (device_swap)
 	{
 		uint resource_controllerID = json_object_dotget_number_with_std(object, name + "Resource Controller UUID");
@@ -562,7 +580,6 @@ void CompImage::Load(const JSON_Object * object, std::string name)
 			device_swap = false;
 		}
 	}
-	raycast_target=json_object_dotget_boolean_with_std(object, name + "RayCast Target");
 	filled=json_object_dotget_number_with_std(object, name + "Fill Amount");
 	type = static_cast<CompImage::Type>((int)json_object_dotget_number_with_std(object, name + "Image Type"));
 	method = static_cast<FillMethod>((int)json_object_dotget_number_with_std(object, name + "Fill Method"));
@@ -571,6 +588,142 @@ void CompImage::Load(const JSON_Object * object, std::string name)
 		radial_inverse = json_object_dotget_boolean_with_std(object, name + "Fill Radian Inverse");
 	}
 	color = App->fs->json_array_dotget_float4_string(object, name + "Image Color");
+
+	Enable();
+}
+
+void CompImage::GetOwnBufferSize(uint& buffer_size)
+{
+	CompGraphic::GetOwnBufferSize(buffer_size);
+
+	if (source_image != nullptr)
+	{
+		buffer_size += sizeof(int);						//source_image->GetUUID()
+	}
+	else
+	{
+		buffer_size += sizeof(int);						//source_image->GetUUID() == 0
+	}
+	buffer_size += sizeof(bool);						//device_swap
+	if (device_swap)
+	{
+		if (controller_image != nullptr)
+		{
+			buffer_size += sizeof(int);					//controller_image->GetUUID()
+		}
+		else
+		{
+			buffer_size += sizeof(int);					//controller_image->GetUUID() == 0
+		}
+	}
+
+	buffer_size += sizeof(bool);						//device_swap_active
+	buffer_size += sizeof(float);						//filled
+	buffer_size += sizeof(int);							//(enum) type
+	buffer_size += sizeof(int);							//(enum) method
+
+	if (method == FillMethod::RADIAL360)
+	{
+		buffer_size += sizeof(bool);					//radial_inverse
+	}
+	buffer_size += sizeof(float);						//color
+	buffer_size += sizeof(float);						//.
+	buffer_size += sizeof(float);						//.
+	buffer_size += sizeof(float);						//.
+}
+
+void CompImage::SaveBinary(char ** cursor, int position) const
+{
+	CompGraphic::SaveBinary(cursor, position);
+	if (source_image != nullptr)
+	{
+		App->json_seria->SaveIntBinary(cursor, source_image->GetUUID());
+	}
+	else
+	{
+		App->json_seria->SaveIntBinary(cursor, 0);
+	}
+	App->json_seria->SaveBooleanBinary(cursor, device_swap);
+	if (device_swap)
+	{
+		if (controller_image != nullptr)
+		{
+			App->json_seria->SaveIntBinary(cursor, controller_image->GetUUID());
+		}
+		else
+		{
+			App->json_seria->SaveIntBinary(cursor, 0);
+		}
+	}
+	App->json_seria->SaveBooleanBinary(cursor, device_swap_active);
+	App->json_seria->SaveFloatBinary(cursor, filled);
+	App->json_seria->SaveIntBinary(cursor, type);
+	App->json_seria->SaveIntBinary(cursor, method);
+
+	if (method == FillMethod::RADIAL360)
+	{
+		App->json_seria->SaveBooleanBinary(cursor, radial_inverse);
+	}
+	App->json_seria->SaveFloat4Binary(cursor, color);
+}
+
+void CompImage::LoadBinary(char ** cursor)
+{
+	CompGraphic::LoadBinary(cursor);
+
+	//...
+	uint resourceID = App->json_seria->LoadIntBinary(cursor);
+	if (resourceID > 0)
+	{
+		source_image = (ResourceMaterial*)App->resource_manager->GetResource(resourceID);
+		if (source_image != nullptr)
+		{
+			source_image->num_game_objects_use_me++;
+
+			// LOAD Image ----------------------------
+			if (source_image->IsLoadedToMemory() == Resource::State::UNLOADED)
+			{
+				App->importer->iMaterial->LoadResource(std::to_string(source_image->GetUUID()).c_str(), source_image);
+			}
+		}
+	}
+
+	device_swap = App->json_seria->LoadBooleanBinary(cursor);
+	if (device_swap)
+	{
+		uint resource_controllerID = App->json_seria->LoadIntBinary(cursor);
+		if (resource_controllerID > 0)
+		{
+			controller_image = (ResourceMaterial*)App->resource_manager->GetResource(resource_controllerID);
+			if (controller_image != nullptr)
+			{
+				controller_image->num_game_objects_use_me++;
+
+				// LOAD Image ----------------------------
+				if (controller_image->IsLoadedToMemory() == Resource::State::UNLOADED)
+				{
+					App->importer->iMaterial->LoadResource(std::to_string(controller_image->GetUUID()).c_str(), controller_image);
+				}
+			}
+			else
+			{
+				device_swap = false;
+			}
+		}
+		else
+		{
+			device_swap = false;
+		}
+	}
+	device_swap_active = App->json_seria->LoadBooleanBinary(cursor);
+	filled = App->json_seria->LoadFloatBinary(cursor);
+	type = static_cast<CompImage::Type>(App->json_seria->LoadIntBinary(cursor));
+	method = static_cast<FillMethod>(App->json_seria->LoadIntBinary(cursor));
+	if (method == FillMethod::RADIAL360)
+	{
+		radial_inverse = App->json_seria->LoadBooleanBinary(cursor);
+	}
+	color = App->json_seria->LoadFloat4Binary(cursor);
 
 	Enable();
 }
@@ -651,6 +804,42 @@ void CompImage::SetToFilled(bool filled)
 
 }
 
+void CompImage::SetNewAnimationValue(const AnimationData & value)
+{
+	switch (value.type)
+	{
+	case ParameterValue::IMAGE_ALPHA_VALUE:
+		SetAlpha(value.value.f_value);
+		break;
+	case ParameterValue::IMAGE_SPRITE_ANIM:
+		if (value.value.sprite == nullptr)
+		{
+			return;
+		}
+		source_image = value.value.sprite;
+		overwrite_image = value.value.sprite;
+		UpdateSpriteId();
+		break;
+	default:
+		break;
+	}
+}
+
+const char * CompImage::ReturnParameterName(ParameterValue parameter)
+{
+	switch (parameter)
+	{
+	case ParameterValue::IMAGE_ALPHA_VALUE:
+		return "Alpha";
+		break;
+	case ParameterValue::IMAGE_SPRITE_ANIM:
+		return "Sprite";
+		break;
+	default:		
+		break;
+	}
+}
+
 float4 CompImage::GetColor() const
 {
 	return color;
@@ -675,14 +864,66 @@ ResourceMaterial * CompImage::GetCurrentTexture() const
 	return overwrite_image;
 }
 
+AnimationData CompImage::ShowParameters()
+{
+	ImGui::OpenPopup("Sprite Options");
+	AnimationData ret;
+	ret.type = ParameterValue::PARAMETER_NONE;
+	SetNextWindowSize(ImVec2(200, 200));
+	if (ImGui::BeginPopup("Sprite Options"))
+	{
+		ImGui::Columns(2, "Type");
+		ImGui::Text("Anim type");
+		ImGui::NextColumn();
+		ImGui::Text("Select");
+		ImGui::NextColumn();
+		ImGui::Separator();
+
+		ImGui::Text("Alpha");
+		ImGui::NextColumn();
+		if(ImGui::Button("Set Alpha"))
+		{
+			ret.type = ParameterValue::IMAGE_ALPHA_VALUE;
+			ret.value.i_value = GetColor().w;
+		}
+		ImGui::NextColumn();
+
+		ImGui::Text("Sprite");
+		ImGui::NextColumn();
+		if(ImGui::Button("Set Sprite"))
+		{
+			ret.type = ParameterValue::IMAGE_SPRITE_ANIM;
+			ret.value.sprite = nullptr;
+		}
+		ImGui::NextColumn();
+		ImGui::Columns(1);
+
+		ImGui::EndPopup();
+	}
+	return ret;
+}
+
+AnimationValue CompImage::GetParameter(ParameterValue parameter)
+{
+	AnimationValue ret;
+	switch (parameter)
+	{
+	case ParameterValue::IMAGE_ALPHA_VALUE:
+		ret.f_value = GetColor().w;
+		break;
+	case ParameterValue::IMAGE_SPRITE_ANIM:
+		ret.sprite = source_image;
+	default:
+		break;
+	}
+	return ret;
+}
+
 void CompImage::CorrectFillAmount()
 {
 	filled = CAP(filled);
 	
 }
-
-
-
 
 
 
@@ -806,7 +1047,8 @@ void CompImage::ExpandMesh()
 	{
 	case Type::SIMPLE:
 	{
-		ProcesQuad(transform->GenerateQuadVertices());
+		if(transform != nullptr)
+			ProcesQuad(transform->GenerateQuadVertices());
 	}
 		break;
 	case Type::FILLED:

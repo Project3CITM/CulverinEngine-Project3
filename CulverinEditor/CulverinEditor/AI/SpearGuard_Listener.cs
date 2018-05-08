@@ -69,6 +69,8 @@ public class SpearGuard_Listener : PerceptionListener
                     {
                         //PLAY COMBAT MUSIC
                         Audio.ChangeState("MusicState", "Combat");
+                        if (Audio.prank)
+                            Audio.ChangeState("MusicState", "AlternateCombat");
                         GetLinkedObject("event_manager").GetComponent<PerceptionManager>().player_seen = true;
                         Debug.Log("COMBAT ON", Department.PLAYER, Color.ORANGE);
                     }

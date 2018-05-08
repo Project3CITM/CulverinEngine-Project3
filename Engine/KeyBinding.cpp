@@ -94,12 +94,12 @@ bool KeyBinding::InitKeyBinding()
 	key_binding_relations.push_back(KeyRelation(3, "ButtonRight","mouse", KeyBindingType::MOUSE_BUTTON_DEVICE));
 
 	// CONTROLLER INPUT------------------------------------------------------------
-	key_binding_relations.push_back(KeyRelation(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_A, "CButtonA", "controller", KeyBindingType::CONTROLLER_BUTTON_DEVICE));
-	key_binding_relations.push_back(KeyRelation(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_B, "CButtonB", "controller", KeyBindingType::CONTROLLER_BUTTON_DEVICE));
-	key_binding_relations.push_back(KeyRelation(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_X, "CButtonX", "controller", KeyBindingType::CONTROLLER_BUTTON_DEVICE));
-	key_binding_relations.push_back(KeyRelation(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_Y, "CButtonY", "controller", KeyBindingType::CONTROLLER_BUTTON_DEVICE));
+	key_binding_relations.push_back(KeyRelation(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_A, " A", "controller", KeyBindingType::CONTROLLER_BUTTON_DEVICE));
+	key_binding_relations.push_back(KeyRelation(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_B, " B", "controller", KeyBindingType::CONTROLLER_BUTTON_DEVICE));
+	key_binding_relations.push_back(KeyRelation(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_X, " X", "controller", KeyBindingType::CONTROLLER_BUTTON_DEVICE));
+	key_binding_relations.push_back(KeyRelation(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_Y, " Y", "controller", KeyBindingType::CONTROLLER_BUTTON_DEVICE));
 
-	key_binding_relations.push_back(KeyRelation(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_START, "CStart", "controller", KeyBindingType::CONTROLLER_BUTTON_DEVICE));
+	key_binding_relations.push_back(KeyRelation(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_START, "Start", "controller", KeyBindingType::CONTROLLER_BUTTON_DEVICE));
 	key_binding_relations.push_back(KeyRelation(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_GUIDE, "CGuide", "controller", KeyBindingType::CONTROLLER_BUTTON_DEVICE));
 	key_binding_relations.push_back(KeyRelation(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_BACK, "CBack", "controller", KeyBindingType::CONTROLLER_BUTTON_DEVICE));
 
@@ -108,11 +108,11 @@ bool KeyBinding::InitKeyBinding()
 	key_binding_relations.push_back(KeyRelation(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_LEFT, "CPadLeft", "controller", KeyBindingType::CONTROLLER_BUTTON_DEVICE));
 	key_binding_relations.push_back(KeyRelation(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_RIGHT, "CPadRight", "controller", KeyBindingType::CONTROLLER_BUTTON_DEVICE));
 
-	key_binding_relations.push_back(KeyRelation(SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_TRIGGERLEFT, "CButtonLeftStick", "controller", KeyBindingType::CONTROLLER_AXIS_DEVICE));
-	key_binding_relations.push_back(KeyRelation(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_LEFTSHOULDER, "CButtonLeftShoulder", "controller", KeyBindingType::CONTROLLER_BUTTON_DEVICE));
+	key_binding_relations.push_back(KeyRelation(SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_TRIGGERLEFT, "L2", "controller", KeyBindingType::CONTROLLER_AXIS_DEVICE));
+	key_binding_relations.push_back(KeyRelation(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_LEFTSHOULDER, "L1", "controller", KeyBindingType::CONTROLLER_BUTTON_DEVICE));
 
-	key_binding_relations.push_back(KeyRelation(SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_TRIGGERRIGHT, "CButtonRightStick", "controller", KeyBindingType::CONTROLLER_AXIS_DEVICE));
-	key_binding_relations.push_back(KeyRelation(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_RIGHTSHOULDER, "CButtonRightShoulder", "controller", KeyBindingType::CONTROLLER_BUTTON_DEVICE));
+	key_binding_relations.push_back(KeyRelation(SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_TRIGGERRIGHT, "R2", "controller", KeyBindingType::CONTROLLER_AXIS_DEVICE));
+	key_binding_relations.push_back(KeyRelation(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_RIGHTSHOULDER, "R1", "controller", KeyBindingType::CONTROLLER_BUTTON_DEVICE));
 
 	key_binding_relations.push_back(KeyRelation(SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_RIGHTX, "CRightX", "controller", KeyBindingType::CONTROLLER_AXIS_DEVICE));
 	key_binding_relations.push_back(KeyRelation(SDL_GameControllerAxis::SDL_CONTROLLER_AXIS_RIGHTY, "CRightY", "controller", KeyBindingType::CONTROLLER_AXIS_DEVICE));
@@ -136,7 +136,7 @@ KeyRelation * KeyBinding::FindKeyBinding(const char * name)
 	for (int i = 0; i < key_binding_relations.size(); i++)
 	{
 
-		if (key_binding_relations[i].name == name)
+		if (strcmp(key_binding_relations[i].name.c_str(),name)==0)
 		{
 			return &key_binding_relations[i];
 		}
@@ -147,15 +147,36 @@ KeyRelation * KeyBinding::FindKeyBinding(const char * name)
 	return &key_binding_relations[KEY_NONE_NUM];
 }
 
+KeyRelation * KeyBinding::FindKeyBinding(DeviceCombinationType device, int event_value)
+{
+	for (int i = 0; i < key_binding_relations.size(); i++)
+	{
+
+		if (key_binding_relations[i].device == device&&key_binding_relations[i].event_value == event_value)
+		{
+			return &key_binding_relations[i];
+		}
+
+	}
+
+
+	return &key_binding_relations[KEY_NONE_NUM];
+}
+
+KeyRelation * KeyBinding::GetNullKeyBinding()
+{
+	return  &key_binding_relations[KEY_NONE_NUM];
+}
+
 DeviceCombinationType KeyRelation::SelectDeviceCombination(const char* value)
 {
 	if (strcmp(value, "mouse")==0|| strcmp(value, "keyboard") == 0)
 	{
-		DeviceCombinationType::KEYBOARD_AND_MOUSE_COMB_DEVICE;
+		return DeviceCombinationType::KEYBOARD_AND_MOUSE_COMB_DEVICE;
 	}
 	else if(strcmp(value, "controller") == 0)
 	{
-		DeviceCombinationType::CONTROLLER_COMB_DEVICE;
+		return DeviceCombinationType::CONTROLLER_COMB_DEVICE;
 	}
 	return DeviceCombinationType::NULL_COMB_DEVICE;
 }

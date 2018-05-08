@@ -8,6 +8,7 @@
 #include "glm\glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include <vector>
+#include "Materials.h"
 
 #define DEFAULT_SHADOW_CAST_POINTS_COUNT 9
 
@@ -80,7 +81,10 @@ private:
 public:
 	//test
 	ShaderProgram * shadow_Shader = nullptr;
+	ShaderProgram * shadow_Shader_skinning = nullptr;
 	ShaderProgram* point_light_shadow_depth_shader = nullptr;
+
+	Material* shadow_skinning_mat = nullptr;
 
 	FrameBuffer text;
 	DepthFrameBuffer test_fix;
@@ -94,8 +98,8 @@ public:
 private:
 	uint shadow_cast_points_count = DEFAULT_SHADOW_CAST_POINTS_COUNT; // This value should be able to change from config and modiffied on load
 	std::vector<DepthCubeMap*> shadow_point_lights_maps;
-	uint shadow_maps_res_w = 256;
-	uint shadow_maps_res_h = 256;
+	uint shadow_maps_res_w = 1024;
+	uint shadow_maps_res_h = 1024;
 
 
 	std::vector<CompLight*> scene_lights;

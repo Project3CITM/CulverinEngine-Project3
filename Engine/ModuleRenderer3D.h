@@ -1,13 +1,15 @@
 #ifndef _MODULERENDERER3D_
 #define _MODULERENDERER3D_
 
-#include "Module.h"
 #include "Globals.h"
+#include "Module.h"
 #include "Light.h"
 #include "parson.h"
 
 #include "ModuleShaders.h"
 #include "Materials.h"
+
+#include "Screenshot_and_gif.h"
 
 #include <gl/GL.h>
 #include <gl/GLU.h>
@@ -18,7 +20,8 @@ class CompCamera;
 class CubeMap_Texture;
 class DepthCubeMap;
 
-enum RenderMode {
+enum RenderMode
+{
 	DEFAULT,
 	GLOW,
 	DEPTH
@@ -49,6 +52,8 @@ public:
 
 	void OnResize(int width, int height);
 
+	float2 LoadImage_devil(const char * theFileName, GLuint *buff);
+	bool loadTextureFromPixels32(GLuint * id_pixels, GLuint width_img, GLuint height_img, GLuint *buff);
 	
 	void RenderSceneWiewport();
 	void BlurShaderVars(int i);
@@ -56,7 +61,6 @@ public:
 
 public:
 
-	
 	SDL_GLContext context;
 	CompCamera* active_camera = nullptr; /* Render the scene through the active camera (it can be SCENE camera or GAME camera)*/
 	CompCamera* scene_camera = nullptr;
@@ -84,6 +88,7 @@ public:
 	ShaderProgram* particles_shader = nullptr;
 	ShaderProgram* lights_billboard_shader = nullptr;
 	ShaderProgram* non_glow_shader = nullptr;
+	ShaderProgram* non_glow_skinning_shader = nullptr;
 	ShaderProgram* blur_shader_tex = nullptr;
 	ShaderProgram* final_shader_tex = nullptr;
 	ShaderProgram* cube_map_shader = nullptr;
@@ -91,6 +96,7 @@ public:
 
 	Material* default_material = nullptr;
 	Material* non_glow_material = nullptr;
+	Material* non_glow_skinning_material = nullptr;
 	Material* final_tex_material = nullptr;
 
 	RenderMode render_mode = RenderMode::DEFAULT;
@@ -109,6 +115,10 @@ public:
 	int blur_amount = 28;
 	float blur_scale = 0.3;
 	float blur_strength = 0.0f;
+
+private:
+	Culverin_Screenshot screenshot;
+	Culverin_Gif gif;
 };
 
 #endif

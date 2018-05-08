@@ -1,6 +1,6 @@
 #version 330 core
 
-#define MAX_LIGHTS 120
+#define MAX_LIGHTS 100
 
 uniform int _numLights;
 uniform struct Light {
@@ -36,14 +36,21 @@ uniform sampler2DShadow _shadowMap;
 uniform vec3 _cameraPosition;
 uniform float _alpha;
 
-uniform float a_Ka;
-uniform float a_Kd;
-uniform float a_Ks;
-uniform float a_shininess;
 
-//uniform int iterations;
+uniform float a_Kd;
+uniform float a_shininess;
+uniform float _farPlane;
+
 uniform int shadow_blur;
-//uniform float bias;
+
+//Fresnel
+uniform bool activate_fresnel;
+uniform float fresnel_scale;
+uniform float fresnel_bias;
+uniform float fresnel_power;
+uniform float fresnel_lerp;
+in vec3 world_pos;
+in vec3 world_normal;
 
 uniform mat4 model;
 
@@ -66,24 +73,19 @@ vec2 poissonDisk[16] = vec2[](
    vec2( 0.14383161, -0.14100790 )
 );
 
-float random(vec3 seed, int i){
-	vec4 seed4 = vec4(seed,i);
-	float dot_product = dot(seed4, vec4(12.9898,78.233,45.164,94.673));
-	return fract(sin(dot_product) * 43758.5453);
-};
+
 
 vec4 light_colors[MAX_LIGHTS];
 
-vec3 blinnPhongDir(Light light, float Kd, float Ks, float shininess, vec3 N)
+vec3 blinnPhongDir(Light light, float Kd, float Ks, float shininess, vec3 N, float shadow)
 {
     vec3 v = normalize(TBN * _cameraPosition - FragPos);
 
     float lightInt = light.properties[0];
 
     if (light.type != 0) {
-        // Directional
-
-       // Light direction
+     
+       
         vec3 s =  normalize(TBN * light.position );
 
         vec3 r = reflect(-s,N);
@@ -94,8 +96,8 @@ vec3 blinnPhongDir(Light light, float Kd, float Ks, float shininess, vec3 N)
 
         float diffuse = Kd * lightInt * cosTheta;
         float spec =  Ks* lightInt* pow(cosAlpha,shininess);
-
-        return vec3(diffuse,spec,1);
+      
+        return vec3(diffuse,spec,1) * shadow;
 
     }
 
@@ -133,10 +135,9 @@ float CalcShadow(vec4 shadowPos, float usedBias)
 
     for(int i = 0; i < iterations; ++i)
     {
-        int index = int(16.0 * random(floor(mat3(model) * ourPos * 1000.0), i)) % 16;
-
-        float shadowVal = (1.0f - texture(_shadowMap, vec3(shadowPos.xy + poissonDisk[index] / 200.0, (shadowPos.z - usedBias) / shadowPos.w)));
-        float tmp = 0.1 * shadowVal;// old value: 0.05 - iterations: 20
+      
+        float shadowVal = (1.0f - texture(_shadowMap, vec3(shadowPos.xy + poissonDisk[i] / 200.0, (shadowPos.z - usedBias) / shadowPos.w)));
+        float tmp = 0.1* shadowVal;// old value: 0.05 - iterations: 20
 
         shadow -= tmp;
     }
@@ -164,23 +165,24 @@ void main()
         if(_lights[i].type != 0)
         {
             //Directional
-            lightDir = _lights[0].position;
+            lightDir = _lights[i].position;
             break;
         }
     }
 
     vec3 l = normalize(lightDir);
     float cosTheta = clamp(dot(ourNormal,l),0,1);
-    float bias = 0.005;
+    float bias = 0.00;
     float usedBias = bias * tan(acos(cosTheta));
     usedBias = clamp(usedBias, 0, 0.01);
 
-
+   vec4 shadowPos = shadowCoord / shadowCoord.w;
+    float shadow = CalcShadow(shadowPos, usedBias);
     
  for (int i = 0; i <_numLights; ++i) {
 
-       inten = blinnPhongDir(_lights[i], a_Kd, spec_texture.r, gloss_texture.r, N);
-       inten_final.xy += inten.xy;
+       inten = blinnPhongDir(_lights[i], a_Kd, spec_texture.r, gloss_texture.r, N, shadow);
+       inten_final += inten;
        light_colors[i] = vec4(_lights[i].l_color.rgb,inten.z);
 
        final_color += vec3(light_colors[i]) * light_colors[i].a;
@@ -192,8 +194,29 @@ void main()
     final_ambient = final_ambient/_numLights;
     final_color =normalize(final_color);
 
-	vec3 col = max( color_texture * vec3(0,0.2,0.2) ,
-	color_texture * (inten_final.x + inten_final.y * spec_texture.r)*final_color.rgb);
+    vec3 col = max( color_texture * vec3(0,0.2,0.2), color_texture * (inten_final.x + inten_final.y * spec_texture.r)*final_color.rgb );
 
-    color = vec4(col, _alpha);
+float fade_dist = 1;
+float norm_min = (_farPlane - _farPlane/ 3);
+float dist = (length(_cameraPosition - vec3(model * vec4(ourPos,1)))-  norm_min) / (_farPlane - norm_min); 
+dist = abs(clamp(dist, 0.0, 1.0)-1);
+    color = vec4(col* dist, _alpha);
+
+color = vec4(col* dist, _alpha);
+    
+
+ if(activate_fresnel == true)
+ {
+
+   vec3 camera_to_vertex = normalize(_cameraPosition - world_pos);
+   float fresnel_coeficient = max(0.0, min(1.0, fresnel_bias + fresnel_scale * pow(1.0 + dot(camera_to_vertex, world_normal), fresnel_power)));
+
+
+     color = mix(color ,vec4(vec3(col.xyz * dist) * fresnel_coeficient, 1.0), fresnel_lerp);
+
+  
+ }
+
+
+
 }

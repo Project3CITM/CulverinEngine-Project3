@@ -138,8 +138,7 @@ void ModuleRenderGui::ChangeSelected(Event & this_event)
 void ModuleRenderGui::OnEvent(Event & this_event)
 {
 	BROFILER_CATEGORY("OnEvent: ModuleRenderGui", Profiler::Color::Blue);
-	if (focus != nullptr)
-		this_event.pointer.focus = focus->GetParent();
+
 
 	switch (this_event.Get_event_data_type())
 	{
@@ -191,12 +190,14 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 	case EventType::EVENT_BUTTON_DOWN:
 	case EventType::EVENT_BUTTON_UP:
 	case EventType::EVENT_MOUSE_MOTION:
+		if (focus != nullptr)
+			this_event.pointer.focus = focus->GetParent();
 		if (App->engine_state != EngineState::STOP)
 		{
 			
 				bool positive_colision = false;
 				std::vector<CompInteractive*>::reverse_iterator it = iteractive_vector.rbegin();
-				for (; it != iteractive_vector.rend(); it++)
+				for (; it != iteractive_vector.rend(); ++it)
 				{
 					if (!(*it)->IsInteractiveEnabled())
 					{
@@ -217,12 +218,13 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 						switch (this_event.Get_event_data_type())
 						{
 						case EventType::EVENT_BUTTON_DOWN:
-							(*it)->OnPointDown(this_event);
 							if ((*it)->GetNavigationMode() != Navigation::NavigationMode::NAVIGATION_NONE)
 							{
 								PassSelected((*it));
 								(*it)->OnInteractiveSelected(this_event);
 							}
+							(*it)->OnPointDown(this_event);
+						
 							focus = (*it);
 							mouse_down = true;
 							break;
@@ -232,7 +234,7 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 							mouse_down = false;
 							break;
 						case EventType::EVENT_MOUSE_MOTION:
-							if ((*it)->IsSelective())
+							if ((*it)->IsDragrable())
 							{
 								(*it)->OnDrag(this_event);
 							}
@@ -251,6 +253,10 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 							mouse_down = false;
 							break;
 						case EventType::EVENT_MOUSE_MOTION:
+							if ((*it)->IsDragrable())
+							{
+								(*it)->OnDrag(this_event);
+							}
 							(*it)->OnPointExit(this_event);
 							break;
 						}

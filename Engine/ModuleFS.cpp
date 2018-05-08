@@ -48,6 +48,15 @@ bool ModuleFS::Init(JSON_Object* node)
 	CreateFolder("Assets/Maps");
 	CreateFolder("Assets/Shaders");
 	CreateFolder("Assets/Shaders/Materials");
+	CreateFolder("Assets/SceneBinary");
+
+	CreateFolder("Screenshots");
+	CreateFolder("Screenshots/ScreenFull");
+	CreateFolder("Screenshots/ScreenPortion");
+	CreateFolder("Screenshots/GifFull");
+	CreateFolder("Screenshots/GifPortion");
+
+	CreateFolder("RealNormalMaps");
 
 	return true;
 }
@@ -71,13 +80,15 @@ update_status ModuleFS::PreUpdate(float dt)
 	static bool ImportAutoFiles = true;
 	if (ImportAutoFiles)
 	{
-		App->module_shaders->LoadShaderMaterials();
+		App->module_shaders->LoadShaderMaterials(); 
+		App->module_shaders->ImportShaderMaterials();
+
+
 		if (App->mode_game == false)
 		{
 			ImportAllFilesNoMeta(allfilesAsstes);
 		}
-		App->module_shaders->ImportShaderMaterials();
-	
+
 
 		//First material!! and next meshes... TODO ELLIOT
 		ImportAutoFiles = false;

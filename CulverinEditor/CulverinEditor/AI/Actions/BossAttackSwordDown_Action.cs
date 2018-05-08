@@ -30,22 +30,49 @@ public class BossAttackSwordDown_Action : Action
 
     public float rumble_power = 0.5f;
     public int rumble_time = 200;
-    private bool ground_hit = true;
+    private bool ground_hit = false;
+    public GameObject target = null;
+    CharactersManager player = null;
 
+    private CompAudio audio;
 
     public override bool ActionStart()
     {
-
         state = BASD_STATE.PRE_APPLY;
-        GetComponent<CompAnimation>().SetTransition("ToSwordDownAttack");
-        GetComponent<CompAnimation>().SetClipDuration("SwordDownAttack", preparation_time / apply_damage_point);
-        GetComponent<CompAudio>().PlayEvent("AttackPreparation");
-        ground_hit = true;
+        target = GetLinkedObject("target");
+        player = target.GetComponent<CharactersManager>();
+
+        if (player == null)
+        {
+            Debug.Log("[error] Attack Action Start: Player is null!");
+        }
+
+        if (player.dying == false)
+        {
+            state = BASD_STATE.PRE_APPLY;
+            GetComponent<CompAnimation>().SetTransition("ToSwordDownAttack");
+            GetComponent<CompAnimation>().SetClipDuration("SwordDownAttack", preparation_time / apply_damage_point);
+            audio = GetComponent<CompAudio>();
+            GetComponent<CompAudio>().PlayEvent("AttackPreparation");
+            ground_hit = false;
+        }
+
         return true;
     }
 
     public override ACTION_RESULT ActionUpdate()
     {
+        if(player == null)
+        {
+            Debug.Log("PLAYER NULL", Department.PLAYER, Color.YELLOW);
+        }
+
+        if (player.dying)
+        {
+            Debug.Log("DON'T ATTACK PLAYER", Department.PLAYER, Color.ORANGE);
+            return ACTION_RESULT.AR_FAIL; //Player is dead, don't attack
+        }
+
         if (state == BASD_STATE.PRE_APPLY && GetComponent<CompAnimation>().IsAnimOverXTime(apply_damage_point))
         {
             GetComponent<CompAnimation>().SetClipDuration("SwordDownAttack", (attack_duration / (1.0f - apply_damage_point)));
@@ -63,42 +90,38 @@ public class BossAttackSwordDown_Action : Action
                     if ((enemy_tile_x - 1 == player_tile_x || enemy_tile_x - 2 == player_tile_x) && player_tile_y == enemy_tile_y)
                     {
                         GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetDamage(damage);
-                        ground_hit = false;
                     }
                     break;
                 case Movement_Action.Direction.DIR_EAST:
                     if ((enemy_tile_x + 1 == player_tile_x || enemy_tile_x + 2 == player_tile_x) && player_tile_y == enemy_tile_y)
                     {
                         GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetDamage(damage);
-                        ground_hit = false;
                     }
                     break;
                 case Movement_Action.Direction.DIR_NORTH:
                     if ((enemy_tile_y - 1 == player_tile_y || enemy_tile_y - 2 == player_tile_y) && player_tile_x == enemy_tile_x)
                     {
                         GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetDamage(damage);
-                        ground_hit = false;
                     }
                     break;
                 case Movement_Action.Direction.DIR_SOUTH:
                     if ((enemy_tile_y + 1 == player_tile_y || enemy_tile_y + 2 == player_tile_y) && player_tile_x == enemy_tile_x)
                     {
                         GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetDamage(damage);
-                        ground_hit = false;
                     }
                     break;
             }
         }
-        else if (ground_hit == true && GetComponent<CompAnimation>().IsAnimOverXTime(hit_ground_point))
+        else if (ground_hit == false && GetComponent<CompAnimation>().IsAnimOverXTime(hit_ground_point))
         {
+            Debug.Log("Ground Hit!!");
             GetComponent<CompAudio>().PlayEvent("BossHitGround");
             Input.RumblePlay(rumble_power, rumble_time);
-            ground_hit = false;
-            Debug.Log("Ground Hit!!");
+            ground_hit = true;
+            
         }
         else if (state == BASD_STATE.POST_APPLY && GetComponent<CompAnimation>().IsAnimationStopped("SwordDownAttack"))
         {
-
             state = BASD_STATE.WAITING;
             return ACTION_RESULT.AR_SUCCESS;
         }

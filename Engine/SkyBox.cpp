@@ -2,6 +2,8 @@
 #include "Application.h"
 #include "ModuleTextures.h"
 #include "ModuleRenderer3D.h"
+#include "ModuleWindow.h"
+#include "Scene.h"
 
 #define NUM_SKYBOX 2
 
@@ -42,9 +44,11 @@ void SkyBox::DrawSkybox(float size, float3 pos, uint i)
 	{
 		return;
 	}
+	glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
+	App->scene->scene_buff->Bind("Scene");
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
 	glDisable(GL_LIGHTING);
-	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D);
 
 	//back face 
@@ -117,6 +121,7 @@ void SkyBox::DrawSkybox(float size, float3 pos, uint i)
 	{
 		glDisable(GL_TEXTURE_2D);
 	}
+	App->scene->scene_buff->UnBind("Scene");
 }
 
 

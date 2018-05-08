@@ -19,7 +19,8 @@ public class Enemy_BT : BT
         ARROW,
         FIREWALL,
         FIREBALL,
-        SWORD
+        SWORD,
+        FIREBREATH
     }
 
     public GameObject enemies_manager = null;
@@ -30,7 +31,7 @@ public class Enemy_BT : BT
     public float dmg_alpha = 0.0f;
 
     public float total_hp = 100;
-    protected float current_hp;
+    public float current_hp = 0;
     public ENEMY_STATE life_state = ENEMY_STATE.ENEMY_ALIVE;
 
     public float max_anim_speed = 1.5f;
@@ -62,6 +63,8 @@ public class Enemy_BT : BT
 
     public bool Disable_Movement_Gameplay_Debbuger = false;
 
+    CompAudio audio_comp;
+    public bool dying = false;
     public override void Start()
     {
         in_combat = false;
@@ -101,7 +104,7 @@ public class Enemy_BT : BT
         hp_timer_total = 10.0f;
         hp_timer = 0.0f;
         hud_active = false;
-
+        audio_comp = GetComponent<CompAudio>();
         base.Start();
     }
 
@@ -109,12 +112,29 @@ public class Enemy_BT : BT
     {
         //Update attack cooldown
         attack_timer += Time.deltaTime;
+        Debug.Log(state, Department.PHYSICS);
+
+        if (GetCurrentHP() <= 0 && state != AI_STATE.AI_DEAD)
+        {
+            Debug.Log("DEAD", Department.IA);
+            //GetComponent<CompAnimation>().SetClipsSpeed(anim_speed);
+            state = AI_STATE.AI_DEAD;
+            life_state = ENEMY_STATE.ENEMY_DEAD;
+
+
+            next_action = GetComponent<Die_Action>();
+            current_action.Interupt();
+            if (GetComponent<EnemySword_BT>() != null) enemies_manager.GetComponent<EnemiesManager>().DeleteSwordEnemy(GetComponent<EnemySword_BT>().gameObject);
+            else if (GetComponent<EnemyShield_BT>() != null) enemies_manager.GetComponent<EnemiesManager>().DeleteShieldEnemy(GetComponent<EnemyShield_BT>().gameObject);
+            else if (GetComponent<EnemySpear_BT>() != null) enemies_manager.GetComponent<EnemiesManager>().DeleteLanceEnemy(GetComponent<EnemySpear_BT>().gameObject);
+        }
+
         base.Update();
     }
 
     public override void MakeDecision()
     {
-        if (next_action.action_type == Action.ACTION_TYPE.ATTACK_ACTION || next_action.action_type == Action.ACTION_TYPE.PUSHBACK_ACTION 
+        if (next_action.action_type == Action.ACTION_TYPE.ATTACK_ACTION || next_action.action_type == Action.ACTION_TYPE.PUSHBACK_ACTION
             || next_action.action_type == Action.ACTION_TYPE.STUN_ACTION || next_action.action_type == Action.ACTION_TYPE.SPEARATTACK_ACTION
             || next_action.action_type == Action.ACTION_TYPE.FACE_PLAYER_ACTION || next_action.action_type == Action.ACTION_TYPE.DIE_ACTION
             || next_action.action_type == Action.ACTION_TYPE.SEPARATE_ACTION || next_action.action_type == Action.ACTION_TYPE.GET_HIT_ACTION 
@@ -124,6 +144,7 @@ public class Enemy_BT : BT
             {
                 life_state = ENEMY_STATE.ENEMY_STUNNED;
             }
+
             current_action = next_action;
             next_action = null_action;
             current_action.ActionStart();
@@ -169,11 +190,26 @@ public class Enemy_BT : BT
 
     public virtual bool ApplyDamage(float damage, ENEMY_GET_DAMAGE_TYPE damage_type)
     {
-        InterruptAction();
+        
+        if (current_action.action_type != Action.ACTION_TYPE.PUSHBACK_ACTION)
+        {
+            Debug.Log("Yes push hit", Department.PHYSICS, Color.BLUE);
 
-        next_action = GetComponent<GetHit_Action>();
+            if (GetComponent<EnemySpear_BT>() != null)
+                audio_comp.PlayEvent("Enemy2_Hurt");
 
-        GetComponent<GetHit_Action>().SetHitType(damage_type);
+            if (GetComponent<EnemySword_BT>() != null)
+                audio_comp.PlayEvent("Enemy1_Hurt");
+
+            next_action = GetComponent<GetHit_Action>();
+            GetComponent<GetHit_Action>().SetHitType(damage_type);
+           // if (GetComponent<EnemySpear_BT>() == null)
+              //  InterruptAction();
+        }
+        else
+        {
+            Debug.Log("Not push hit", Department.PHYSICS, Color.PINK);
+        }
 
         current_hp -= damage;
         //ChangeTexturesToDamaged();
@@ -190,10 +226,9 @@ public class Enemy_BT : BT
             {
                 gameObject.GetComponent<CompCollider>().CollisionActive(false);
             }
-
             next_action = GetComponent<Die_Action>();
             current_action.Interupt();
-            if (GetComponent<EnemySword_BT>() != null) enemies_manager.GetComponent<EnemiesManager>().DeleteSwordEnemy(GetComponent<EnemySword_BT>().gameObject);
+            if (GetComponent<EnemySword_BT>() != null)enemies_manager.GetComponent<EnemiesManager>().DeleteSwordEnemy(GetComponent<EnemySword_BT>().gameObject);
             else if (GetComponent<EnemyShield_BT>() != null) enemies_manager.GetComponent<EnemiesManager>().DeleteShieldEnemy(GetComponent<EnemyShield_BT>().gameObject);
             else if (GetComponent<EnemySpear_BT>() != null) enemies_manager.GetComponent<EnemiesManager>().DeleteLanceEnemy(GetComponent<EnemySpear_BT>().gameObject);
         }
@@ -317,7 +352,11 @@ public class Enemy_BT : BT
 
     public virtual void UpdateHUD()
     {
+        Debug.Log("current" + current_hp, Department.STAGE, Color.BLUE);
+        Debug.Log("total" + total_hp, Department.STAGE, Color.RED);
+
         float calc_hp = current_hp / total_hp;
+        Debug.Log("calc_hp" + calc_hp, Department.STAGE, Color.PINK);
         enemy_hp_bar.GetComponent<CompImage>().FillAmount(calc_hp);
         hp_timer = 0.0f;
     }

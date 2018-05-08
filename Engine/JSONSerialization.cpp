@@ -238,7 +238,7 @@ void JSONSerialization::LoadScene(const char* sceneName)
 		//Sync components
 		for (int i = 0; i < num_objects; i++)
 		{
-			scene_ptr[i].go->SyncComponents(nullptr);
+			scene_ptr[i].go->SyncComponents(App->scene->root);
 		}
 
 		//Add static objects to scene
@@ -253,7 +253,6 @@ void JSONSerialization::LoadScene(const char* sceneName)
 				App->scene->dynamic_objects.push_back(scene_ptr[i].go);
 			}
 		}
-		App->scene->RecalculateStaticObjects();
 
 		templist.clear();
 		
@@ -936,6 +935,7 @@ void JSONSerialization::SaveInputManager(JSON_Object * config_node, const InputM
 	json_object_dotset_string_with_std(config_node, name + "InputManagerName", input_manager->GetName());
 	json_object_dotset_boolean_with_std(config_node, name + "InputManagerActive", input_manager->GetActiveInput());
 	json_object_dotset_boolean_with_std(config_node, name + "InputManagerBlock", input_manager->GetBlockAction());
+
 	if (!input_manager->GetActionVector().empty())
 	{
 	
@@ -982,7 +982,9 @@ void JSONSerialization::LoadPlayerAction(PlayerActions** player_action,const cha
 			input_manager->SetName(json_object_dotget_string_with_std(config, name + "InputManagerName"));
 			input_manager->SetActiveInput(json_object_dotget_boolean_with_std(config, name + "InputManagerActive"));
 			input_manager->SetBlockAction(json_object_dotget_boolean_with_std(config, name + "InputManagerBlock"));
+
 			int input_action_size = json_object_dotget_number_with_std(config, name + "InputManagerActionSize");
+
 			input_manager->number_of_action = input_action_size;
 			for (uint j = 0; j < input_action_size; j++)
 			{
@@ -1034,7 +1036,7 @@ void JSONSerialization::SaveFont(const ResourceFont * font, const char * directo
 
 void JSONSerialization::SaveUIAnimation(const AnimationJson * animation, const char * directory, const char * fileName)
 {
-	LOG("SAVING Font %s -----", animation->name.c_str());
+	LOG("SAVING UIAnimation %s -----", animation->name.c_str());
 
 	JSON_Value* config_file;
 	JSON_Object* config;
@@ -1042,7 +1044,6 @@ void JSONSerialization::SaveUIAnimation(const AnimationJson * animation, const c
 	std::string nameJson = directory;
 	nameJson += "/";
 	nameJson += animation->name;
-	nameJson += ".anim.json";
 	config_file = json_value_init_object();
 	if (config_file != nullptr)
 	{
@@ -1094,11 +1095,16 @@ void JSONSerialization::SaveUIAnimation(const AnimationJson * animation, const c
 						App->fs->json_array_dotset_float3(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Value " + key_data, animation->animations[i]->key_frame_data[j].key_data[k].key_values.f3_value);
 						break;
 					case ParameterValue::RECT_TRANSFORM_WIDTH:
-						
 						json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Key on time " + key_data, animation->animations[i]->key_frame_data[j].key_data[k].key_values.f_value);
 						break;
 					case ParameterValue::RECT_TRANSFORM_HEIGHT:
 						json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Key on time " + key_data, animation->animations[i]->key_frame_data[j].key_data[k].key_values.f_value);
+						break;
+					case ParameterValue::IMAGE_ALPHA_VALUE:
+						json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "Alpha on time " + key_data, animation->animations[i]->key_frame_data[j].key_data[k].key_values.f_value);
+						break;
+					case ParameterValue::IMAGE_SPRITE_ANIM:
+						json_object_dotset_number_with_std(config, "UIAnimation " + animations + ".Animations.KeyData " + key_frame + "UUID Sprite on time " + key_data, animation->animations[i]->key_frame_data[j].key_data[k].key_values.sprite->GetUUID());
 						break;
 					default:
 						break;

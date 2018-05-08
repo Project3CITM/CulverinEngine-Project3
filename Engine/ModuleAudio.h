@@ -33,6 +33,9 @@ public:
 	
 
 	void SaveAudioBanks(JSON_Object* config_node);
+	void GetOwnBufferSize(uint & buffer_size);
+	void SaveAudioBanks(char ** cursor);
+	void LoadAudioBanksFromScene(int number_of_banks, char ** cursor);
 	void LoadAudioBanksFromScene(int number_of_banks, JSON_Object* config_node);
 	
 	void SetListener(CompAudio* c);
@@ -42,6 +45,7 @@ public:
 	void ResumeSounds();
 	void SetAudioVariableValue(const char* variable_name, float value);
 	void ChangeState(const char* group, const char* new_state);
+	float GetVolume() const;
 	void ChangeVolume(float volume);
 	void Mute(bool m);
 

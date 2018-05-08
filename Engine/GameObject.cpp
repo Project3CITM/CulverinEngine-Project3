@@ -94,7 +94,10 @@ GameObject::GameObject(const GameObject& copy, bool haveparent, GameObject* pare
 
 	// Same data as the 'copy' gameobject
 	active = copy.IsActive();
-	parent_active = parent->IsParentActive();
+	if (parent != nullptr)
+		parent_active = parent->IsParentActive();
+	else
+		parent_active = true;
 	visible = copy.IsVisible();
 	static_obj = copy.IsStatic();
 	bb_active = copy.IsAABBActive();
@@ -704,11 +707,11 @@ void GameObject::ShowHierarchy(bool use_search)
 void GameObject::ShowGameObjectOptions()
 {
 	//Create child Game Objects / Components
-	if (ImGui::MenuItem("Copy", NULL, false, false))
+	if (ImGui::MenuItem("Copy", NULL, false))
 	{
 		((Hierarchy*)App->gui->win_manager[WindowName::HIERARCHY])->SetGameObjectCopy(this);
 	}
-	if (ImGui::MenuItem("Paste", NULL, false, false))
+	if (ImGui::MenuItem("Paste", NULL, false))
 	{
 		((Hierarchy*)App->gui->win_manager[WindowName::HIERARCHY])->CopyGameObject(this);
 	}
@@ -754,14 +757,17 @@ void GameObject::ShowGameObjectOptions()
 			LOG("Deleting a GameObject while PlayMode may cause crashes... you can't delete now.");
 		}
 	}
-	//if (ImGui::MenuItem("Set All Childs with tag 'No C#'"))
-	//{
-	//	SetAllChildsTag(this, "NoC#");
-	//}
-	//if (ImGui::MenuItem("Set All Childs with tag 'No C#' NO PARENT"))
-	//{
-	//	SetAllChildsTag(this, "NoC#", true);
-	//}
+	if (App->gui->develop_mode)
+	{
+		if (ImGui::MenuItem("Set All Childs with tag 'No C#'", NULL, false, App->gui->develop_mode))
+		{
+			SetAllChildsTag(this, "NoC#");
+		}
+		if (ImGui::MenuItem("Set All Childs with tag 'No C#' NO PARENT", NULL, false, App->gui->develop_mode))
+		{
+			SetAllChildsTag(this, "NoC#", true);
+		}
+	}
 	if (ImGui::MenuItem("Show Number of Childs (recursive)", NULL, false, App->gui->develop_mode))
 	{
 		uint count = 0;
@@ -895,6 +901,12 @@ void GameObject::ShowGameObjectOptions()
 					parent = App->scene->CreateCanvas(this);
 				}
 				GameObject* check_box = App->scene->CreateCheckBox(parent);
+				GameObject* tick_obj = App->scene->CreateImage(check_box);
+
+				CompCheckBox* check = (CompCheckBox*)check_box->FindComponentByType(Comp_Type::C_CHECK_BOX);
+
+				check->SetTick((CompImage*)tick_obj->FindComponentByType(Comp_Type::C_IMAGE));
+
 				App->gui->SetLinkInspector(check_box);
 
 			}
@@ -907,8 +919,22 @@ void GameObject::ShowGameObjectOptions()
 					parent = App->scene->CreateCanvas(this);
 				}
 				GameObject* slider = App->scene->CreateSlider(parent);
-				App->gui->SetLinkInspector(slider);
+				GameObject* bg = App->scene->CreateImage(slider);
+				GameObject* bar = App->scene->CreateImage(slider);
+				GameObject* to_slide = App->scene->CreateImage(slider);
 
+				CompSlider* temp = (CompSlider*)slider->FindComponentByType(Comp_Type::C_SLIDER);
+
+				bg->GetComponentRectTransform()->SetWidth(400);
+				bg->GetComponentRectTransform()->SetHeight(30);
+				bar->GetComponentRectTransform()->SetWidth(400);
+				bar->GetComponentRectTransform()->SetHeight(30);
+
+				temp->SetSliderBg((CompImage*)bg->FindComponentByType(Comp_Type::C_IMAGE));
+				temp->SetSliderBar((CompImage*)bar->FindComponentByType(Comp_Type::C_IMAGE));
+				temp->SetTargetGraphic((CompGraphic*)to_slide->FindComponentByType(Comp_Type::C_IMAGE));
+
+				App->gui->SetLinkInspector(slider);
 			}
 			if (ImGui::MenuItem("Text"))
 			{
@@ -940,21 +966,21 @@ void GameObject::ShowGameObjectOptions()
 	// -------------------------------------------------------------
 }
 
-//void GameObject::SetAllChildsTag(GameObject* child, const char* tag, bool parent)
-//{
-//	if (child->GetNumChilds() > 0)
-//	{
-//		for (int i = 0; i < child->GetNumChilds(); i++)
-//		{
-//			child->SetAllChildsTag(child->GetChildbyIndex(i), tag);
-//		}
-//	}
-//	if (child->GetNumComponents() > 1 && child->FindComponentByType(Comp_Type::C_COLLIDER) == nullptr &&
-//		child->FindComponentByType(Comp_Type::C_SCRIPT) == nullptr && parent == false)
-//	{
-//		child->SetTag(tag);
-//	}
-//}
+void GameObject::SetAllChildsTag(GameObject* child, const char* tag, bool parent)
+{
+	if (child->GetNumChilds() > 0)
+	{
+		for (int i = 0; i < child->GetNumChilds(); i++)
+		{
+			child->SetAllChildsTag(child->GetChildbyIndex(i), tag);
+		}
+	}
+	if (child->GetNumComponents() > 1 && child->FindComponentByType(Comp_Type::C_COLLIDER) == nullptr &&
+		child->FindComponentByType(Comp_Type::C_SCRIPT) == nullptr && parent == false)
+	{
+		child->SetTag(tag);
+	}
+}
 
 void GameObject::GetChildsRecursive(GameObject* child, uint& count)
 {
@@ -1318,6 +1344,17 @@ void GameObject::SetActive(bool active)
 	this->active = active;
 
 	bool set_pactive = (parent_active && active) ? true : false;
+	if (!components.empty())
+	{
+		if (components[0]->GetType() == Comp_Type::C_RECT_TRANSFORM)
+		{
+			for (uint i = 0; i < components.size(); i++)
+			{
+				components[i]->OnGOActive(set_pactive);
+			}
+		}
+	}
+
 	for (uint i = 0; i < childs.size(); i++)
 	{
 		childs[i]->SetParentActive(set_pactive);
@@ -1327,7 +1364,16 @@ void GameObject::SetActive(bool active)
 void GameObject::SetParentActive(bool active)
 {
 	parent_active = active;
-
+	if (!components.empty())
+	{
+		if (components[0]->GetType() == Comp_Type::C_RECT_TRANSFORM)
+		{
+			for (uint i = 0; i < components.size(); i++)
+			{
+				components[i]->OnGOActive(active);
+			}
+		}
+	}
 	if (this->active)
 	{
 		for (uint i = 0; i < childs.size(); i++)
@@ -1684,12 +1730,6 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 			//TODO change transform
 			CompSlider* slider = new CompSlider(type, this);
 			components.push_back(slider);
-			CompImage* image_to_link = (CompImage*)FindComponentByType(Comp_Type::C_IMAGE);
-			if (image_to_link != nullptr)
-			{
-
-			}
-			else LOG("IMAGE not linked to any slider");
 			return slider;
 		}
 		case Comp_Type::C_CAMERA:
@@ -1778,6 +1818,29 @@ Component* GameObject::AddComponent(Comp_Type type, bool isFromLoader)
 	}
 
 	return nullptr;
+}
+
+void GameObject::AddComponent(Component* new_component, uint position)
+{
+	if (position > this->GetNumComponents())
+	{
+		components.push_back(new_component);
+		new_component->SetParent(this);
+	}
+	else
+	{
+		components.push_back(new_component);
+		new_component->SetParent(this);
+		for (int i = 1, fir = components.size() - 2, sec = components.size() - 1; i < components.size(); i++, fir--, sec--)
+		{
+			std::iter_swap(components.begin() + fir, components.begin() + sec);
+			if (fir == position)
+			{
+				return;
+			}
+		}
+	}
+
 }
 
 void GameObject::AddComponentCopy(const Component& copy)
@@ -1899,6 +1962,37 @@ void GameObject::AddComponentCopy(const Component& copy)
 	}
 }
 
+void GameObject::GetOwnBufferSize(uint & buffer_size)
+{
+	buffer_size += sizeof(int);			//identifier
+	buffer_size += sizeof(int);			//UID
+	buffer_size += sizeof(int);			//UID Parent
+	//Save name size
+	buffer_size += sizeof(int);
+	buffer_size += name.size();
+	//Save Tag size
+	buffer_size += sizeof(int);
+	buffer_size += tag.size();
+	buffer_size += sizeof(bool);		//IsAABBActive
+	buffer_size += sizeof(bool);		//IsStatic
+	buffer_size += sizeof(bool);		//AreTranslationsActivateds
+	buffer_size += sizeof(bool);		//AreRotationsActivateds
+	buffer_size += sizeof(bool);		//AreScalesActivateds
+
+	buffer_size += sizeof(int);		//components.size()
+
+	// Save Components size
+	for (uint i = 0; i < components.size(); i++)
+	{
+		components[i]->GetOwnBufferSize(buffer_size);
+	}
+
+	for (uint i = 0; i < childs.size(); i++)
+	{
+		childs[i]->GetOwnBufferSize(buffer_size);
+	}
+}
+
 void GameObject::SaveComponents(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const
 {
 	for (uint i = 0; i < components.size(); i++)
@@ -1955,6 +2049,9 @@ void GameObject::LoadComponents(const JSON_Object* object, std::string name, uin
 		case Comp_Type::C_IMAGE:
 			this->AddComponent(Comp_Type::C_IMAGE);
 			break;
+		case Comp_Type::C_SLIDER:
+			this->AddComponent(Comp_Type::C_SLIDER);
+			break;
 		case Comp_Type::C_SCRIPT:
 			this->AddComponent(Comp_Type::C_SCRIPT, true);
 			break;
@@ -2006,6 +2103,120 @@ void GameObject::LoadComponents(const JSON_Object* object, std::string name, uin
 		((CompMesh*)components[i])->GenSkeleton();*/
 	}
 }
+
+bool GameObject::LoadComponents(char** cursor, uint numComponents)
+{
+	// First Add All components by type
+	for (uint i = 0; i < numComponents; i++)
+	{
+		int next_identificator = App->json_seria->LoadIntBinary(cursor);
+		if (next_identificator != IDENTIFICATOR_COMPONENT)
+		{
+			LOG("[error] Error with Loading Components, info: %s, %i", GetName(), i);
+			return false;
+		}
+		// type--------
+		Comp_Type type = (Comp_Type)App->json_seria->LoadIntBinary(cursor);
+		// UID Parent
+		uint uid_parent = App->json_seria->LoadIntBinary(cursor);
+		if (uid_parent != GetUUID())
+		{
+			LOG("[error] Error with UID Parent...");
+			return false;
+		}
+		switch (type)
+		{
+		case Comp_Type::C_UNKNOWN:
+			break;
+		case Comp_Type::C_TRANSFORM:
+			this->AddComponent(Comp_Type::C_TRANSFORM);
+			break;
+		case Comp_Type::C_RECT_TRANSFORM:
+			this->AddComponent(Comp_Type::C_RECT_TRANSFORM);
+			break;
+		case Comp_Type::C_MESH:
+			this->AddComponent(Comp_Type::C_MESH);
+			break;
+		case Comp_Type::C_MATERIAL:
+			this->AddComponent(Comp_Type::C_MATERIAL);
+			break;
+		case Comp_Type::C_CAMERA:
+			this->AddComponent(Comp_Type::C_CAMERA);
+			break;
+		case Comp_Type::C_BUTTON:
+			this->AddComponent(Comp_Type::C_BUTTON);
+			break;
+		case Comp_Type::C_CHECK_BOX:
+			this->AddComponent(Comp_Type::C_CHECK_BOX);
+			break;
+		case Comp_Type::C_CANVAS:
+			this->AddComponent(Comp_Type::C_CANVAS);
+			break;
+		case Comp_Type::C_CANVAS_RENDER:
+			this->AddComponent(Comp_Type::C_CANVAS_RENDER);
+			break;
+		case Comp_Type::C_TEXT:
+			this->AddComponent(Comp_Type::C_TEXT);
+			break;
+		case Comp_Type::C_EDIT_TEXT:
+			this->AddComponent(Comp_Type::C_EDIT_TEXT);
+			break;
+		case Comp_Type::C_IMAGE:
+			this->AddComponent(Comp_Type::C_IMAGE);
+			break;
+		case Comp_Type::C_SLIDER:
+			this->AddComponent(Comp_Type::C_SLIDER);
+			break;
+		case Comp_Type::C_SCRIPT:
+			this->AddComponent(Comp_Type::C_SCRIPT, true);
+			break;
+		case Comp_Type::C_ANIMATION:
+			this->AddComponent(Comp_Type::C_ANIMATION);
+			break;
+		case Comp_Type::C_ANIMATION_UI:
+			this->AddComponent(Comp_Type::C_ANIMATION_UI);
+			break;
+		case Comp_Type::C_AUDIO:
+			this->AddComponent(Comp_Type::C_AUDIO);
+			break;
+		case Comp_Type::C_BONE:
+			this->AddComponent(Comp_Type::C_BONE);
+			break;
+		case Comp_Type::C_FSM:
+			this->AddComponent(Comp_Type::C_FSM);
+			break;
+		case Comp_Type::C_LIGHT:
+			this->AddComponent(Comp_Type::C_LIGHT);
+			break;
+		case Comp_Type::C_CUBEMAP_RENDERER:
+			this->AddComponent(Comp_Type::C_CUBEMAP_RENDERER);
+			break;
+		case Comp_Type::C_COLLIDER:
+			this->AddComponent(Comp_Type::C_COLLIDER);
+			break;
+		case Comp_Type::C_RIGIDBODY:
+			this->AddComponent(Comp_Type::C_RIGIDBODY);
+			break;
+		case Comp_Type::C_PARTICLE_SYSTEM:
+			this->AddComponent(Comp_Type::C_PARTICLE_SYSTEM);
+			break;
+		case Comp_Type::C_JOINT:
+			this->AddComponent(Comp_Type::C_JOINT);
+			break;
+		default:
+			break;
+		}
+		components[components.size() - 1]->LoadBinary(cursor);
+	}
+
+	// Now Iterate All components and Load variables
+	for (int i = 0; i < components.size(); i++)
+	{
+		//components[i]->LoadBinary(cursor);
+	}
+	return true;
+}
+
 void GameObject::SyncComponents(GameObject* parent)
 {
 

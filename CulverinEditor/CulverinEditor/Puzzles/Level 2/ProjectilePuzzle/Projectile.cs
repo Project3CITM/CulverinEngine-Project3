@@ -9,15 +9,18 @@ public class Projectile : CulverinBehaviour
     public float speed_projectil = 1.0f;
     public bool collision;
     CompRigidBody rb;
+    CompAudio audio;
 
     private bool destroyed = false;
 
     void Start()
     {
         rb = GetComponent<CompRigidBody>();
+        audio = GetComponent<CompAudio>();
         Shoot();
         collision = true;
-     
+
+        audio.PlayEvent("DaenerysFireballImpact");     
     }
 
     public void Shoot()
@@ -46,7 +49,8 @@ public class Projectile : CulverinBehaviour
 
                 if (cm != null)
                 {
-                    cm.GetDamage(damage);
+                    cm.GetDamageProjectile(damage);
+                    StatsScore.PuzzleDamage();
                 }
             }
 
@@ -59,6 +63,7 @@ public class Projectile : CulverinBehaviour
         {
             destroyed = true;
             col.CollisionActive(false);
+            audio.PlayEvent("DaenerysFireballImpact");
             Destroy(gameObject);
         }
     }

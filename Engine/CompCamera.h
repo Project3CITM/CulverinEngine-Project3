@@ -57,6 +57,8 @@ public:
 	float GetFar() const;
 	float GetFOV() const;
 	float GetRatio() const;
+	float GetFrustumDistance() const;
+	float3 GetFrustumCenter() const;
 
 	float* GetViewMatrix() const;
 	float* GetProjectionMatrix() const;
@@ -65,6 +67,11 @@ public:
 
 	void Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const;
 	void Load(const JSON_Object* object, std::string name);
+	void SyncComponent(GameObject* sync_parent);
+
+	void GetOwnBufferSize(uint& buffer_size);
+	void SaveBinary(char** cursor, int position) const;
+	void LoadBinary(char** cursor);
 
 public:
 	Frustum frustum;
@@ -82,6 +89,8 @@ private:
 	float near_plane = 0.0f;
 	float far_plane = 0.0f;
 	float vertical_fov = 0.0f;
+	float frustum_halfdistance_squared = 0;
+	float3 frustum_center = float3::zero;
 	// -------------------------------
 
 	std::vector<GameObject*> candidates_to_cull;

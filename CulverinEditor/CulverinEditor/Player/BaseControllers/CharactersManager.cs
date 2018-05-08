@@ -1,6 +1,7 @@
 ﻿using CulverinEditor;
 using CulverinEditor.Debug;
 using CulverinEditor.SceneManagement;
+using CulverinEditor.Pathfinding;
 
 public class CharactersManager : CulverinBehaviour
 {
@@ -9,7 +10,8 @@ public class CharactersManager : CulverinBehaviour
         IDLE = 0,
         CHANGING_LEFT,
         CHANGING_RIGHT,
-        DROWNING
+        DROWNING,
+        DYING
     }
 
     public enum Side
@@ -18,7 +20,7 @@ public class CharactersManager : CulverinBehaviour
         RIGHT
     }
 
-    //--------------------------------------------------------- THIS IS HARDCODED FOR SCORE SCREEN 
+    // THIS IS HARDCODED FOR SCORE SCREEN --
     uint enem_killed;
     public float puzzle_start;
     public bool in_puzzle;
@@ -26,24 +28,31 @@ public class CharactersManager : CulverinBehaviour
     GameObject coin1;
     GameObject coin2;
     GameObject coin3;
+    // -------------------------------------
 
-    //SCORE SCREEN END
     public GameObject current_character;
     public GameObject left_character;
     public GameObject right_character;
     private GameObject temporal_change = null;
-    //GameObject arrow;
+
     public GameObject player_obj;
     public GameObject health_obj;
+    Hp health;
     public GameObject stamina_obj;
     public GameObject leftamina_bar;
-    public GameObject leftmana_bar;
     public GameObject mana_obj;
+    public GameObject leftmana_bar;
 
     //To manage secondary abilities buttons
     public GameObject jaime_s_button_obj;
+    CompButton jaime_s_button;
+    JaimeCD_Secondary jaime_s_script;
     public GameObject daenerys_s_button_obj;
+    CompButton daenerys_s_button;
+    DaenerysCD_Secondary daenerys_s_script;
     public GameObject theon_s_button_obj;
+    CompButton theon_s_button;
+    TheonCD_Secondary theon_s_script;
 
     public GameObject jaime_s_button_obj_idle;
     public GameObject daenerys_s_button_obj_idle;
@@ -57,6 +66,7 @@ public class CharactersManager : CulverinBehaviour
     //To manage player state
     State state = State.IDLE;
     public bool changing = false;
+    public bool dying = false;
 
     //To manage Jaime Secondary Ability
     public bool shield_activated = false;
@@ -69,10 +79,10 @@ public class CharactersManager : CulverinBehaviour
 
     //GOD MODE -----------------------------
     public GameObject god_mode_sprite;
+    CompImage god_mode_image;
     public GameObject no_cds_text;
     public GameObject no_energy_text;
     public GameObject no_damage_text;
-
     /*GOD MODE: 
         - No damage taken.
         - 0 cost of abilities.
@@ -113,30 +123,38 @@ public class CharactersManager : CulverinBehaviour
 
         player_obj = GetLinkedObject("player_obj");
         health_obj = GetLinkedObject("health_obj");
+        health = health_obj.GetComponent<Hp>();
         stamina_obj = GetLinkedObject("stamina_obj");
-        mana_obj = GetLinkedObject("mana_obj");
-
         leftamina_bar = GetLinkedObject("leftamina_bar");
+        mana_obj = GetLinkedObject("mana_obj");
         leftmana_bar = GetLinkedObject("leftmana_bar");
 
-        leftmana_bar.GetComponent<CompImage>().SetEnabled(false, GetLinkedObject("leftmana_bar"));
-
         jaime_s_button_obj = GetLinkedObject("jaime_s_button_obj");
-        daenerys_s_button_obj = GetLinkedObject("daenerys_s_button_obj");
-        theon_s_button_obj = GetLinkedObject("theon_s_button_obj");
         jaime_s_button_obj_idle = GetLinkedObject("jaime_s_button_obj_idle");
+        jaime_s_button = jaime_s_button_obj.GetComponent<CompButton>();
+        jaime_s_script = jaime_s_button_obj.GetComponent<JaimeCD_Secondary>();
+
+        daenerys_s_button_obj = GetLinkedObject("daenerys_s_button_obj");
+        daenerys_s_button = daenerys_s_button_obj.GetComponent<CompButton>();
         daenerys_s_button_obj_idle = GetLinkedObject("daenerys_s_button_obj_idle");
+        daenerys_s_script = daenerys_s_button_obj.GetComponent<DaenerysCD_Secondary>();
+
+        theon_s_button_obj = GetLinkedObject("theon_s_button_obj");
+        theon_s_button = theon_s_button_obj.GetComponent<CompButton>();
         theon_s_button_obj_idle = GetLinkedObject("theon_s_button_obj_idle");
+        theon_s_script = theon_s_button_obj.GetComponent<TheonCD_Secondary>();
 
         camera = GetLinkedObject("camera");
 
         //GOD MODE VARIABLES ----------------------------------------
         god_mode_sprite = GetLinkedObject("god_mode_sprite");
+        god_mode_image = god_mode_sprite.GetComponent<CompImage>();
+
         no_cds_text = GetLinkedObject("no_cds_text");
         no_energy_text = GetLinkedObject("no_energy_text");
         no_damage_text = GetLinkedObject("no_damage_text");
 
-        god_mode_sprite.GetComponent<CompImage>().SetRender(false);
+        god_mode_image.SetRender(false);
 
         no_cds_text.GetComponent<CompText>().SetText("NO COOLDOWNS MODE");
         no_cds_text.SetActive(false);
@@ -146,13 +164,15 @@ public class CharactersManager : CulverinBehaviour
 
         no_damage_text.GetComponent<CompText>().SetText("NO DAMAGE MODE");
         no_damage_text.SetActive(false);
-        // ----------------------------------------------------------
 
         SetCurrentPosition();
 
         audio = GetComponent<CompAudio>();
+        leftmana_bar.GetComponent<CompImage>().SetEnabled(false);
+
 
         changing = false;
+        dying = false;
         is_healing = false;
         god_mode = false;
 
@@ -162,11 +182,18 @@ public class CharactersManager : CulverinBehaviour
         daenerys_tired_time = 0.0f;
         theon_tired = false;
         theon_tired_time = 0.0f;
-
     }
 
     void Update()
     {
+        //if (dying == false) 
+        //{
+        //    Debug.Log("ALIVE", Department.PLAYER, Color.BLUE);
+        //}
+        //else
+        //{
+        //    Debug.Log("DEAD", Department.PLAYER, Color.RED);
+        //}
         //MANAGE AUDIO CONTROLLER VARIABLES --
         if (jaime_tired) 
         {
@@ -204,49 +231,51 @@ public class CharactersManager : CulverinBehaviour
         if (is_healing)
         {
             Debug.Log("Healing", Department.PLAYER, Color.PINK);
-            health_obj = GetLinkedObject("health_obj");
             if (current_character.GetName() == "Theon")
             {
-                float curr_hp = health_obj.GetComponent<Hp>().GetCurrentHealth();
+                float curr_hp = health.GetCurrentHealth();
                 float max_hp = current_character.GetComponent<TheonController>().max_hp;
                 if (curr_hp < heal_destination)
                 {
-                    health_obj.GetComponent<Hp>().SetHP(curr_hp + 0.9f, max_hp);
+                    health.SetHP(curr_hp + 0.9f, max_hp);
                     current_character.GetComponent<TheonController>().curr_hp = curr_hp + 0.9f;
                 }
                 else
                 {
-                    health_obj.GetComponent<Hp>().SetHP(heal_destination, max_hp);
+                    current_character.GetComponent<TheonController>().play_breathing_audio = true;
+                    health.SetHP(heal_destination, max_hp);
                     is_healing = false;
                 }
             }
             else if (current_character.GetName() == "Jaime")
             {
-                float curr_hp = health_obj.GetComponent<Hp>().GetCurrentHealth();
+                float curr_hp = health.GetCurrentHealth();
                 float max_hp = current_character.GetComponent<JaimeController>().max_hp;
                 if (curr_hp < heal_destination)
                 {
-                    health_obj.GetComponent<Hp>().SetHP(curr_hp + 0.9f, max_hp);
+                    health.SetHP(curr_hp + 0.9f, max_hp);
                     current_character.GetComponent<JaimeController>().curr_hp = curr_hp + 0.9f;
                 }
                 else
                 {
-                    health_obj.GetComponent<Hp>().SetHP(heal_destination, max_hp);
+                    current_character.GetComponent<JaimeController>().play_breathing_audio = true;
+                    health.SetHP(heal_destination, max_hp);
                     is_healing = false;
                 }
             }
             else if (current_character.GetName() == "Daenerys")
             {
-                float curr_hp = health_obj.GetComponent<Hp>().GetCurrentHealth();
+                float curr_hp = health.GetCurrentHealth();
                 float max_hp = current_character.GetComponent<DaenerysController>().max_hp;
                 if (curr_hp < heal_destination)
                 {
-                    health_obj.GetComponent<Hp>().SetHP(curr_hp + 0.9f, max_hp);
+                    health.SetHP(curr_hp + 0.9f, max_hp);
                     current_character.GetComponent<DaenerysController>().curr_hp = curr_hp + 0.9f;
                 }
                 else
                 {
-                    health_obj.GetComponent<Hp>().SetHP(heal_destination, max_hp);
+                    current_character.GetComponent<DaenerysController>().play_breathing_audio = true;
+                    health.SetHP(heal_destination, max_hp);
                     is_healing = false;
                 }
             }
@@ -269,30 +298,46 @@ public class CharactersManager : CulverinBehaviour
                         GetDamage(10);
                     }
 
-                    if (health_obj.GetComponent<Hp>().GetCurrentHealth() <= 0)
+                    if (health.GetCurrentHealth() <= 0)
                     {
+                        Debug.Log("CHARACTER DIYNG", Department.PLAYER, Color.GREEN);
                         if (IsDead(left_character) == false)
                         {
+                            Debug.Log("left", Department.PLAYER, Color.GREEN);
                             GetLinkedObject("player_obj").GetComponent<DamageFeedback>().CharacterDie();
                             state = State.CHANGING_LEFT;
-                            CurrentToOut();
                         }
                         else if (IsDead(right_character) == false)
                         {
+                            Debug.Log("right", Department.PLAYER, Color.GREEN);
                             GetLinkedObject("player_obj").GetComponent<DamageFeedback>().CharacterDie();
                             state = State.CHANGING_RIGHT;
-                            CurrentToOut();
                         }
                         else
                         {
+                            Debug.Log("U FUCKED", Department.PLAYER, Color.GREEN);
                             GetLinkedObject("player_obj").GetComponent<DamageFeedback>().TotalDefeat();
-                            CurrentToOut();
+                            if (current_character.GetName() == "Theon")
+                            {
+                                TheonController theon = current_character.GetComponent<TheonController>();
+                                theon.StopBreathing("TheonBreathing");
+                            }
+                            else if (current_character.GetName() == "Jaime")
+                            {
+                                JaimeController jaime = current_character.GetComponent<JaimeController>();
+                                jaime.StopBreathing("JaimeBreathing");
+                            }
+                            else if (current_character.GetName() == "Daenerys")
+                            {
+                                DaenerysController daenerys = current_character.GetComponent<DaenerysController>();
+                                daenerys.StopBreathing("DaenerysBreathing");
+                            }
                         }
                     }
 
                     if (Input.GetKeyDown(KeyCode.M))
                     {
-                        SceneManager.LoadScene("MainMenuScene");
+                        SceneManager.LoadScene("3D Menu intro");
                     }
 
                     if (Input.GetInput_KeyDown("TriangleR", "Player"))
@@ -435,24 +480,29 @@ public class CharactersManager : CulverinBehaviour
         {
             left_character.GetComponent<JaimeController>().SetPosition(CharacterController.Position.CURRENT);
             left_character.GetComponent<JaimeController>().UpdateHUD(true, true);
-            left_character.GetComponent<JaimeController>().SetAnimationTransition("ToIn", true);
+            left_character.GetComponent<CompAnimation>().PlayAnimationNode("In");
             left_character.GetComponent<JaimeController>().ToggleMesh(true);
             left_character.GetComponent<JaimeController>().jaime_sword_obj.GetComponent<CompCollider>().CollisionActive(true);
+            left_character.GetComponent<JaimeController>().force_audio = true;
+            GetLinkedObject("this_obj_lasthp").GetComponent<CompImage>().FillAmount(left_character.GetComponent<JaimeController>().curr_hp / 100.0f);
         }
         else if (left_character.GetName() == "Daenerys")
         {
             left_character.GetComponent<DaenerysController>().SetPosition(CharacterController.Position.CURRENT);
             left_character.GetComponent<DaenerysController>().UpdateHUD(true, true);
-            left_character.GetComponent<DaenerysController>().SetAnimationTransition("ToIn", true);
+            left_character.GetComponent<CompAnimation>().PlayAnimationNode("In");
             left_character.GetComponent<DaenerysController>().ToggleMesh(true);
+            left_character.GetComponent<DaenerysController>().force_audio = true;
+            GetLinkedObject("this_obj_lasthp").GetComponent<CompImage>().FillAmount(left_character.GetComponent<DaenerysController>().curr_hp / 100.0f);
         }
         else if (left_character.GetName() == "Theon")
         {
             left_character.GetComponent<TheonController>().SetPosition(CharacterController.Position.CURRENT);
             left_character.GetComponent<TheonController>().UpdateHUD(true, true);
             left_character.GetComponent<TheonController>().ToggleMesh(true);
-            left_character.GetComponent<TheonController>().SetAnimationTransition("ToIn", true);
-
+            left_character.GetComponent<CompAnimation>().PlayAnimationNode("In");
+            left_character.GetComponent<TheonController>().force_audio = true;
+            GetLinkedObject("this_obj_lasthp").GetComponent<CompImage>().FillAmount(left_character.GetComponent<TheonController>().curr_hp / 100.0f);
         }
     }
 
@@ -479,28 +529,34 @@ public class CharactersManager : CulverinBehaviour
             current_character.GetComponent<TheonController>().ToggleMesh(false);
         }
 
-        // LEFT CHARACTER -------------------------------
+        // RIGHT CHARACTER -------------------------------
         if (right_character.GetName() == "Jaime")
         {
             right_character.GetComponent<JaimeController>().SetPosition(CharacterController.Position.CURRENT);
             right_character.GetComponent<JaimeController>().UpdateHUD(true, false);
-            right_character.GetComponent<JaimeController>().SetAnimationTransition("ToIn", true);
+            right_character.GetComponent<CompAnimation>().PlayAnimationNode("In");
             right_character.GetComponent<JaimeController>().ToggleMesh(true);
             right_character.GetComponent<JaimeController>().jaime_sword_obj.GetComponent<CompCollider>().CollisionActive(true);
+            right_character.GetComponent<JaimeController>().force_audio = true;
+            GetLinkedObject("this_obj_lasthp").GetComponent<CompImage>().FillAmount(right_character.GetComponent<JaimeController>().curr_hp/100.0f);
         }
         else if (right_character.GetName() == "Daenerys")
         {
             right_character.GetComponent<DaenerysController>().SetPosition(CharacterController.Position.CURRENT);
             right_character.GetComponent<DaenerysController>().UpdateHUD(true, false);
-            right_character.GetComponent<DaenerysController>().SetAnimationTransition("ToIn", true);
+            right_character.GetComponent<CompAnimation>().PlayAnimationNode("In");
             right_character.GetComponent<DaenerysController>().ToggleMesh(true);
+            right_character.GetComponent<DaenerysController>().force_audio = true;
+            GetLinkedObject("this_obj_lasthp").GetComponent<CompImage>().FillAmount(right_character.GetComponent<DaenerysController>().curr_hp / 100.0f);
         }
         else if (right_character.GetName() == "Theon")
         {
             right_character.GetComponent<TheonController>().SetPosition(CharacterController.Position.CURRENT);
             right_character.GetComponent<TheonController>().UpdateHUD(true, false);
-            right_character.GetComponent<TheonController>().SetAnimationTransition("ToIn", true);
+            right_character.GetComponent<CompAnimation>().PlayAnimationNode("In");
             right_character.GetComponent<TheonController>().ToggleMesh(true);
+            right_character.GetComponent<TheonController>().force_audio = true;
+            GetLinkedObject("this_obj_lasthp").GetComponent<CompImage>().FillAmount(right_character.GetComponent<TheonController>().curr_hp / 100.0f);
         }
     }
 
@@ -518,11 +574,11 @@ public class CharactersManager : CulverinBehaviour
         DaenerysController dcontroller;
         TheonController tcontroller;
 
+        current_character.GetComponent<CompAnimation>().PlayAnimationNode("Out");
+
         if (current_character.GetName() == "Jaime")
         {
             jcontroller = current_character.GetComponent<JaimeController>();
-            jcontroller.SetAnimationTransition("ToOut", true);
-
             if (right_character.GetName() == "Daenerys")
             {
                 dcontroller = right_character.GetComponent<DaenerysController>();
@@ -543,8 +599,6 @@ public class CharactersManager : CulverinBehaviour
         else if (current_character.GetName() == "Daenerys")
         {
             dcontroller = current_character.GetComponent<DaenerysController>();
-            dcontroller.SetAnimationTransition("ToOut", true);
-
             if (right_character.GetName() == "Jaime")
             {
                 jcontroller = right_character.GetComponent<JaimeController>();
@@ -565,8 +619,6 @@ public class CharactersManager : CulverinBehaviour
         else if (current_character.GetName() == "Theon")
         {
             tcontroller = current_character.GetComponent<TheonController>();
-            tcontroller.SetAnimationTransition("ToOut", true);
-
             if (right_character.GetName() == "Jaime")
             {
                 jcontroller = right_character.GetComponent<JaimeController>();
@@ -649,33 +701,30 @@ public class CharactersManager : CulverinBehaviour
         {
             if (left_character.GetName() == "Jaime")
             {
-                GetLinkedObject("jaime_s_button_obj").GetComponent<CompButton>().Clicked();
+                jaime_s_button.Clicked();
             }
             else if (left_character.GetName() == "Daenerys")
             {
-                GetLinkedObject("daenerys_s_button_obj").GetComponent<CompButton>().Clicked();
-
+                daenerys_s_button.Clicked();
             }
             else if (left_character.GetName() == "Theon")
             {
-                GetLinkedObject("theon_s_button_obj").GetComponent<CompButton>().Clicked();
-
+                theon_s_button.Clicked();
             }
         }
         else if (side == Side.RIGHT)
         {
             if (right_character.GetName() == "Jaime")
             {
-                GetLinkedObject("jaime_s_button_obj").GetComponent<CompButton>().Clicked();
+                jaime_s_button.Clicked();
             }
             else if (right_character.GetName() == "Daenerys")
             {
-                GetLinkedObject("daenerys_s_button_obj").GetComponent<CompButton>().Clicked();
+                daenerys_s_button.Clicked();
             }
             else if (right_character.GetName() == "Theon")
             {
-                GetLinkedObject("theon_s_button_obj").GetComponent<CompButton>().Clicked();
-
+                theon_s_button.Clicked();
             }
         }
     }
@@ -684,7 +733,8 @@ public class CharactersManager : CulverinBehaviour
     public bool GetDamage(float dmg)
     {
         //Rumble Gamepad
-        Input.RumblePlay(0.5f, 200);
+        if(dmg != 0.0f)
+            Input.RumblePlay(0.5f, 200);
 
         // Shield Ability Consumable
         if (player_obj.GetComponent<Shield>().IsActive())
@@ -692,7 +742,6 @@ public class CharactersManager : CulverinBehaviour
             player_obj.GetComponent<Shield>().Break();
             return false;
         }
-
         else
         {
             // 0 DAMAGE TAKEN IN GOD MODE
@@ -706,10 +755,9 @@ public class CharactersManager : CulverinBehaviour
             {
                 if (current_character.GetName() == "Jaime")
                 {
-
                     if (current_character.GetComponent<JaimeController>().GetDamage(dmg))
                     {
-                        if (health_obj.GetComponent<Hp>().GetCurrentHealth() <= 0)
+                        if (health.GetCurrentHealth() <= 0)
                         {
                             StatsScore.CharacterDead();
 
@@ -720,7 +768,204 @@ public class CharactersManager : CulverinBehaviour
                             jaime_controller.jaime_icon_obj_stamina.GetComponent<CompImage>().SetRender(false);
 
                             //Deactivate Secondary ability button
-                            jaime_s_button_obj.GetComponent<CompButton>().Deactivate();
+                            jaime_s_button.Deactivate();
+                            jaime_s_script.Die();
+
+                            if(dmg != 0.0f)
+                                jaime_controller.PlayFx("JaimeDead");
+                        }
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else if (current_character.GetName() == "Daenerys")
+                {
+                    current_character.GetComponent<DaenerysController>().GetDamage(dmg);
+                    if (health.GetCurrentHealth() <= 0)
+                    {
+                        StatsScore.CharacterDead();
+
+                        DaenerysController daenerys_controller = current_character.GetComponent<DaenerysController>();
+                        daenerys_controller.SetState(CharacterController.State.DEAD);
+                        daenerys_controller.daenerys_icon_obj.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+                        daenerys_controller.daenerys_icon_obj_mana.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+                        daenerys_controller.daenerys_icon_obj_mana.GetComponent<CompImage>().SetRender(false);
+
+                        //Deactivate Secondary ability button
+                        daenerys_s_button.Deactivate();
+                        daenerys_s_script.Die();
+                        if (dmg != 0.0f)
+                            daenerys_controller.PlayFx("DaenerysDead");
+                    }
+                    return true;
+                }
+                else if (current_character.GetName() == "Theon")
+                {
+                    current_character.GetComponent<TheonController>().GetDamage(dmg);
+                    if (health.GetCurrentHealth() <= 0)
+                    {
+                        StatsScore.CharacterDead();
+
+                        TheonController theon_controller = current_character.GetComponent<TheonController>();
+                        theon_controller.SetState(CharacterController.State.DEAD);
+                        theon_controller.theon_icon_obj.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+                        theon_controller.theon_icon_obj_stamina.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+                        theon_controller.theon_icon_obj_stamina.GetComponent<CompImage>().SetRender(false);
+
+                        //Deactivate Secondary ability button
+                        theon_s_button.Deactivate();
+                        theon_s_script.Die();
+                        if (dmg != 0.0f)
+                            theon_controller.PlayFx("TheonDead");
+                    }
+                    return true;
+                }
+            }
+            return true;
+        }
+    }
+
+    public bool GetDamageProjectile(float dmg)
+    {
+        //Rumble Gamepad
+        if (dmg != 0.0f)
+            Input.RumblePlay(0.5f, 200);
+
+        // Shield Ability Consumable
+        if (player_obj.GetComponent<Shield>().IsActive())
+        {
+            player_obj.GetComponent<Shield>().Break();
+            return false;
+        }
+        else
+        {
+            // 0 DAMAGE TAKEN IN GOD MODE
+            if (god_mode || no_damage)
+            {
+                dmg = 0;
+            }
+
+            // CURRENT CHARACTER -------------------------------
+            if (GetCurrCharacterState() != (int)CharacterController.State.DEAD)
+            {
+                if (current_character.GetName() == "Jaime")
+                {
+                    if (current_character.GetComponent<JaimeController>().GetDamageProj(dmg))
+                    {
+                        if (health.GetCurrentHealth() <= 0)
+                        {
+                            StatsScore.CharacterDead();
+
+                            JaimeController jaime_controller = current_character.GetComponent<JaimeController>();
+                            jaime_controller.SetState(CharacterController.State.DEAD);
+                            jaime_controller.jaime_icon_obj.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+                            jaime_controller.jaime_icon_obj_stamina.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+                            jaime_controller.jaime_icon_obj_stamina.GetComponent<CompImage>().SetRender(false);
+
+                            //Deactivate Secondary ability button
+                            jaime_s_button.Deactivate();
+                            jaime_s_script.Die();
+
+                            if (dmg != 0.0f)
+                                jaime_controller.PlayFx("JaimeDead");
+                        }
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else if (current_character.GetName() == "Daenerys")
+                {
+                    current_character.GetComponent<DaenerysController>().GetDamage(dmg);
+                    if (health.GetCurrentHealth() <= 0)
+                    {
+                        StatsScore.CharacterDead();
+
+                        DaenerysController daenerys_controller = current_character.GetComponent<DaenerysController>();
+                        daenerys_controller.SetState(CharacterController.State.DEAD);
+                        daenerys_controller.daenerys_icon_obj.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+                        daenerys_controller.daenerys_icon_obj_mana.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+                        daenerys_controller.daenerys_icon_obj_mana.GetComponent<CompImage>().SetRender(false);
+
+                        //Deactivate Secondary ability button
+                        daenerys_s_button.Deactivate();
+                        daenerys_s_script.Die();
+                        if (dmg != 0.0f)
+                            daenerys_controller.PlayFx("DaenerysDead");
+                    }
+                    return true;
+                }
+                else if (current_character.GetName() == "Theon")
+                {
+                    current_character.GetComponent<TheonController>().GetDamage(dmg);
+                    if (health.GetCurrentHealth() <= 0)
+                    {
+                        StatsScore.CharacterDead();
+
+                        TheonController theon_controller = current_character.GetComponent<TheonController>();
+                        theon_controller.SetState(CharacterController.State.DEAD);
+                        theon_controller.theon_icon_obj.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+                        theon_controller.theon_icon_obj_stamina.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+                        theon_controller.theon_icon_obj_stamina.GetComponent<CompImage>().SetRender(false);
+
+                        //Deactivate Secondary ability button
+                        theon_s_button.Deactivate();
+                        theon_s_script.Die();
+                        if (dmg != 0.0f)
+                            theon_controller.PlayFx("TheonDead");
+                    }
+                    return true;
+                }
+            }
+            return true;
+        }
+    }
+
+    //Call thius function to deal damage to the current character
+    public bool Push(float dmg, PathNode tile)
+    {
+        //Rumble Gamepad
+        Input.RumblePlay(0.5f, 200);
+
+        // Shield Ability Consumable
+        if (player_obj.GetComponent<Shield>().IsActive())
+        {
+            player_obj.GetComponent<Shield>().Break();
+            return false;
+        }
+        else
+        {
+            // 0 DAMAGE TAKEN IN GOD MODE
+            if (god_mode || no_damage)
+            {
+                dmg = 0;
+            }
+
+            // CURRENT CHARACTER -------------------------------
+            if (GetCurrCharacterState() != (int)CharacterController.State.DEAD)
+            {
+                if (current_character.GetName() == "Jaime")
+                {
+                    if (current_character.GetComponent<JaimeController>().Push(dmg, tile))
+                    {
+                        if (health.GetCurrentHealth() <= 0)
+                        {
+                            StatsScore.CharacterDead();
+
+                            JaimeController jaime_controller = current_character.GetComponent<JaimeController>();
+                            jaime_controller.SetState(CharacterController.State.DEAD);
+                            jaime_controller.jaime_icon_obj.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+                            jaime_controller.jaime_icon_obj_stamina.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+                            jaime_controller.jaime_icon_obj_stamina.GetComponent<CompImage>().SetRender(false);
+
+                            //Deactivate Secondary ability button
+                            jaime_s_button.Deactivate();
+                            jaime_s_script.Die();
 
                             jaime_controller.PlayFx("JaimeDead");
                         }
@@ -733,8 +978,8 @@ public class CharactersManager : CulverinBehaviour
                 }
                 else if (current_character.GetName() == "Daenerys")
                 {
-                    current_character.GetComponent<DaenerysController>().GetDamage(dmg);
-                    if (health_obj.GetComponent<Hp>().GetCurrentHealth() <= 0)
+                    current_character.GetComponent<DaenerysController>().Push(dmg, tile);
+                    if (health.GetCurrentHealth() <= 0)
                     {
                         StatsScore.CharacterDead();
 
@@ -745,7 +990,8 @@ public class CharactersManager : CulverinBehaviour
                         daenerys_controller.daenerys_icon_obj_mana.GetComponent<CompImage>().SetRender(false);
 
                         //Deactivate Secondary ability button
-                        daenerys_s_button_obj.GetComponent<CompButton>().Deactivate();
+                        daenerys_s_button.Deactivate();
+                        daenerys_s_script.Die();
 
                         daenerys_controller.PlayFx("DaenerysDead");
                     }
@@ -753,8 +999,8 @@ public class CharactersManager : CulverinBehaviour
                 }
                 else if (current_character.GetName() == "Theon")
                 {
-                    current_character.GetComponent<TheonController>().GetDamage(dmg);
-                    if (health_obj.GetComponent<Hp>().GetCurrentHealth() <= 0)
+                    current_character.GetComponent<TheonController>().Push(dmg, tile);
+                    if (health.GetCurrentHealth() <= 0)
                     {
                         StatsScore.CharacterDead();
 
@@ -765,14 +1011,14 @@ public class CharactersManager : CulverinBehaviour
                         theon_controller.theon_icon_obj_stamina.GetComponent<CompImage>().SetRender(false);
 
                         //Deactivate Secondary ability button
-                        theon_s_button_obj.GetComponent<CompButton>().Deactivate();
+                        theon_s_button.Deactivate();
+                        theon_s_script.Die();
 
                         theon_controller.PlayFx("TheonDead");
                     }
                     return true;
                 }
             }
-
             return true;
         }
     }
@@ -846,6 +1092,22 @@ public class CharactersManager : CulverinBehaviour
         }
     }
 
+    public void PlayerDie(GameObject character)
+    {
+        if (character.GetName() == "Jaime")
+        {
+          character.GetComponent<JaimeController>().SetState(CharacterController.State.DEAD);  
+        }
+        else if (character.GetName() == "Daenerys")
+        {
+            character.GetComponent<DaenerysController>().SetState(CharacterController.State.DEAD);
+        }
+        else if (character.GetName() == "Theon")
+        {
+            character.GetComponent<TheonController>().SetState(CharacterController.State.DEAD);
+        }
+    }
+
     public bool IsDead(GameObject character)
     {
         if (character.GetName() == "Jaime")
@@ -899,6 +1161,57 @@ public class CharactersManager : CulverinBehaviour
 
 
     // THIS IS HARDCODED FOR SCORE SCREEN --------------------------------
+    public float GetTotalHP()
+    {
+        float result_hp = 0.0f;
+
+        //CURRENT CHARACTER HP
+        if (current_character.GetName() == "Jaime")
+        {
+            result_hp += current_character.GetComponent<JaimeController>().curr_hp;
+        }
+        else if (current_character.GetName() == "Daenerys")
+        {
+            result_hp += current_character.GetComponent<DaenerysController>().curr_hp;
+        }
+        else if (current_character.GetName() == "Theon")
+        {
+            result_hp += current_character.GetComponent<TheonController>().curr_hp;
+        }
+
+        //LEFT CHARACTER HP
+        if (left_character.GetName() == "Jaime")
+        {
+            result_hp += left_character.GetComponent<JaimeController>().curr_hp;
+        }
+        else if (left_character.GetName() == "Daenerys")
+        {
+            result_hp += left_character.GetComponent<DaenerysController>().curr_hp;
+        }
+        else if (left_character.GetName() == "Theon")
+        {
+            result_hp += left_character.GetComponent<TheonController>().curr_hp;
+        }
+
+        //RIGHT CHARACTER HP
+        if (right_character.GetName() == "Jaime")
+        {
+            result_hp += right_character.GetComponent<JaimeController>().curr_hp;
+        }
+        else if (right_character.GetName() == "Daenerys")
+        {
+            result_hp += right_character.GetComponent<DaenerysController>().curr_hp;
+        }
+        else if (right_character.GetName() == "Theon")
+        {
+            result_hp += right_character.GetComponent<TheonController>().curr_hp;
+        }
+
+        Debug.Log("TOTAL HP: " + result_hp, Department.PLAYER, Color.RED);
+
+        return result_hp;
+    }
+
     void EnemyKilled(uint number = 1)
     {
         enem_killed += number;
@@ -1080,7 +1393,8 @@ public class CharactersManager : CulverinBehaviour
         if (current_character.GetName() == "Jaime")
         {
             float max_hp = current_character.GetComponent<JaimeController>().max_hp;
-            heal_destination = max_hp * percentage + health_obj.GetComponent<Hp>().GetCurrentHealth();
+            heal_destination = max_hp * percentage + health.GetCurrentHealth();
+
             if (heal_destination > max_hp)
             {
                 heal_destination = max_hp;
@@ -1100,8 +1414,8 @@ public class CharactersManager : CulverinBehaviour
         else if (current_character.GetName() == "Daenerys")
         {
             float max_hp = current_character.GetComponent<DaenerysController>().max_hp;
-            heal_destination = max_hp * percentage + health_obj.GetComponent<Hp>().GetCurrentHealth();
-            if(heal_destination > max_hp)
+            heal_destination = max_hp * percentage + health.GetCurrentHealth();
+            if (heal_destination > max_hp)
             {
                 heal_destination = max_hp;
             }
@@ -1120,7 +1434,7 @@ public class CharactersManager : CulverinBehaviour
         else if (current_character.GetName() == "Theon")
         {
             float max_hp = current_character.GetComponent<TheonController>().max_hp;
-            heal_destination = max_hp * percentage + health_obj.GetComponent<Hp>().GetCurrentHealth();
+            heal_destination = max_hp * percentage + health.GetCurrentHealth();
             if (heal_destination > max_hp)
             {
                 heal_destination = max_hp;
@@ -1147,7 +1461,7 @@ public class CharactersManager : CulverinBehaviour
             god_mode = !god_mode;
 
             //Enable god mode sprite
-            god_mode_sprite.GetComponent<CompImage>().SetRender(god_mode);
+            god_mode_image.SetRender(god_mode);
         }
 
         //NO DAMAGE MODE
@@ -1188,7 +1502,149 @@ public class CharactersManager : CulverinBehaviour
         {
             current_character.GetComponent<TheonController>().SetState(currstate);
         }
+    }
+
+    public void SaveInfoPlayer()
+    {
+        if (current_character.GetName() == "Jaime")
+        {
+            SceneManager.PushSaveInfo(current_character.GetComponent<JaimeController>().curr_hp);
+        }
+        if (right_character.GetName() == "Jaime")
+        {
+            SceneManager.PushSaveInfo(right_character.GetComponent<JaimeController>().curr_hp);
+        }
+        if (left_character.GetName() == "Jaime")
+        {
+            SceneManager.PushSaveInfo(left_character.GetComponent<JaimeController>().curr_hp);
+        }
+
+        if (current_character.GetName() == "Daenerys")
+        {
+            SceneManager.PushSaveInfo(current_character.GetComponent<DaenerysController>().curr_hp);
+        }
+        if (left_character.GetName() == "Daenerys")
+        {
+            SceneManager.PushSaveInfo(left_character.GetComponent<DaenerysController>().curr_hp);
+        }
+        if (right_character.GetName() == "Daenerys")
+        {
+            SceneManager.PushSaveInfo(right_character.GetComponent<DaenerysController>().curr_hp);
+        }
+
+        if (current_character.GetName() == "Theon")
+        {
+            SceneManager.PushSaveInfo(current_character.GetComponent<TheonController>().curr_hp);
+        }
+        if (left_character.GetName() == "Theon")
+        {
+            SceneManager.PushSaveInfo(left_character.GetComponent<TheonController>().curr_hp);
+        }
+        if (right_character.GetName() == "Theon")
+        {
+            SceneManager.PushSaveInfo(right_character.GetComponent<TheonController>().curr_hp);
+        }
+    }
+
+    public void LoadInfoPlayer()
+    {
+        float theoninfo = SceneManager.PopLoadInfo();
+        float daenerysinfo = SceneManager.PopLoadInfo();
+        float jaimeinfo = SceneManager.PopLoadInfo();
+
+        if(theoninfo == 1503.0f)
+        {
+            left_character.GetComponent<TheonController>().curr_hp = left_character.GetComponent<TheonController>().max_hp;
+        }
+        if (jaimeinfo == 1503.0f)
+        {
+            current_character.GetComponent<JaimeController>().curr_hp = current_character.GetComponent<JaimeController>().max_hp;
+        }
+        if (daenerysinfo == 1503.0f)
+        {
+            right_character.GetComponent<DaenerysController>().curr_hp = right_character.GetComponent<DaenerysController>().max_hp;
+        }
+
+        if (theoninfo == 0.0f)
+        {
+            LeftCharacterDie();
+        }
+        if (daenerysinfo == 0.0f)
+        {
+            RightCharacterDie();
+        }
         
+
+        current_character.GetComponent<JaimeController>().curr_hp = jaimeinfo;
+        left_character.GetComponent<TheonController>().curr_hp = theoninfo;
+        right_character.GetComponent<DaenerysController>().curr_hp = daenerysinfo;
+
+        Debug.Log("INFO PLAYER", Department.PLAYER, Color.RED);
+        GetLinkedObject("health_obj").GetComponent<Hp>().SetHP(current_character.GetComponent<JaimeController>().curr_hp, current_character.GetComponent<JaimeController>().max_hp);
+        GetLinkedObject("this_obj_lasthp").GetComponent<CompImage>().FillAmount(current_character.GetComponent<JaimeController>().curr_hp / 100.0f);
+        GetLinkedObject("daenerys_icon_obj_hp").GetComponent<CompImage>().FillAmount(right_character.GetComponent<DaenerysController>().curr_hp / 100.0f);
+        GetLinkedObject("theon_icon_obj_hp").GetComponent<CompImage>().FillAmount(left_character.GetComponent<TheonController>().curr_hp / 100.0f);
+
+
+        if (jaimeinfo <= 0.0f)
+        {
+            GetDamage(0.0f);
+            current_character.GetComponent<JaimeController>().SetState(CharacterController.State.DEAD);
+            if (theoninfo > 0.0f)
+            {
+                ChangeLeft();
+
+                temporal_change = current_character;
+                current_character = left_character;
+                left_character = temporal_change;
+
+                state = State.IDLE;
+            }
+            else
+            {
+                ChangeRight();
+
+                temporal_change = current_character;
+                current_character = right_character;
+                right_character = temporal_change;
+
+                state = State.IDLE;
+            }
+        }
+    }
+
+    public string GetCurrentCharacterName()
+    {
+        return current_character.GetName();
+    }
+
+    public void RightCharacterDie()
+    {
+            StatsScore.CharacterDead();
+
+            DaenerysController daenerys_controller = right_character.GetComponent<DaenerysController>();
+            daenerys_controller.SetState(CharacterController.State.DEAD);
+            daenerys_controller.daenerys_icon_obj.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+            daenerys_controller.daenerys_icon_obj_mana.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+            daenerys_controller.daenerys_icon_obj_mana.GetComponent<CompImage>().SetRender(false);
+
+            //Deactivate Secondary ability button
+            daenerys_s_button.Deactivate();
+            daenerys_s_script.Die();
+    }
+    public void LeftCharacterDie()
+    {
+        StatsScore.CharacterDead();
+
+        TheonController theon_controller = left_character.GetComponent<TheonController>();
+        theon_controller.SetState(CharacterController.State.DEAD);
+        theon_controller.theon_icon_obj.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+        theon_controller.theon_icon_obj_stamina.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+        theon_controller.theon_icon_obj_stamina.GetComponent<CompImage>().SetRender(false);
+
+        //Deactivate Secondary ability button
+        theon_s_button.Deactivate();
+        theon_s_script.Die();
     }
 }
 

@@ -9,6 +9,8 @@
 #include "CompMesh.h"
 #include "ModuleResourceManager.h"
 #include "JSONSerialization.h"
+#include "ModuleInput.h"
+#include "ModuleGUI.h"
 
 
 ModuleMap::ModuleMap()
@@ -417,6 +419,18 @@ void ModuleMap::ShowWalkableMap()
 				{
 					ImGui::PopStyleColor();
 				}
+				if (ImGui::IsItemHovered() && App->gui->develop_mode)
+				{
+					if (App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT)
+					{
+						map[x][y] = paint;
+					}
+					if (App->input->GetKey(SDL_SCANCODE_Z) == KEY_REPEAT)
+					{
+						map[x][y] = -1;
+					}
+				}
+
 				std::string position_tile = "x:" + std::to_string(x);
 				position_tile += " - y:" + std::to_string(y);
 				if (ImGui::IsItemHovered())

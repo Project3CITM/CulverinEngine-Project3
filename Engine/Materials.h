@@ -5,6 +5,22 @@
 #include <vector>
 #include "ShadersLib.h"
 
+
+enum MaterialBlendModes
+{
+	MGlZero = 0,
+	MGlOne,
+	MGlSrcColor,
+	MGlOneMinusSrcColor,
+	MGlDstColor,
+	MGlOneMinusDstColor,
+	MGlSrcAlpha,
+	MGlOneMinusSrcAlpha,
+	MGlDstAlpha,
+	MGlOneMinusDstAlpha,
+	MGlSrcAlphaSaturate
+};
+
 class Material {
 public:
 	Material();
@@ -16,7 +32,7 @@ public:
 
 	void  Unbind();
 
-	void Save()const;
+	void Save();
 	void Load();
 
 	UniformVar  GetVariableInfo(uint index);
@@ -27,10 +43,13 @@ public:
 
 	void GetProgramVariables();
 	uint GetProgramID() const;
-
 	
 	void RestartIterators();
 
+	// BLEND MODES ------------------------
+	void SetSourceBlendMode();
+	void SetDestinyBlendMode();
+	//----------------
 
 public:
 
@@ -44,6 +63,15 @@ public:
 	//GLOW
 	bool glow = false;
 
+	//CAST SHADOW
+	bool cast_shadows = true;
+
+	//BLEND MODES
+	MaterialBlendModes source_type = MaterialBlendModes::MGlOne;
+	int m_source_type = GL_ONE; 
+	MaterialBlendModes destiny_type = MaterialBlendModes::MGlOneMinusSrcAlpha;
+	int m_destiny_type = GL_ONE_MINUS_SRC_ALPHA;
+
 	//Variables Vector
 	std::vector<TextureVar>	textures;
 	std::vector<intVar>		int_variables;
@@ -52,6 +80,7 @@ public:
 	std::vector<ColorVar>	color_variables;
 	std::vector<boolVar>	bool_variables;
 	std::vector<CubeMapVar>	cube_maps;
+
 
 	std::vector<TextureVar>::iterator	it_textures;
 	std::vector<intVar>::iterator		it_int_variables;
@@ -63,6 +92,7 @@ public:
 
 	uint active_num = 0;
 };
+
 
 #endif
 

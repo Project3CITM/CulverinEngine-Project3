@@ -37,8 +37,7 @@ public class Fountain : CulverinBehaviour
         starting_x_scale_bottom = bottom_water.transform.GetScale().x;
         starting_z_scale_bottom = bottom_water.transform.GetScale().z;
         starting_y_bottom = bottom_water.transform.GetPosition().y;
-
-        fountain_interact.GetComponent<CompImage>().DeactivateRender();
+        fountain_interact.GetComponent<CompText>().DeactivateRender();
     }
 
     void Update()
@@ -57,7 +56,7 @@ public class Fountain : CulverinBehaviour
                 if (current_usage == 0)
                 {
                     on_fountain_range = false;
-                    fountain_interact.GetComponent<CompImage>().DeactivateRender();
+                    fountain_interact.GetComponent<CompText>().DeactivateRender();
                 }
             }
         }
@@ -106,7 +105,7 @@ public class Fountain : CulverinBehaviour
     {
         if (current_usage > 0)
         {
-            fountain_interact.GetComponent<CompImage>().ActivateRender();
+            fountain_interact.GetComponent<CompText>().ActivateRender();
             on_fountain_range = true;
         }
     }
@@ -114,6 +113,6 @@ public class Fountain : CulverinBehaviour
     void OnTriggerLost()
     {
         on_fountain_range = false;
-        fountain_interact.GetComponent<CompImage>().DeactivateRender();
+        fountain_interact.GetComponent<CompText>().DeactivateRender();
     }
 }

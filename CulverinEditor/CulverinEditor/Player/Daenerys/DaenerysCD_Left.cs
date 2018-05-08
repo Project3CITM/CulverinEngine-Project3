@@ -7,86 +7,73 @@ public class DaenerysCD_Left : CoolDown
     private int current_charges = 3;
 
     public GameObject charge_count_0;
+    CompImage charge_img_0;
     public GameObject charge_count_1;
+    CompImage charge_img_1;
     public GameObject charge_count_2;
+    CompImage charge_img_2;
     public GameObject charge_count_3;
+    CompImage charge_img_3;
 
     public GameObject daenerys_left_cd_text;
 
-    void Start()
+    DaenerysController daenerys_controller;
+
+    public override void Start()
     {
         charge_count_0 = GetLinkedObject("charge_count_0");
         charge_count_1 = GetLinkedObject("charge_count_1");
         charge_count_2 = GetLinkedObject("charge_count_2");
         charge_count_3 = GetLinkedObject("charge_count_3");
-
-        charge_count_0.GetComponent<CompImage>().SetEnabled(false, charge_count_0);
-        charge_count_1.GetComponent<CompImage>().SetEnabled(false, charge_count_1);
-        charge_count_2.GetComponent<CompImage>().SetEnabled(false, charge_count_2);
-        charge_count_3.GetComponent<CompImage>().SetEnabled(true, charge_count_3);
-
         daenerys_left_cd_text = GetLinkedObject("daenerys_left_cd_text");
-        ResetTextTimer(daenerys_left_cd_text);
+
+        charge_img_0 = charge_count_0.GetComponent<CompImage>();
+        charge_img_1 = charge_count_1.GetComponent<CompImage>();
+        charge_img_2 = charge_count_2.GetComponent<CompImage>();
+        charge_img_3 = charge_count_3.GetComponent<CompImage>();
+                                                                                
+        charge_img_0.SetEnabled(false);
+        charge_img_1.SetEnabled(false);
+        charge_img_2.SetEnabled(false);
+        charge_img_3.SetEnabled(false);
+
+        current_charges = 1;
+
+        LinkTextTimer(daenerys_left_cd_text);
+        ResetTextTimer();
+
+        //Link to the external daenerys_obj 
+        daenerys_controller = GetLinkedObject("daenerys_obj").GetComponent<DaenerysController>();
+
+        base.Start();
     }
 
     public override void Update()
     {
-        if (current_charges < max_charges)
+        base.Update();
+
+        //Manage Seconds Counter
+        if (in_cd)
         {
-            //Perform Radial Fill when charges are 0
-            if (current_charges == 0) 
-            {
-                //Manage the Radial Fill Cooldown
-                float final_time = cd_time - act_time;
+            ManageTextTimer();
+        }
 
-                calc_time = final_time / cd_time;
-                GetComponent<CompImage>().FillAmount(calc_time);
-
-                //Manage Seconds Counter     
-                ManageTextTimer(daenerys_left_cd_text);          
-            }
-           
-            act_time += Time.deltaTime;
-            
-            if (act_time >= cd_time)
-            {
-                if (in_cd == true)
-                {
-                    in_cd = false;
-                    button_cd = GetLinkedObject("daenerys_button_left_obj").GetComponent<CompButton>();
-                    button_cd.Activate();
-
-                    if (current_charges == 0)
-                    {
-                        GetComponent<CompImage>().FillAmount(1.0f);
-
-                        ResetTextTimer(daenerys_left_cd_text);
-                        Debug.Log("RESET TIMER FALSE", Department.PLAYER, Color.YELLOW);
-
-                        reset_timer = false;
-                    }              
-                }
-
-                current_charges++;
-
-                UpdateChargesIcon();
-
-                if (current_charges < max_charges)
-                {
-                    act_time = 0.0f;
-                }
-            }
+        //Reset Seconds Counter
+        if (reset_timer)
+        {
+            ResetTextTimer();
+            reset_timer = false;
         }
     }
 
     public override void OnClick()
     {
-        if (GetLinkedObject("daenerys_obj").GetComponent<DaenerysController>().GetState() == 0
-            && GetLinkedObject("player_obj").GetComponent<CharactersManager>().changing == false)
+        if (daenerys_controller.GetState() == 0
+            && characters_manager.changing == false)
         {
             if (in_cd == false)
             {
-                if (GetLinkedObject("daenerys_obj").GetComponent<DaenerysController>().OnLeftClick() == true)
+                if (daenerys_controller.OnLeftClick() == true)
                 {
                     ActivateAbility();
                 }                
@@ -97,22 +84,22 @@ public class DaenerysCD_Left : CoolDown
     public override void ActivateAbility()
     {
         //NO CHARGES COST IN GOD MODE
-        if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().god_mode == false ||
-            GetLinkedObject("player_obj").GetComponent<CharactersManager>().no_energy == false)
-        {
-            current_charges--;
-            UpdateChargesIcon();
-        }
+        //if (characters_manager.god_mode == false ||
+        //    characters_manager.no_energy == false)
+        //{
+            //current_charges--;
+            //UpdateChargesIcon();
+        //}
 
         act_time = 0.0f;
         
-        if (current_charges == 0)
-        {
-            button_cd = GetLinkedObject("daenerys_button_left_obj").GetComponent<CompButton>();
-            button_cd.Deactivate();
-            in_cd = true;
-            prev_seconds = 1000;
-        }
+        //if (current_charges == 0)
+        //{
+        button_cd.Deactivate();
+        cd_time = daenerys_controller.left_ability_cd_time;
+        in_cd = true;
+        prev_seconds = 1000;
+        //}
     }
 
     public int GetCurrentCharges()
@@ -126,28 +113,28 @@ public class DaenerysCD_Left : CoolDown
         {
             case 0:
                 {
-                    charge_count_0.GetComponent<CompImage>().SetEnabled(true, charge_count_0);
-                    charge_count_1.GetComponent<CompImage>().SetEnabled(false, charge_count_1);
+                    charge_img_0.SetEnabled(true);
+                    charge_img_1.SetEnabled(false);
                     break;
                 }
             case 1:
                 {
-                    charge_count_0.GetComponent<CompImage>().SetEnabled(false, charge_count_0);
-                    charge_count_1.GetComponent<CompImage>().SetEnabled(true, charge_count_1);
-                    charge_count_2.GetComponent<CompImage>().SetEnabled(false, charge_count_2);
+                    charge_img_0.SetEnabled(false);
+                    charge_img_1.SetEnabled(true);
+                    charge_img_2.SetEnabled(false);
                     break;
                 }
             case 2:
                 {
-                    charge_count_1.GetComponent<CompImage>().SetEnabled(false, charge_count_1);
-                    charge_count_2.GetComponent<CompImage>().SetEnabled(true, charge_count_2);
-                    charge_count_3.GetComponent<CompImage>().SetEnabled(false, charge_count_3);
-                    break;
-                }
-            case 3:
-                {
-                    charge_count_2.GetComponent<CompImage>().SetEnabled(false, charge_count_2);
-                    charge_count_3.GetComponent<CompImage>().SetEnabled(true, charge_count_3);
+                    charge_img_1.SetEnabled(false);
+                    charge_img_2.SetEnabled(true);
+                    charge_img_3.SetEnabled(false);
+                    break; 
+                }          
+            case 3:        
+                {          
+                    charge_img_2.SetEnabled(false);
+                    charge_img_3.SetEnabled(true);
                     break;
                 }
             default:

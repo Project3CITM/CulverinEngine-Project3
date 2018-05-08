@@ -128,6 +128,9 @@ public:
 	// Scene Saved
 	bool scene_saved = true; // TODO XAVI - need implementation with Event System
 
+	/*Save & Load Stats Player*/
+	std::vector<float> infoPlayer;
+
 	// Quadtree ----------------
 	//Quadtree quadtree;
 	Octree octree;

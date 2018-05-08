@@ -3,13 +3,14 @@
 #include "CompTransform.h"
 #include "MathGeoLib.h"
 #include "Application.h"
+#include "JSONSerialization.h"
 #include "Scene.h"
 #include "ModuleFS.h"
 #include "ModuleRenderer3D.h"
 #include "GameObject.h"
 #include "ModuleGUI.h"
 #include "WindowInspector.h"
-#include"ModuleWindow.h"
+#include "ModuleWindow.h"
 #include "SDL\include\SDL_opengl.h"
 #include <math.h>
 
@@ -35,6 +36,8 @@ CompCamera::CompCamera(Comp_Type t, GameObject* parent) : Component(t, parent)
 	frustum.farPlaneDistance = far_plane;
 	frustum.verticalFov = vertical_fov * DEGTORAD;
 	frustum.horizontalFov = Atan(aspect_ratio*Tan(frustum.verticalFov / 2)) * 2;
+	frustum_center = frustum.CenterPoint();
+	frustum_halfdistance_squared = frustum.MinimalEnclosingAABB().HalfSize().LengthSq();
 
 	name_component = "Camera";
 }
@@ -61,6 +64,8 @@ CompCamera::CompCamera(const CompCamera& copy, GameObject* parent) : Component(C
 	frustum.farPlaneDistance = far_plane;
 	frustum.verticalFov = vertical_fov * DEGTORAD;
 	frustum.horizontalFov = Atan(aspect_ratio*Tan(frustum.verticalFov / 2)) * 2;
+	frustum_center = frustum.CenterPoint();
+	frustum_halfdistance_squared = frustum.MinimalEnclosingAABB().HalfSize().LengthSq();
 
 	name_component = "Camera";
 }
@@ -110,6 +115,8 @@ void CompCamera::UpdateFrustum()
 	frustum.pos = trans.Col3(3);
 	frustum.front = trans.Col3(2).Normalized();
 	frustum.up = trans.Col3(1).Normalized();
+	frustum_center = frustum.CenterPoint();
+	frustum_halfdistance_squared = frustum.MinimalEnclosingAABB().HalfSize().LengthSq();
 }
 
 void CompCamera::Draw()
@@ -333,8 +340,6 @@ void CompCamera::CullStaticObjects()
 void CompCamera::CullDynamicObjects()
 {
 	const AABB* box = nullptr;
-	float3 frustum_center = frustum.CenterPoint();
-	float far_plane_Sq = frustum.MinimalEnclosingAABB().HalfSize().LengthSq();
 
 	const int num = App->scene->dynamic_objects.size();
 	GameObject** ptr = (num > 0) ? App->scene->dynamic_objects.data() : nullptr;
@@ -347,7 +352,7 @@ void CompCamera::CullDynamicObjects()
 		{
 			box = &curr_obj->box_fixed;
 
-			if ((box->CenterPoint() - frustum_center).LengthSq() - box->HalfSize().LengthSq() >  far_plane_Sq)
+			if ((box->CenterPoint() - frustum_center).LengthSq() - box->HalfSize().LengthSq() >  frustum_halfdistance_squared)
 			{
 				curr_obj->SetVisible(false); // OUTSIDE CAMERA VISION
 			}
@@ -569,6 +574,16 @@ float CompCamera::GetRatio() const
 	return frustum.AspectRatio();
 }
 
+float CompCamera::GetFrustumDistance() const
+{
+	return frustum_halfdistance_squared;
+}
+
+float3 CompCamera::GetFrustumCenter() const
+{
+	return frustum_center;
+}
+
 float* CompCamera::GetViewMatrix() const
 {
 	static float4x4 matrix;
@@ -623,17 +638,87 @@ void CompCamera::Load(const JSON_Object * object, std::string name)
 	frustum.farPlaneDistance = json_object_dotget_number_with_std(object, name + "Far Plane");
 	frustum.verticalFov = json_object_dotget_number_with_std(object, name + "Vertical Pov");
 
+	is_main = json_object_dotget_boolean_with_std(object, name + "Main Camera");
+
+	culling = json_object_dotget_boolean_with_std(object, name + "Culling");
+	cull_dynamics = json_object_dotget_boolean_with_std(object, name + "Dynamic Culling");
+
+	Enable();
+}
+
+void CompCamera::SyncComponent(GameObject * sync_parent)
+{
 	// Set output variables ----
 	near_plane = frustum.nearPlaneDistance;
 	far_plane = frustum.farPlaneDistance;
 	vertical_fov = frustum.verticalFov * RADTODEG; /* output variable in Degrees */
 	SetFov(vertical_fov);
 
-	is_main = json_object_dotget_boolean_with_std(object, name + "Main Camera");
 	SetMain(is_main);
+	UpdateFrustum();
+}
 
-	culling = json_object_dotget_boolean_with_std(object, name + "Culling");
-	cull_dynamics = json_object_dotget_boolean_with_std(object, name + "Dynamic Culling");
+void CompCamera::GetOwnBufferSize(uint & buffer_size)
+{
+	Component::GetOwnBufferSize(buffer_size);
+	buffer_size += sizeof(int);				//UID
+	
+	buffer_size += sizeof(bool);			//Culling
+	buffer_size += sizeof(bool);			//Cull_dynamics
+	buffer_size += sizeof(bool);			//Is_Main
+
+	buffer_size += sizeof(float);			//near_plane
+	buffer_size += sizeof(float);			//far_plane
+	buffer_size += sizeof(float);			//vertical_fov
+
+	buffer_size += sizeof(float);			//Frustum Position
+	buffer_size += sizeof(float);			//Frustum Position
+	buffer_size += sizeof(float);			//Frustum Position
+
+	buffer_size += sizeof(float);			//Frustum Front
+	buffer_size += sizeof(float);			//Frustum Front
+	buffer_size += sizeof(float);			//Frustum Front
+
+	buffer_size += sizeof(float);			//Frustum Up
+	buffer_size += sizeof(float);			//Frustum Up
+	buffer_size += sizeof(float);			//Frustum Up
+}
+
+void CompCamera::SaveBinary(char ** cursor, int position) const
+{
+	Component::SaveBinary(cursor, position);
+	App->json_seria->SaveIntBinary(cursor, uid);
+
+	// Config options variables ---------
+	App->json_seria->SaveBooleanBinary(cursor, culling);
+	App->json_seria->SaveBooleanBinary(cursor, cull_dynamics);
+	App->json_seria->SaveBooleanBinary(cursor, is_main);
+
+	// Frustum variables --------
+	App->json_seria->SaveFloatBinary(cursor, frustum.nearPlaneDistance);
+	App->json_seria->SaveFloatBinary(cursor, frustum.farPlaneDistance);
+	App->json_seria->SaveFloatBinary(cursor, frustum.verticalFov);
+
+	// Transform variables ------
+	App->json_seria->SaveFloat3Binary(cursor, frustum.pos);
+	App->json_seria->SaveFloat3Binary(cursor, frustum.front);
+	App->json_seria->SaveFloat3Binary(cursor, frustum.up);
+}
+
+void CompCamera::LoadBinary(char ** cursor)
+{
+	uid = App->json_seria->LoadIntBinary(cursor);
+	culling = App->json_seria->LoadBooleanBinary(cursor);
+	cull_dynamics = App->json_seria->LoadBooleanBinary(cursor);
+	is_main = App->json_seria->LoadBooleanBinary(cursor);
+
+	frustum.nearPlaneDistance = App->json_seria->LoadFloatBinary(cursor);
+	frustum.farPlaneDistance = App->json_seria->LoadFloatBinary(cursor);
+	frustum.verticalFov = App->json_seria->LoadFloatBinary(cursor);
+
+	frustum.pos = App->json_seria->LoadFloat3Binary(cursor);
+	frustum.front = App->json_seria->LoadFloat3Binary(cursor);
+	frustum.up = App->json_seria->LoadFloat3Binary(cursor);
 
 	Enable();
 }

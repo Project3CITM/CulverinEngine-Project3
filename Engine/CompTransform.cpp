@@ -14,6 +14,7 @@
 #include "WindowInspector.h"
 #include "WindowSceneWorld.h"
 #include "ImGui/ImGuizmo.h"
+#include "JSONSerialization.h"
 #include <gl/GL.h>
 #include <gl/GLU.h>
 
@@ -53,11 +54,6 @@ void CompTransform::Init(float3 p, float3 r, float3 s)
 	SetPos(p);
 	SetRot(r);
 	SetScale(s);
-}
-
-void CompTransform::PreUpdate(float dt)
-{
-	updated = false;
 }
 
 void CompTransform::Update(float dt)
@@ -330,7 +326,6 @@ void CompTransform::SyncComponent(GameObject * sync_parent)
 	UpdateMatrix(transform_mode);
 	parentUpdate = false;
 	toUpdate = false;
-	updated = true;
 }
 
 void CompTransform::SetPosGlobal(float3 pos)
@@ -813,5 +808,40 @@ void CompTransform::Load(const JSON_Object* object, std::string name)
 	float3 scale = App->fs->json_array_dotget_float3_string(object, name + "Scale");
 	Init(position, rotation, scale);
 	
+	Enable();
+}
+
+void CompTransform::GetOwnBufferSize(uint& buffer_size)
+{
+	Component::GetOwnBufferSize(buffer_size);
+	buffer_size += sizeof(float);			// Position
+	buffer_size += sizeof(float);			// Position
+	buffer_size += sizeof(float);			// Position
+
+	buffer_size += sizeof(float);			// Rotation
+	buffer_size += sizeof(float);			// Rotation
+	buffer_size += sizeof(float);			// Rotation
+	buffer_size += sizeof(float);			// Rotation
+
+	buffer_size += sizeof(float);			// Scale
+	buffer_size += sizeof(float);			// Scale
+	buffer_size += sizeof(float);			// Scale
+}
+
+void CompTransform::SaveBinary(char ** cursor, int position) const
+{
+	Component::SaveBinary(cursor, position);
+	App->json_seria->SaveFloat3Binary(cursor, GetPos());
+	App->json_seria->SaveFloat4Binary(cursor, math::float4(GetRot().x, GetRot().y, GetRot().z, GetRot().w));
+	App->json_seria->SaveFloat3Binary(cursor, GetScale());
+}
+
+void CompTransform::LoadBinary(char ** cursor)
+{
+	float3 position = App->json_seria->LoadFloat3Binary(cursor);
+	float4 rotation = App->json_seria->LoadFloat4Binary(cursor);
+	float3 scale = App->json_seria->LoadFloat3Binary(cursor);
+	Init(position, rotation, scale);
+
 	Enable();
 }

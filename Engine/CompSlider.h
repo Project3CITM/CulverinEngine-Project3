@@ -12,23 +12,50 @@ public:
 
 	void ShowOptions();
 	void ShowInspectorInfo();
+	void SetNewPositions();
+	void SetSlideBarPos();
+	void SetSlideBarBall();
 	void Save(JSON_Object * object, std::string name, bool saveScene, uint & countResources) const;
+	uint SaveSliderCompUID(CompImage *img) const;
 	void Load(const JSON_Object * object, std::string name);
 
-	//void OnPointDown(Event event_input);
+	void GetOwnBufferSize(uint& buffer_size);
+	void SaveBinary(char** cursor, int position) const;
+	void LoadBinary(char** cursor);
+	//----------------------------------------------------------------------------------
+
+	void SyncComponent(GameObject * sync_parent);
+	void OnSubmit(Event event_data);
+	void OnCancel(Event event_data);
+	void OnMove(Event event_data);
+
+	void SetFillBar(float amount);
+	float GetFillBar()const;
+	void SyncSliderComponents(GameObject* sync_parent);
+	void SyncBar();
 	void OnDrag(Event event_input);
-	//bool PointerInside(float2 position);
-	//void OnClick();
+	void SetSliderBg(CompImage*bg);
+	void SetSliderBar(CompImage*bar);
+
+	bool IsPressed();
 
 
 private:
+	
 public:
-	CompImage * slide_bar = nullptr;
+
 private:
 	std::vector<CompScript*> linked_scripts;
 	float min_pos = 0;
 	float max_pos = 0;
+	CompImage * slide_bg = nullptr;
+	uint uuid_reimported_slide_bg = 0;
 
+	CompImage * slide_bar = nullptr;
+	uint uuid_reimported_slide_bar = 0;
+	float speed = 1.0f;
+	float fill = 0.5f;
+	bool on_drag = false;
 };
 
 #endif

@@ -5,9 +5,11 @@ public class EnemySword_BT : Enemy_BT
 {
 
     Material enemy_mat_sword;
-
+    float hp_limiter;
     public GameObject sword_name;
     public int texture_type = 0;
+    public float berserk_mode_percentage=0;
+    public float berserk_speed_attack = 1;
     public override void Start()
     {
         GameObject Temp_go = GetLinkedObject("enemies_manager");
@@ -39,6 +41,9 @@ public class EnemySword_BT : Enemy_BT
 
         dmg_alpha = 0.0f;
 
+        hp_limiter = total_hp * (berserk_mode_percentage * 0.01f);
+        Debug.Log("Hp limiter : " + hp_limiter, Department.STAGE, Color.PINK);
+
         base.Start();
         base.DeactivateHUD(sword_name);
     }
@@ -61,8 +66,12 @@ public class EnemySword_BT : Enemy_BT
 
         if (attack_ready && current_action.action_type == Action.ACTION_TYPE.GET_HIT_ACTION)
         {
-            Debug.Log("GetHitInterrupted BITCH", Department.IA);
             current_action.Interupt();
+        }
+
+        if(current_hp <= hp_limiter)
+        {
+            attack_cooldown = berserk_speed_attack;
         }
 
         base.Update();

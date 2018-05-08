@@ -115,7 +115,18 @@ bool ModuleResourceManager::Start()
 			{
 				if (strcmp(files_reimport[files_reimport.size() - 1], resources_to_reimport[i].directory_obj) != 0)
 				{
-					files_reimport.push_back(resources_to_reimport[i].directory_obj);
+					bool dontrepeat = false;
+					for (int j = 0; j < files_reimport.size(); j++)
+					{
+						if (strcmp(resources_to_reimport[i].directory_obj, files_reimport[j]) == 0)
+						{
+							dontrepeat = true;
+						}
+					}
+					if (!dontrepeat)
+					{
+						files_reimport.push_back(resources_to_reimport[i].directory_obj);
+					}
 				}
 			}
 			// if a Resource state == Resource::State::REIMPORT delete it.
@@ -745,52 +756,67 @@ void ModuleResourceManager::ShowAllResources(bool& active)
 			ImGui::EndPopup();
 		}
 		ImGui::Separator();
+		ImGui::Text("Only with number of objects > 0: "); 
+		static bool onlyused = false;
+		ImGui::SameLine(); ImGui::Checkbox(":D", &onlyused);
 		Resource::Type typeResource = Resource::Type::UNKNOWN;
 		if (selected_type != -1)
 		{
 			typeResource = type_R[selected_type];
 		}
+		static ImGuiTextFilter filter;
+		filter.Draw();
 		std::map<uint, Resource*>::iterator it = resources.begin();
 		for (int i = 0; i < resources.size(); i++)
 		{
 			ImGui::PushID(i);
 			if (typeResource == it->second->GetType())
 			{
-				//Only Draw the Type Selected.
-				ImGui::Bullet();
-				ImGui::Text("Name: "); ImGui::SameLine();
-				ImGui::TextColored(ImVec4(0.933, 0.933, 0, 1), "%s", it->second->name.c_str());
-				char namedit[200];
-				strcpy_s(namedit, 200, it->second->name.c_str());
-				ImGui::AlignFirstTextHeightToWidgets();
-				ImGui::Text("Edit Name: "); ImGui::SameLine();
-				if (ImGui::InputText("##nameModel", namedit, 50, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue))
+				if (filter.PassFilter(it->second->name.c_str()))
 				{
-					it->second->name = App->fs->ConverttoChar(std::string(namedit).c_str());
-					//TODO ELLIOT SaveMeta
-				}
-				ImGui::Text("Number of GameObjects Use this Resource: "); ImGui::SameLine();
-				if (it->second->num_game_objects_use_me > 0)
-				{
-					ImGui::TextColored(ImVec4(0, 0.933, 0, 1), "%i", it->second->num_game_objects_use_me);
-				}
-				else
-				{
-					ImGui::TextColored(ImVec4(0.933, 0, 0, 1), "%i", it->second->num_game_objects_use_me);
-				}
-				ImGui::Text("UID of Resource:"); ImGui::SameLine();
-				ImGui::TextColored(ImVec4(0, 0.666, 1, 1), "%i", it->second->GetUUID());
-				ImGui::Text("Directory in Assets: "); ImGui::SameLine();
-				ImGui::TextColored(ImVec4(0, 0.933, 0, 1), "%s", it->second->path_assets.c_str());
-				if (it->second->GetType() == Resource::Type::SCRIPT)
-				{
-					ImGui::Text("Directory in Library: "); ImGui::SameLine();
-					ImGui::TextColored(ImVec4(0, 0.933, 0.933, 1), "%s", ((ResourceScript*)it->second)->GetPathdll().c_str());
-				}
-				if (it->second->GetType() == Resource::Type::ANIMATION)
-				{
-					ImGui::Text("Directory in Library: "); ImGui::SameLine();
-					ImGui::TextColored(ImVec4(0, 0.933, 0.933, 1), "%s", ((ResourceAnimation*)it->second)->path_library.c_str());
+					if (onlyused)
+					{
+						if (it->second->num_game_objects_use_me <= 0)
+						{
+							continue;
+						}
+					}
+					//Only Draw the Type Selected.
+					ImGui::Bullet();
+					ImGui::Text("Name: "); ImGui::SameLine();
+					ImGui::TextColored(ImVec4(0.933, 0.933, 0, 1), "%s", it->second->name.c_str());
+					char namedit[200];
+					strcpy_s(namedit, 200, it->second->name.c_str());
+					ImGui::AlignFirstTextHeightToWidgets();
+					ImGui::Text("Edit Name: "); ImGui::SameLine();
+					if (ImGui::InputText("##nameModel", namedit, 50, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue))
+					{
+						it->second->name = App->fs->ConverttoChar(std::string(namedit).c_str());
+						//TODO ELLIOT SaveMeta
+					}
+					ImGui::Text("Number of GameObjects Use this Resource: "); ImGui::SameLine();
+					if (it->second->num_game_objects_use_me > 0)
+					{
+						ImGui::TextColored(ImVec4(0, 0.933, 0, 1), "%i", it->second->num_game_objects_use_me);
+					}
+					else
+					{
+						ImGui::TextColored(ImVec4(0.933, 0, 0, 1), "%i", it->second->num_game_objects_use_me);
+					}
+					ImGui::Text("UID of Resource:"); ImGui::SameLine();
+					ImGui::TextColored(ImVec4(0, 0.666, 1, 1), "%i", it->second->GetUUID());
+					ImGui::Text("Directory in Assets: "); ImGui::SameLine();
+					ImGui::TextColored(ImVec4(0, 0.933, 0, 1), "%s", it->second->path_assets.c_str());
+					if (it->second->GetType() == Resource::Type::SCRIPT)
+					{
+						ImGui::Text("Directory in Library: "); ImGui::SameLine();
+						ImGui::TextColored(ImVec4(0, 0.933, 0.933, 1), "%s", ((ResourceScript*)it->second)->GetPathdll().c_str());
+					}
+					if (it->second->GetType() == Resource::Type::ANIMATION)
+					{
+						ImGui::Text("Directory in Library: "); ImGui::SameLine();
+						ImGui::TextColored(ImVec4(0, 0.933, 0.933, 1), "%s", ((ResourceAnimation*)it->second)->path_library.c_str());
+					}
 				}
 			}
 			it++;

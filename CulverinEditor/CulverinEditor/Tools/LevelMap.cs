@@ -12,11 +12,27 @@ public class LevelMap : CulverinBehaviour
     public int map_width = 0;
     public int map_height = 0;
 
+    //[Obsolete("Change: Level_map.map[index, index2] -> Leve_map[index, index2]", false)]
     public int[,] map
     {
         get
         {
             return level_map;
+        }
+    }
+
+    /// <summary>  
+    ///     Like int[,] map but this return a number and check if outside array! 
+    ///     Change: Level_map.map[index, index2] -> Leve_map[index, index2]
+    /// </summary>  
+    /// 
+    public int this[int index, int index2]
+    {
+        get
+        {
+            if (index >= 0 && index2 >= 0 && index < map_width && index2 < map_height)
+                return level_map[index, index2];
+            return 1;
         }
     }
 
@@ -55,7 +71,6 @@ public class LevelMap : CulverinBehaviour
     /// <param name="y"></param>
     /// <param name="value"></param>
     /// 
-
     public void UpdateMap(int x, int y, int value)
     {
         level_map[x, y] = value;

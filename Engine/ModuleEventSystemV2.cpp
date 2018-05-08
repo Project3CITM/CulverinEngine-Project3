@@ -10,7 +10,8 @@
 #include "CompLight.h"
 #include "ModuleLightning.h"
 #include "CompCubeMapRenderer.h"
-
+#include "Scene.h"
+#include "SkyBox.h"
 void AddListener(EventType type, Module* listener)
 {
 	App->event_system_v2->AddListener(type, listener);
@@ -98,11 +99,14 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 	IteratingMaps = true;
 	FrameBuffer* active_frame = nullptr;
 
+	
+
 	//Draw opaque events
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_NORMAL_ARRAY);
 	glEnableClientState(GL_ELEMENT_ARRAY_BUFFER);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
 	if (App->renderer3D->wireframe) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	IterateLightsV(dt);
 	glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
@@ -113,7 +117,7 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 	//Draw alpha events
 	IterateDrawAlphaV(dt);
 	active_frame->UnBind("Scene");
-
+	
 	//Draw opaque with glow events
 	glViewport(0, 0, 128, 128);
 	active_frame = App->scene->glow_buff;
@@ -122,6 +126,9 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 	active_frame->UnBind("Scene");
 
 	glUseProgram(NULL);
+	if (App->renderer3D->active_camera)
+		App->scene->skybox->DrawSkybox(800, App->renderer3D->active_camera->frustum.pos, App->scene->skybox_index);
+	glViewport(0, 0, 128, 128);
 	if (App->renderer3D->wireframe) glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
@@ -141,6 +148,7 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 			PushEvent(item._Ptr->_Myval);
 		PushedWhileIteratingEvents.clear();
 	}
+	
 	/*
 	//Draw opaque events
 	if (EventPushedWhileIteratingMaps_DrawV)
@@ -170,11 +178,12 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 void ModuleEventSystemV2::IterateDrawV(float dt)
 {
 	BROFILER_CATEGORY("ModuleEventSystemV2: IterateDrawV", Profiler::Color::Blue);
-
+	glEnable(GL_BLEND);
 	uint LastBindedProgram = 0;
 	uint NewProgramID = 0;
 	Material* LastUsedMaterial = nullptr;
 	Material* ActualMaterial =  nullptr;
+
 	for (std::multimap<DrawVMultimapKey, Event, Comparator>::const_iterator item = DrawV.cbegin(); item != DrawV.cend();)
 	{
 		EventType type = item._Ptr->_Myval.second.Get_event_data_type();
@@ -184,11 +193,13 @@ void ModuleEventSystemV2::IterateDrawV(float dt)
 			NewProgramID = 0;
 			if (item._Ptr->_Myval.first.uuid != 0)
 				NewProgramID = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->GetShaderProgram()->programID;
-
+			
 				ActualMaterial = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->material;
 
 			if (LastUsedMaterial != ActualMaterial)
 			{
+			
+				glBlendFunc(ActualMaterial->m_source_type, ActualMaterial->m_destiny_type);
 				
 				LastUsedMaterial = ActualMaterial;
 
@@ -204,9 +215,11 @@ void ModuleEventSystemV2::IterateDrawV(float dt)
 				App->module_shaders->SetUniformVariables(ActualMaterial);
 
 				GLuint ShadowMapLoc = glGetUniformLocation(ActualMaterial->GetProgramID(), "_shadowMap");
-				glUniform1i(ShadowMapLoc, (ActualMaterial->textures.size() + ActualMaterial->cube_maps.size()));
-				glActiveTexture(GL_TEXTURE0 + (ActualMaterial->textures.size() + ActualMaterial->cube_maps.size()));
-				glBindTexture(GL_TEXTURE_2D, App->module_lightning->test_fix.depthTex);
+				if (ShadowMapLoc != -1) {
+					glUniform1i(ShadowMapLoc, (ActualMaterial->textures.size() + ActualMaterial->cube_maps.size()));
+					glActiveTexture(GL_TEXTURE0 + (ActualMaterial->textures.size() + ActualMaterial->cube_maps.size()));
+					glBindTexture(GL_TEXTURE_2D, App->module_lightning->test_fix.depthTex);
+				}
 				
 
 			}
@@ -234,6 +247,8 @@ void ModuleEventSystemV2::IterateDrawV(float dt)
 			continue;
 		}
 	}
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glDisable(GL_BLEND);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glActiveTexture(GL_TEXTURE0);
 }
@@ -278,10 +293,24 @@ void ModuleEventSystemV2::IterateDrawGlowV(float dt)
 				if (item._Ptr->_Myval.first.uuid != 0)
 				{
 					if (UseGlow) NewProgramID = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->GetShaderProgram()->programID;
-					else NewProgramID = App->renderer3D->non_glow_material->GetProgramID();
+					else 
+					{ 
+						if (((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->GetShaderProgram()->name == "Skinning with texture Final version")
+						{
+							NewProgramID = App->renderer3D->non_glow_skinning_material->GetProgramID();
+						}
+						else NewProgramID = App->renderer3D->non_glow_material->GetProgramID(); 
+					}
 				}
 
-				if (!UseGlow) ActualMaterial = App->renderer3D->non_glow_material;
+				if (!UseGlow)
+				{
+					if (((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->GetShaderProgram()->name == "Skinning with texture Final version")
+					{
+						ActualMaterial = App->renderer3D->non_glow_skinning_material;
+					}
+					else ActualMaterial = App->renderer3D->non_glow_material;
+				}
 				else ActualMaterial = ((CompMesh*)item._Ptr->_Myval.second.draw.ToDraw)->GetMaterial()->material;
 
 				if (LastUsedMaterial != ActualMaterial)
@@ -367,6 +396,7 @@ void ModuleEventSystemV2::IterateDrawAlphaV(float dt)
 
 				if (LastUsedMaterial != ActualMaterial)
 				{
+					glBlendFunc(ActualMaterial->m_source_type, ActualMaterial->m_destiny_type);
 					LastUsedMaterial = ActualMaterial;
 					glBindTexture(GL_TEXTURE_2D, 0);
 					glActiveTexture(GL_TEXTURE0);
@@ -402,6 +432,7 @@ void ModuleEventSystemV2::IterateDrawAlphaV(float dt)
 				if ((NewProgramID != LastBindedProgram) && (NewProgramID != 0))
 				{
 					LastBindedProgram = NewProgramID;
+					LastUsedMaterial = nullptr;
 					App->renderer3D->particles_shader->Bind();
 				}
 				((Particle*)item._Ptr->_Myval.second.particle_draw.ToDraw)->DrawParticle(App->renderer3D->particles_shader->programID);
@@ -593,6 +624,9 @@ void ModuleEventSystemV2::PushEvent(Event& event)
 		uint ID = 0;
 		if ((event.draw.ToDraw != nullptr) && (((CompMesh*)event.draw.ToDraw)->GetMaterial() != nullptr) && (((CompMesh*)event.draw.ToDraw)->GetMaterial()->GetShaderProgram() != nullptr))
 			ID = ((CompMesh*)event.draw.ToDraw)->GetMaterial()->GetShaderProgram()->programID;
+
+		//LOG(((CompMesh*)event.draw.ToDraw)->GetMaterial()->GetShaderProgram()->name.c_str());
+
 		float DistanceCamToObject = diff_vect.Length();
 		switch (event.draw.Dtype)
 		{
@@ -615,7 +649,7 @@ void ModuleEventSystemV2::PushEvent(Event& event)
 				EventPushedWhileIteratingMaps_DrawAlphaV = true;
 			}
 			*/
-			DrawAlphaV.insert(std::pair<float, Event>(DistanceCamToObject, event));
+			DrawAlphaV.insert(std::pair<float, Event>(-DistanceCamToObject, event));
 			break;
 		case event.draw.DRAW_2D: 
 			//MM2DCanvasDrawEvent.insert(std::pair<float, Event>(DistanceCamToObject, event)); 

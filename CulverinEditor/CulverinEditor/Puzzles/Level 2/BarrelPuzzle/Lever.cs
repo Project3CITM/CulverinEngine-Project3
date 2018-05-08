@@ -21,6 +21,22 @@ public class Lever : CulverinBehaviour
     private List<GameObject> line5;
     private List<GameObject> line6;
 
+    // Chain Lines-----------------------------
+    public GameObject chain_line_1;
+    public GameObject chain_line_2;
+    public GameObject chain_line_3;
+    public GameObject chain_line_4;
+    public GameObject chain_line_5;
+    public GameObject chain_line_6;
+
+    //Chain Lists ---------------------------------------
+    private List<GameObject> chains_1;
+    private List<GameObject> chains_2;
+    private List<GameObject> chains_3;
+    private List<GameObject> chains_4;
+    private List<GameObject> chains_5;
+    private List<GameObject> chains_6;
+
     // 
     public float speed_barrel = 5.0f;
     public float wheight_barrel = 20.0f;
@@ -142,13 +158,30 @@ public class Lever : CulverinBehaviour
         GeneratePath();
 
         lever_interact = GetLinkedObject("lever_interact");
-        if(lever_interact != null)
-            lever_interact.SetActive(false);
+       
+        lever_interact.SetActive(false);
 
         if(other_lever_1 != null)
             other_lever_1 = GetLinkedObject("other_lever_1");
         if (other_lever_2 != null)
             other_lever_2 = GetLinkedObject("other_lever_2");
+
+        chain_line_1 = GetLinkedObject("chain_line_1");
+        chain_line_2 = GetLinkedObject("chain_line_2");
+        chain_line_3 = GetLinkedObject("chain_line_3");
+        chain_line_4 = GetLinkedObject("chain_line_4");
+        chain_line_5 = GetLinkedObject("chain_line_5");
+        chain_line_6 = GetLinkedObject("chain_line_6");
+
+        chains_1 = new List<GameObject>();
+        chains_2 = new List<GameObject>();
+        chains_3 = new List<GameObject>();
+        chains_4 = new List<GameObject>();
+        chains_5 = new List<GameObject>();
+        chains_6 = new List<GameObject>();
+
+        // Get All Chains from Puzzle.
+        SetChains();
 
         //// Testing --------------------------------------------
         //for (int y = 0; y < number_lines; y++)
@@ -174,10 +207,10 @@ public class Lever : CulverinBehaviour
     void Update()
     {
         //-- TMP: Debug -----
-        if(on_lever_animation && anim_controller.IsAnimationStopped(lever_animation_name))
+      /*  if(on_lever_animation && anim_controller.IsAnimationStopped(lever_animation_name))
         {
             OnLeverAnimFinish();
-        }
+        }*/
 
         //-- Lever Triggered -----
         if(on_lever_range && !active_lever && !on_lever_animation)
@@ -203,13 +236,6 @@ public class Lever : CulverinBehaviour
                 lever_interact.SetActive(false);
             }
         }
-
-
-        /*if (Input.GetKeyDown(KeyCode.N))
-        {
-            ResetPuzzle();
-        }*/
-
 
         //---------------------
 
@@ -237,7 +263,6 @@ public class Lever : CulverinBehaviour
                 SetInfo(line5, 4);
                 SetInfo(line6, 5);
                 phase1 = true;
-                SetPathWalkable(1,1);
             }
             if (!phase2) // Move barrels mode.PUZZLE
             {
@@ -252,6 +277,7 @@ public class Lever : CulverinBehaviour
                 phase_wait = true;
                 time = Time.realtimeSinceStartup + delay_second_mode;
                 audio.PlayEvent("Chain");
+                MoveChains(true);
             }
 
             if (phase_wait) // wait to move the other mode
@@ -284,17 +310,13 @@ public class Lever : CulverinBehaviour
                     SetPathWalkable(0, 3);
                     editmap = false;
                     countdown.StartCountdown();
-                    
+                    MoveChains(false);
                 }
                 else if (countdown.IsCountdownOver())
                 {
                     ResetPuzzle();
                 }
             }
-
-           
-
-
             
         }
     }
@@ -302,46 +324,25 @@ public class Lever : CulverinBehaviour
     // OnTrigger Lever ------------------------
     void OnTriggerEnter()
     {
-
+        on_lever_range = true;
         if (active_lever || on_lever_animation)
         {
             return;
         }
 
-        CompCollider col = GetComponent<CompCollider>();
-        GameObject obj_col = col.GetCollidedObject();
-        Debug.Log(obj_col.GetTag().ToString());
-
-        if (obj_col != null && obj_col.CompareTag("player"))
-        {
-
-            lever_interact.SetActive(true);
-            on_lever_range = true;
-
-        }
-
+        lever_interact.SetActive(true);
     }
 
     void OnTriggerLost()
     {
-
+        on_lever_range = false;
         if (active_lever)
         {
             on_lever_range = false;
             return;
         }
 
-        CompCollider col = GetComponent<CompCollider>();
-        GameObject obj_col = col.GetCollidedObject();
-
-        if (obj_col != null && obj_col.CompareTag("player"))
-        {
-
-            lever_interact.SetActive(false);
-            on_lever_range = false;
-
-        }
-
+        lever_interact.SetActive(false);
     }
 
     // -------------------------------------------------------------------------------------
@@ -380,6 +381,12 @@ public class Lever : CulverinBehaviour
 
         int curr_x = 0;
         int curr_y = 0;
+
+        int start_tile_x = 0;
+        int start_tile_z = 0;
+        int target_tile_x = 0;
+        int target_tile_z = 0;
+
         for (int x = barrel_per_line - 1; x >= 0; x--)
         {
             curr_x = puzzle_start_tile_x + y * (int)(orientation_x.x + orientation_z.x);
@@ -387,12 +394,23 @@ public class Lever : CulverinBehaviour
 
             if (current_path.walkability[x, y] == 0)
             {
-               
                 list[count_barrel--].GetComponent<BarrelFall>().SetData(speed_barrel, wheight_barrel, curr_x, curr_y, barrel_fall_speed, BarrelFall.ModeBarrel.PUZZLE, time_sinking, floor_height);
             }
             else if (current_path.walkability[x, y] == 1)
             {
                 list[count_barrel--].GetComponent<BarrelFall>().SetData(speed_barrel, wheight_barrel, curr_x, curr_y, barrel_fall_speed, BarrelFall.ModeBarrel.FILLING, time_sinking, floor_height);
+            }
+
+            if (x == barrel_per_line - 1)
+            {
+                target_tile_x = curr_x;
+                target_tile_z = curr_y;
+            }
+            else if(x == 0)
+            {
+                start_tile_x = curr_x;
+                start_tile_z = curr_y;
+                SetChainsData(number_of_lines, start_tile_x, start_tile_z, target_tile_x, target_tile_z);
             }
         }
     }
@@ -461,6 +479,158 @@ public class Lever : CulverinBehaviour
         }
     }
 
+    void SetChains()
+    {
+        bool stop = false;
+        int count = 0;
+        while (stop == false)
+        {
+            GameObject temp = chain_line_1.GetChildByTagIndex("barrel", count++);
+            if (temp == null)
+                stop = true;
+            else
+                chains_1.Add(temp);
+        }
+        stop = false;
+        count = 0;
+        while (stop == false)
+        {
+            GameObject temp = chain_line_2.GetChildByTagIndex("barrel", count++);
+            if (temp == null)
+                stop = true;
+            else
+                chains_2.Add(temp);
+        }
+        stop = false;
+        count = 0;
+        while (stop == false)
+        {
+            GameObject temp = chain_line_3.GetChildByTagIndex("barrel", count++);
+            if (temp == null)
+                stop = true;
+            else
+                chains_3.Add(temp);
+        }
+        stop = false;
+        count = 0;
+        while (stop == false)
+        {
+            GameObject temp = chain_line_4.GetChildByTagIndex("barrel", count++);
+            if (temp == null)
+                stop = true;
+            else
+                chains_4.Add(temp);
+        }
+        stop = false;
+        count = 0;
+        while (stop == false)
+        {
+            GameObject temp = chain_line_5.GetChildByTagIndex("barrel", count++);
+            if (temp == null)
+                stop = true;
+            else
+                chains_5.Add(temp);
+        }
+        stop = false;
+        count = 0;
+        while (stop == false)
+        {
+            GameObject temp = chain_line_6.GetChildByTagIndex("barrel", count++);
+            if (temp == null)
+                stop = true;
+            else
+                chains_6.Add(temp);
+        }
+    }
+
+    void SetChainsData(int line, int start_x, int start_z, int target_x, int target_z)
+    {
+        switch(line)
+        {
+            case 0:
+                {
+                    for (int i = 0; i < chains_1.Count; i++)
+                    {
+                        chains_1[i].GetComponent<ChainMove>().SetData(speed_barrel,start_x,start_z,target_x,target_z);
+                    }
+                    break;
+                }
+            case 1:
+                {
+                    for (int i = 0; i < chains_2.Count; i++)
+                    {
+                        chains_2[i].GetComponent<ChainMove>().SetData(speed_barrel, start_x, start_z, target_x, target_z);
+                    }
+                    break;
+                }
+            case 2:
+                {
+                    for (int i = 0; i < chains_3.Count; i++)
+                    {
+                        chains_3[i].GetComponent<ChainMove>().SetData(speed_barrel, start_x, start_z, target_x, target_z);
+                    }
+                    break;
+                }
+            case 3:
+                {
+                    for (int i = 0; i < chains_4.Count; i++)
+                    {
+                        chains_4[i].GetComponent<ChainMove>().SetData(speed_barrel, start_x, start_z, target_x, target_z);
+                    }
+                    break;
+                }
+            case 4:
+                {
+                    for (int i = 0; i < chains_5.Count; i++)
+                    {
+                        chains_5[i].GetComponent<ChainMove>().SetData(speed_barrel, start_x, start_z, target_x, target_z);
+                    }
+                    break;
+                }
+            case 5:
+                {
+                    for (int i = 0; i < chains_6.Count; i++)
+                    {
+                        chains_6[i].GetComponent<ChainMove>().SetData(speed_barrel, start_x, start_z, target_x, target_z);
+                    }
+                    break;
+                }
+        }
+    }
+
+    void MoveChains(bool active)
+    {
+        for (int i = 0; i < chains_1.Count; i++)
+        {
+            chains_1[i].GetComponent<ChainMove>().SetMove(active);
+        }                                        
+                                                 
+        for (int i = 0; i < chains_2.Count; i++) 
+        {                                        
+            chains_2[i].GetComponent<ChainMove>().SetMove(active);
+        }                                        
+                                                 
+        for (int i = 0; i < chains_3.Count; i++) 
+        {                                        
+            chains_3[i].GetComponent<ChainMove>().SetMove(active);
+        }                                       
+                                                
+        for (int i = 0; i < chains_4.Count; i++)
+        {                                       
+            chains_4[i].GetComponent<ChainMove>().SetMove(active);
+        }                                        
+                                                 
+        for (int i = 0; i < chains_5.Count; i++) 
+        {                                        
+            chains_5[i].GetComponent<ChainMove>().SetMove(active);
+        }
+
+        for (int i = 0; i < chains_6.Count; i++)
+        {
+            chains_6[i].GetComponent<ChainMove>().SetMove(active);
+        }
+    }
+
     void OnLeverActivated()
     {
         // Called when lever is activated. Set flag to true and play the animation.
@@ -468,6 +638,9 @@ public class Lever : CulverinBehaviour
         anim_controller = lever_go.GetComponent<CompAnimation>();
         if (anim_controller != null)
             anim_controller.PlayAnimation(lever_animation_name);
+        
+        // Block Walkability
+        SetPathWalkable(1, 1);
     }
 
     void OnLeverAnimFinish()
@@ -609,6 +782,13 @@ public class Lever : CulverinBehaviour
         time = 0.0f;
 
         SetPathWalkable(3,3);
+        GetLinkedObject("player_obj").GetComponent<MovementController>().CheckDrawning();
+
+        if (on_lever_range)
+        {
+            lever_interact.SetActive(true);
+        }
+
 
     }
 

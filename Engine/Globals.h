@@ -19,6 +19,14 @@ void log(const char file[], int line, const char* format, ...);
 #define HAVE_M_PI
 #define IM_ARRAYSIZE(_ARR)  ((int)(sizeof(_ARR)/sizeof(*_ARR)))
 
+#define IDENTIFICATOR_ROOT 20
+#define IDENTIFICATOR_GAMEOBJECT 21
+#define IDENTIFICATOR_COMPONENT 22
+#define IDENTIFICATOR_AUDIOBANKS 23
+#define IDENTIFICATOR_END 25
+#define IDENTIFICATOR_ERROR 26
+
+
 // Deletes a buffer
 #define RELEASE( x )\
     {\

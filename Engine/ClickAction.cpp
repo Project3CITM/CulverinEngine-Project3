@@ -9,6 +9,7 @@
 #include "GameObject.h"
 #include "CompScript.h"
 #include "ModuleFS.h"
+#include "JSONSerialization.h"
 
 ClickAction::ClickAction()
 {
@@ -252,16 +253,16 @@ void ClickAction::ShowOnClickInfo()
 	ImGui::SameLine();
 	if (ImGui::ImageButton((ImTextureID*)App->gui->icon_remove, ImVec2(8, 8), ImVec2(-1, 1), ImVec2(0, 0)))
 	{
-		ClickActionData new_action;
-		actions.pop_back();
+		if (actions.size() > 0)
+		{
+			actions.pop_back();
+		}
 	}
 	ImGui::PopStyleColor();
 	ImGui::EndChild();
 	ImGui::PopStyleVar();
 	// Andre how to call functions :D
 	// actions[i].script->csharp->DoPublicMethod(actions[i].method, &actions[i].value);
-
-
 }
 void ClickAction::ShowTypeMethod(int index)
 {
@@ -599,6 +600,206 @@ void ClickAction::LoadClickAction(const JSON_Object * object, std::string name)
 	}
 
 
+}
+
+void ClickAction::GetOwnBufferSize(uint & buffer_size)
+{
+	// Save Actions (UI Button) ------------------------
+	if (actions.size() > 0)
+	{
+		buffer_size += sizeof(int);										//actions.size()
+		for (int i = 0; i < actions.size(); i++)
+		{
+			buffer_size += sizeof(int);									//actions[i].selected_mode
+			if (actions[i].attacked == nullptr)
+			{
+				buffer_size += sizeof(int);								//actions[i].attacked.UID = -1
+				continue;	
+			}
+			buffer_size += sizeof(int);									//actions[i].attacked->GetUUID()
+
+			if (actions[i].script == nullptr)
+			{
+				buffer_size += sizeof(int);								//actions[i].script->GetScriptName() = "No Script"
+				buffer_size += strlen("No Script");						//
+				continue;
+			}
+			buffer_size += sizeof(int);									//actions[i].script->GetScriptName()
+			buffer_size += strlen(actions[i].script->GetScriptName());	//
+
+			if (actions[i].method == nullptr)
+			{
+				buffer_size += sizeof(int);								//actions[i].method->name_method.c_str() = "No Function"
+				buffer_size += strlen("No Function");					//
+				continue;
+			}
+			buffer_size += sizeof(int);									//actions[i].method->name_method.c_str()
+			buffer_size += actions[i].method->name_method.size();		//
+
+			buffer_size += sizeof(int);									//actions[i].method->type
+			switch (actions[i].method->type)
+			{
+			case VarType::Var_INT:
+			{
+				buffer_size += sizeof(int);								//*(int*)actions[i].value
+				break;
+			}
+			case VarType::Var_FLOAT:
+			{
+				buffer_size += sizeof(float);							//*(float*)actions[i].value
+				break;
+			}
+			case VarType::Var_BOOL:
+			{
+				buffer_size += sizeof(bool);							//*(bool*)actions[i].value
+				break;
+			}
+			case VarType::Var_STRING:
+			{
+				break;
+			}
+			case VarType::Var_GAMEOBJECT:
+			{
+				break;
+			}
+			}
+		}
+	}
+	else
+	{
+		buffer_size += sizeof(int);										//actions.size() == 0
+	}
+}
+
+void ClickAction::SaveBinary(char** cursor) const
+{
+	// Save Actions (UI Button) ------------------------
+	if (actions.size() > 0)
+	{
+		App->json_seria->SaveIntBinary(cursor, actions.size());
+		for (int i = 0; i < actions.size(); i++)
+		{
+			App->json_seria->SaveIntBinary(cursor, actions[i].selected_mode);
+			if (actions[i].attacked == nullptr)
+			{
+				App->json_seria->SaveIntBinary(cursor, -1);
+				continue;
+			}
+			App->json_seria->SaveIntBinary(cursor, actions[i].attacked->GetUUID());
+
+			if (actions[i].script == nullptr)
+			{
+				App->json_seria->SaveStringBinary(cursor, "No Script");
+				continue;
+			}
+			App->json_seria->SaveStringBinary(cursor, actions[i].script->GetScriptName());
+
+			if (actions[i].method == nullptr)
+			{
+				App->json_seria->SaveStringBinary(cursor, "No Function");
+				continue;
+			}
+			App->json_seria->SaveStringBinary(cursor, actions[i].method->name_method);
+
+			App->json_seria->SaveIntBinary(cursor, (int)actions[i].method->type);
+			switch (actions[i].method->type)
+			{
+			case VarType::Var_INT:
+			{
+				App->json_seria->SaveIntBinary(cursor, *(int*)actions[i].value);
+				break;
+			}
+			case VarType::Var_FLOAT:
+			{
+				App->json_seria->SaveFloatBinary(cursor, *(float*)actions[i].value);
+				break;
+			}
+			case VarType::Var_BOOL:
+			{
+				App->json_seria->SaveBooleanBinary(cursor, *(bool*)actions[i].value);
+				break;
+			}
+			case VarType::Var_STRING:
+			{
+				break;
+			}
+			case VarType::Var_GAMEOBJECT:
+			{
+				break;
+			}
+			}
+		}
+	}
+	else
+	{
+		App->json_seria->SaveIntBinary(cursor, 0);
+	}
+}
+
+void ClickAction::LoadBinary(char ** cursor)
+{
+	uint number_actions = App->json_seria->LoadIntBinary(cursor);
+	for (int i = 0; i < number_actions; i++)
+	{
+		ClickActionData temp;
+
+		temp.selected_mode = App->json_seria->LoadIntBinary(cursor);
+		temp.UID_attacked = App->json_seria->LoadIntBinary(cursor);
+		if (temp.UID_attacked == -1)
+		{
+			actions.push_back(temp);
+			continue;
+		}
+		temp.current_script = App->json_seria->LoadStringBinary(cursor);
+		if (temp.current_script == "No Script")
+		{
+			actions.push_back(temp);
+			continue;
+		}
+		temp.current_function = App->json_seria->LoadStringBinary(cursor);
+		if (temp.current_function == "No Function")
+		{
+			actions.push_back(temp);
+			continue;
+		}
+		VarType type_function = (VarType)App->json_seria->LoadIntBinary(cursor);
+		if (type_function != VarType::Var_NONE)
+		{
+			switch (type_function)
+			{
+			case VarType::Var_INT:
+			{
+				int value = App->json_seria->LoadIntBinary(cursor);
+				temp.value = new char[sizeof value];
+				*(int*)temp.value = value;
+				break;
+			}
+			case VarType::Var_FLOAT:
+			{
+				float value = App->json_seria->LoadFloatBinary(cursor);
+				temp.value = new char[sizeof value];
+				*(float*)temp.value = value;
+				break;
+			}
+			case VarType::Var_BOOL:
+			{
+				bool value = App->json_seria->LoadBooleanBinary(cursor);
+				temp.value = new char[sizeof value];
+				*(bool*)temp.value = value;
+				break;
+			}
+			case VarType::Var_STRING:
+			{
+				break;
+			}
+			case VarType::Var_GAMEOBJECT:
+			{
+				break;
+			}
+			}
+		}
+		actions.push_back(temp);
+	}
 }
 
 void ClickAction::SyncClickAction()

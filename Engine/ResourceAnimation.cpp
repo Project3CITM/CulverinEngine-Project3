@@ -47,13 +47,15 @@ AnimBone::~AnimBone()
 	scale_keys.clear();
 }
 
-void AnimBone::UpdateBone(GameObject* bone, AnimationClip* playing_clip, BlendingClip* blending_node_clip, BlendingClip* second_blending_node_clip ,AnimationClip* blending_clip) const
+void AnimBone::UpdateBone(GameObject* bone, AnimationClip* playing_clip, BlendingClip* blending_node_clip, BlendingClip* second_blending_node_clip ,AnimationNode* blending_clip) const
 {
 	if (playing_clip != nullptr)
 	{
 		float3 pos, blending_node_pos, blending_pos, last_pos;
 		Quat rot, blending_node_rot, blending_rot, last_rot;
 		float3 scale, blending_node_scale, blending_scale, last_scale;
+
+
 
 		CompTransform* transform = bone->GetComponentTransform();
 
@@ -86,7 +88,6 @@ void AnimBone::UpdateBone(GameObject* bone, AnimationClip* playing_clip, Blendin
 			rot = rot.Slerp(blending_node_rot, second_blending_node_clip->weight);
 			scale = scale.Lerp(blending_node_scale, second_blending_node_clip->weight);
 		}
-
 		if (blending_clip == nullptr)
 		{
 			transform->SetPos(pos);
@@ -95,11 +96,37 @@ void AnimBone::UpdateBone(GameObject* bone, AnimationClip* playing_clip, Blendin
 		}
 		else
 		{
-			blending_pos = GetPosition(blending_clip, bonetransf);
-			blending_rot = GetRotation(blending_clip, bonerots);
-			blending_scale = GetScale(blending_clip, bonescals);
+			blending_pos = GetPosition(blending_clip->clip, bonetransf);
+			blending_rot = GetRotation(blending_clip->clip, bonerots);
+			blending_scale = GetScale(blending_clip->clip, bonescals);
 
-			float weight = (blending_clip->total_blending_time - blending_clip->current_blending_time) / blending_clip->total_blending_time;
+			if (blending_clip->GetFirstActiveBlendingClip() != nullptr)
+			{
+				BlendingClip* blending_blend_clip = blending_clip->GetFirstActiveBlendingClip();
+
+				blending_node_pos = GetPosition(blending_blend_clip->clip, bonetransf);
+				blending_node_rot = GetRotation(blending_blend_clip->clip, bonerots);
+				blending_node_scale = GetScale(blending_blend_clip->clip, bonescals);
+
+				blending_pos = blending_pos.Lerp(blending_node_pos, blending_blend_clip->weight);
+				blending_rot = blending_rot.Slerp(blending_node_rot, blending_blend_clip->weight);
+				blending_scale = blending_scale.Lerp(blending_node_scale, blending_blend_clip->weight);
+			}
+			
+			if (blending_clip->GetSecondActiveBlendingClip() != nullptr)
+			{
+				BlendingClip* blending_blend_clip = blending_clip->GetSecondActiveBlendingClip();
+
+				blending_node_pos = GetPosition(blending_blend_clip->clip, bonetransf);
+				blending_node_rot = GetRotation(blending_blend_clip->clip, bonerots);
+				blending_node_scale = GetScale(blending_blend_clip->clip, bonescals);
+
+				blending_pos = blending_pos.Lerp(blending_node_pos, blending_blend_clip->weight);
+				blending_rot = blending_rot.Slerp(blending_node_rot, blending_blend_clip->weight);
+				blending_scale = blending_scale.Lerp(blending_node_scale, blending_blend_clip->weight);
+			}
+
+			float weight = (blending_clip->clip->total_blending_time - blending_clip->clip->current_blending_time) / blending_clip->clip->total_blending_time;
 
 			last_pos = pos.Lerp(blending_pos, weight);
 			last_rot = rot.Slerp(blending_rot, weight);

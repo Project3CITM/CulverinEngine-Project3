@@ -8,7 +8,10 @@
 #include "ModuleShaders.h"
 #include "Materials.h"
 
+
 class ResourceMaterial;
+
+
 
 class CompMaterial : public Component
 {
@@ -43,7 +46,12 @@ public:
 	// SAVE - LOAD METHODS ------------------------
 	void Save(JSON_Object* object, std::string name, bool saveScene, uint& countResources) const;
 	void Load(const JSON_Object* object, std::string name);
+
+	void GetOwnBufferSize(uint& buffer_size);
+	void SaveBinary(char** cursor, int position) const;
+	void LoadBinary(char** cursor);
 	// --------------------------------------------
+
 
 
 
@@ -52,6 +60,7 @@ public:
 	//ResourceMaterial* resource_material = nullptr;
 	//ShaderProgram material_shader;
 	Material* material;
+	
 private:
 
 	Color color = White;

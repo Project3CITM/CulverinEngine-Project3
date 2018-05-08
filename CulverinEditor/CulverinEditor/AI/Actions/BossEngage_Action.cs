@@ -14,8 +14,9 @@ class BossEngage_Action : Action
     public override bool ActionStart()
     {
         GetLinkedObject("player_obj").GetComponent<CharactersManager>().SetCurrentCharacterState(CharacterController.State.GRABBED);
-        GetComponent<CompAnimation>().SetTransition("ToDraw");
-        GetComponent<CompAnimation>().SetClipDuration("Draw", duration);
+        GetComponent<CompAnimation>().SetTransition("ToPresentation");
+        GetComponent<CompAnimation>().SetClipDuration("Presentation", duration);
+        GetComponent<Boss_BT>().boss_fight_timer = 0.0f;
         return true;
     }
 
@@ -27,7 +28,7 @@ class BossEngage_Action : Action
             play_audio = true;
         }
 
-        if (GetComponent<CompAnimation>().IsAnimationStopped("Draw"))
+        if (GetComponent<CompAnimation>().IsAnimationStopped("Presentation"))
             return ACTION_RESULT.AR_SUCCESS;
         return ACTION_RESULT.AR_IN_PROGRESS;
     }
@@ -41,7 +42,8 @@ class BossEngage_Action : Action
         GetLinkedObject("hp_bar_boss").SetActive(true);
         GetLinkedObject("hp_bar_boss").GetComponent<BossHPBar>().ActivateHPBar(true);
         Audio.ChangeState("MusicState", "FinalBoss");
-
+        if (Audio.prank)
+            Audio.ChangeState("MusicState", "AlternateBoss");
         return true;
     }
 

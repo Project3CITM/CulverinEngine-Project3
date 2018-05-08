@@ -4,7 +4,7 @@ using CulverinEditor.Debug;
 class Disengage_Action : Action
 {
     public float duration = 1.0f;
-
+    CompAnimation anim_comp;
     public Disengage_Action()
     {
         action_type = ACTION_TYPE.DISENGAGE_ACTION;
@@ -12,10 +12,12 @@ class Disengage_Action : Action
 
     public override bool ActionStart()
     {
-        GetComponent<CompAnimation>().SetTransition("ToSheatheSword");
+        anim_comp = GetComponent<CompAnimation>();
+
+        anim_comp.SetTransition("ToSheatheSword");
         //TODO_AI: Audio disengage?
         //GetComponent<CompAudio>().PlayEvent("Dracarys");
-        GetComponent<CompAnimation>().SetClipDuration("Sheathe Sword", duration);
+        anim_comp.SetClipDuration("Sheathe Sword", duration);
 
 
         //PLAY COMBAT MUSIC
@@ -28,7 +30,7 @@ class Disengage_Action : Action
 
     public override ACTION_RESULT ActionUpdate()
     {
-        if (GetComponent<CompAnimation>().IsAnimationStopped("Sheathe Sword"))
+        if (anim_comp.IsAnimationStopped("Sheathe Sword"))
             return ACTION_RESULT.AR_SUCCESS;
         return ACTION_RESULT.AR_IN_PROGRESS;
     }

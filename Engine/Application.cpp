@@ -267,16 +267,39 @@ void Application::FinishUpdate()
 {
 	BROFILER_CATEGORY("Application FinishUpdate", Profiler::Color::PaleVioletRed);
 	// SAVE & LOAD FUNCTIONS ------------------------
-	if (want_to_save == true)
+	if (want_to_save == true || want_to_save_binary == true)
 	{
 		if (App->mode_game == false)
 		{
-			actual_scene = json_seria->SaveScene();
+			if (want_to_save)
+			{
+				actual_scene = json_seria->SaveScene();
+			}
+			else if (want_to_save_binary)
+			{
+				actual_scene = json_seria->SaveSceneBinary();
+			}
 		}
 		want_to_save = false;
+		want_to_save_binary = false;
+	}
+	if (remove_secondary_scene)
+	{
+		render_gui->focus = nullptr;
+		render_gui->selected = nullptr;
+		render_gui->ClearInteractiveVector();
+
+		scene->DeleteAllGameObjects(scene->secondary_root, false);
+
+		if (engine_state != EngineState::STOP)
+		{
+			change_to_game = true;
+		}
+
+		remove_secondary_scene = false;
 	}
 
-	if (want_to_load == true)
+	if (want_to_load == true || want_to_load_binary == true || want_to_load_json == true)
 	{
 		//Before Delete GameObjects Del Variables Scripts GameObject 
 		scene->octree.Clear(false);
@@ -284,6 +307,9 @@ void Application::FinishUpdate()
 		scene->dynamic_objects.clear();
 
 		//App->importer->iScript->ClearMonoMap();
+		std::string scene_binary = DIRECTORY_ASSETS;
+		scene_binary += "SceneBinary/";
+		scene_binary += fs->GetOnlyName(actual_scene) + ".culverinscene";
 
 		App->scene->DeleteAllGameObjects(App->scene->root);
 		scene->ClearAllTags();
@@ -293,7 +319,34 @@ void Application::FinishUpdate()
 		render_gui->selected = nullptr;
 		render_gui->ClearInteractiveVector();
 
-		json_seria->LoadScene(actual_scene.c_str());
+		if (want_to_load)
+		{
+			if (App->fs->CheckIsFileExist(scene_binary))
+			{
+				json_seria->LoadSceneBinary(scene_binary.c_str());
+			}
+			else
+			{
+				json_seria->LoadScene(actual_scene.c_str());
+			}
+		}
+		else if (want_to_load_json)
+		{
+			json_seria->LoadScene(actual_scene.c_str());
+		}
+		else if (want_to_load_binary)
+		{
+			if (App->fs->CheckIsFileExist(scene_binary))
+			{
+				json_seria->LoadSceneBinary(scene_binary.c_str());
+			}
+			else
+			{
+				LOG("[error] Doesn't exist this scene in binary");
+				LOG("[blue] Load scene with json!!");
+				json_seria->LoadScene(actual_scene.c_str());
+			}
+		}
 
 		if (load_in_game)
 		{
@@ -306,6 +359,8 @@ void Application::FinishUpdate()
 			change_to_game = true;
 		}
 		want_to_load = false;
+		want_to_load_binary = false;
+		want_to_load_json = false;
 		load_in_game = false;
 	}
 
@@ -326,7 +381,17 @@ void Application::FinishUpdate()
 		importer->iScript->ClearLinkVariables();
 
 
-		json_seria->LoadScene(actual_scene.c_str());
+		std::string scene_binary = DIRECTORY_ASSETS;
+		scene_binary += "SceneBinary/";
+		scene_binary += fs->GetOnlyName(actual_scene) + ".culverinscene";
+		if (App->fs->CheckIsFileExist(scene_binary))
+		{
+			json_seria->LoadSceneBinary(scene_binary.c_str());
+		}
+		else
+		{
+			json_seria->LoadScene(actual_scene.c_str());
+		}
 
 
 		importer->iScript->SetMonoMap(App->scene->root, true);
@@ -381,14 +446,34 @@ void Application::FinishUpdate()
 		importer->iScript->ClearLinkVariables();
 
 		// Load SecondaryScene and swap
-		json_seria->LoadScene(secondary_scene.c_str());
+		std::string scene_binary = DIRECTORY_ASSETS;
+		scene_binary += "SceneBinary/";
+		scene_binary += fs->GetOnlyName(secondary_scene) + ".culverinscene";
+		if (App->fs->CheckIsFileExist(scene_binary))
+		{
+			json_seria->LoadSceneBinary(scene_binary.c_str());
+		}
+		else
+		{
+			json_seria->LoadScene(secondary_scene.c_str());
+		}
 		scene->ChangeRoot(scene->secondary_root, scene->root);
 
 		camera = scene->secondary_root->FindGameObjectWithTag("camera");
 		((CompCamera*)camera->FindComponentByType(Comp_Type::C_CAMERA))->SetMain(false);
 
 		// Load Root 
-		json_seria->LoadScene(actual_scene.c_str());
+		scene_binary = DIRECTORY_ASSETS;
+		scene_binary += "SceneBinary/";
+		scene_binary += fs->GetOnlyName(actual_scene) + ".culverinscene";
+		if (App->fs->CheckIsFileExist(scene_binary))
+		{
+			json_seria->LoadSceneBinary(scene_binary.c_str());
+		}
+		else
+		{
+			json_seria->LoadScene(actual_scene.c_str());
+		}
 
 		camera = scene->root->FindGameObjectWithTag("camera");
 		((CompCamera*)camera->FindComponentByType(Comp_Type::C_CAMERA))->SetMain(true);
@@ -410,22 +495,7 @@ void Application::FinishUpdate()
 		load_multi_scene = false;
 	}
 
-	if (remove_secondary_scene)
-	{
-		render_gui->focus = nullptr;
-		render_gui->selected = nullptr;
-		render_gui->ClearInteractiveVector();
-
-		scene->DeleteAllGameObjects(scene->secondary_root,false);
-
-		if (engine_state != EngineState::STOP)
-		{
-			change_to_game = true;
-		}
-
-		remove_secondary_scene = false;
-	}
-
+	
 	if (change_to_secondary_scene)
 	{
 		if (scene->secondary_root->GetChildsVec().size() > 0)
@@ -565,7 +635,6 @@ update_status Application::Update()
 
 	if (mode_game)
 	{
-		static bool active_fps = false;
 		if (App->input->GetKey(SDL_SCANCODE_F4) == KEY_DOWN)
 		{
 			active_fps = !active_fps;
@@ -640,7 +709,7 @@ update_status Application::Update()
 	{
 		if ((*item)->IsEnabled())
 		{
-			if (((*item) == camera) || ((*item) == event_system_v2))
+			if (((*item) == camera) || ((*item) == event_system_v2) || ((*item) == renderer3D))
 			{
 				// Camera can't be affected by Game Time Scale (0 dt = 0 movement)
 				ret = (*item)->PostUpdate(real_time.dt);
@@ -1010,14 +1079,35 @@ void Application::SetState(EngineState state)
 	LOG("Engine State is Now: %i", engine_state);
 }
 
-void Application::WantToSave()
+void Application::WantToSave(bool binary)
 {
-	want_to_save = true;
+	if (binary == false)
+	{
+		want_to_save = true;
+	}
+	else
+	{
+		want_to_save_binary = true;
+	}
 }
 
-void Application::WantToLoad(bool in_game)
+void Application::WantToLoad(bool in_game, bool binary, bool force_json)
 {
-	want_to_load = true;
+	if (binary == false)
+	{
+		if (force_json)
+		{
+			want_to_load_json = true;
+		}
+		else
+		{
+			want_to_load = true;
+		}
+	}
+	else
+	{
+		want_to_load_binary = true;
+	}
 	load_in_game = in_game;
 }
 
@@ -1101,11 +1191,8 @@ void Application::MakeBuild(std::string build_name, std::string Initial_scene, s
 	static std::string game_name;
 	game_name = build_name;
 
-	static bool full_screen = false;
 	static bool native_resolution = false;
 	static bool run_in_background = false;
-	static bool resizable_window = true;
-	static bool borderless = false;
 	static bool full_desktop = true;
 	static bool game_mode = true;
 	static bool use_release = true;
@@ -1187,6 +1274,14 @@ void Application::MakeBuild(std::string build_name, std::string Initial_scene, s
 	LOG("Copy Map folder");
 	App->SaveLogs();
 
+	// Copy Folder Maps -------------------------------------------
+	path_copy = App->fs->GetMainDirectory() + "/SceneBinary";
+	path_paste = desktop_assets + "/SceneBinary";
+	App->fs->CopyPasteFolder(path_copy.c_str(), path_paste.c_str());
+
+	LOG("Copy SceneBinary folder");
+	App->SaveLogs();
+
 
 	// Copy Folder ParticleSystem -------------------------------------------
 	path_copy = App->fs->GetMainDirectory() + "/ParticleSystem";
@@ -1259,6 +1354,12 @@ void Application::MakeBuild(std::string build_name, std::string Initial_scene, s
 	std::string temp_player = App->fs->GetMainDirectory();
 	temp_player += "/player_action.json";
 	App->fs->CopyPasteFile(temp_player.c_str(), desktop_library.c_str());
+	// Player Actions Default
+	desktop_library = desktop + "/";
+	desktop_library += "Library/JSON/player_action_default.json";
+	temp_player = App->fs->GetMainDirectory();
+	temp_player += "/player_action_default.json";
+	App->fs->CopyPasteFile(temp_player.c_str(), desktop_library.c_str());
 
 	// Then all files (no Folders) in Game.
 	std::vector<std::string> files_game;
@@ -1269,6 +1370,20 @@ void Application::MakeBuild(std::string build_name, std::string Initial_scene, s
 		files_game_new += App->fs->FixName_directory(files_game[i]);
 		App->fs->CopyPasteFile(files_game[i].c_str(), files_game_new.c_str());
 	}
+
+	files_game.clear();
+
+	// Finally move all materials .dds RealNormalMaps to Library/Materials 
+	std::string real_normal_maps = App->fs->GetGameDirectory();
+	real_normal_maps += "/RealNormalMaps";
+	App->fs->GetOnlyFilesFromFolder(real_normal_maps, files_game);
+	for (int i = 0; i < files_game.size(); i++)
+	{
+		std::string files_game_new = desktop + "/Library/Materials/";
+		files_game_new += App->fs->GetOnlyName(files_game[i]);
+		App->fs->CopyPasteFile(files_game[i].c_str(), files_game_new.c_str());
+	}
+	files_game.clear();
 
 	LOG("Copy all files (Game)");
 	App->SaveLogs();
@@ -1348,6 +1463,82 @@ bool Application::InitBuild()
 	}
 	return true;
 }
+
+void Application::SetFullScreen()
+{
+	LOG("Setting to Fullscreen");
+	SDL_SetWindowFullscreen(App->window->window, SDL_WINDOW_FULLSCREEN);
+}
+
+bool Application::GetFullScreen()
+{
+	Uint32 flag = SDL_GetWindowFlags(App->window->window);
+	if (flag == SDL_WINDOW_FULLSCREEN)
+		return true;
+	else
+		return false;
+}
+
+void Application::SetWindowed()
+{
+	LOG("Setting to Windowed");
+	SDL_SetWindowFullscreen(App->window->window, SDL_WINDOW_RESIZABLE);
+}
+
+bool Application::GetWindowed()
+{
+	Uint32 flag = SDL_GetWindowFlags(App->window->window);
+	if (flag == SDL_WINDOW_RESIZABLE)
+		return true;
+	else
+		return false;
+}
+
+void Application::SetBordeless()
+{
+	LOG("Setting to Bordeless");
+	SDL_SetWindowFullscreen(App->window->window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+}
+
+bool Application::GetBordeless()
+{
+	Uint32 flag = SDL_GetWindowFlags(App->window->window);
+	if (flag == SDL_WINDOW_FULLSCREEN_DESKTOP)
+		return true;
+	else
+		return false;
+}
+
+void Application::SetVSync()
+{
+	vsync = !vsync;
+}
+
+bool Application::GetVSync()
+{
+	return vsync;
+}
+
+void Application::ShowFPS()
+{
+	active_fps = !active_fps;
+}
+
+bool Application::GetFPS()
+{
+	return active_fps;
+}
+
+void Application::SwapControllerVibration()
+{
+	App->input->SwapVibration();
+}
+
+bool Application::GetControllerVibration()
+{
+	return App->input->GetRumblePlay();
+}
+
 
 static void *counted_malloc(size_t size) {
 	void *res = malloc(size);
