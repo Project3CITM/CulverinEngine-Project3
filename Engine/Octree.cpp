@@ -262,30 +262,22 @@ int OctreeNode::CollectIntersections(std::vector<GameObject*>& nodes, const Frus
 		AABB Box = curr_obj->box_fixed;
 		if ((Box.CenterPoint() - center_frustum).LengthSq() - Box.HalfSize().LengthSq() < size_frustum)
 		{
-			int iTotalIn = 0;
 			bool is_in = true;
 			for (int p = 0; p < 4; ++p) {
-				int iInCount = 4;
-				int iPtIn = 1;
-				for (int j = 2; j < 8; j+=4) {
+				int iInCount = 8;
+				for (int j = 0; j < 8; ++j) {
 					// test this point against the planes
 					if (planes[p].normal.Dot(Box.CornerPoint(j)) >= planes[p].d) {
-						iPtIn = 0;
-						--iInCount;
-					}
-					if (planes[p].normal.Dot(Box.CornerPoint(j+1)) >= planes[p].d) {
-						iPtIn = 0;
 						--iInCount;
 					}
 				}
+				
 				// were all the points outside of plane p?
 				if (iInCount == 0)
 				{
 					is_in = false;
 					break;
 				}
-				// check if they were all on the right side of the plane
-				iTotalIn += iPtIn;
 			}
 
 			if (is_in)
