@@ -1,4 +1,4 @@
-﻿# nJoy Game's Unthroned 
+﻿# nJoy Game's Unthrone
 ## CONTENTS
 
 	0) WHAT IS OUR GAME?
