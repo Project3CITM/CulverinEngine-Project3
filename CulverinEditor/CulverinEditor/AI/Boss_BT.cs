@@ -102,7 +102,6 @@ public class Boss_BT : BT
 
     public override void Update()
     {
-        boss_dead_delay_timer += Time.deltaTime;
         if (rumble == true)
         {
             rumble_timer += Time.deltaTime;
