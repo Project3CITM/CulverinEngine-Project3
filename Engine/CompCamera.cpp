@@ -305,10 +305,13 @@ void CompCamera::DoCulling()
 		}
 		return;
 	}
-	
-	// First check culling with static objects (optimized with quadtree)
-	CullStaticObjects();
-	
+	else
+	{
+		// First check culling with static objects (optimized with quadtree)
+		//CullStaticObjects();
+		BROFILER_CATEGORY("Oclusion Culling: CompCamera", Profiler::Color::Blue);
+		App->scene->oclusion_culling->CheckOclusionMap(frustum);
+	}
 
 	// Then check dynamic objects
 	BROFILER_CATEGORY("CullDynamic: CompCamera", Profiler::Color::Blue);
@@ -321,20 +324,9 @@ void CompCamera::DoCulling()
 
 void CompCamera::CullStaticObjects()
 {
-	// First, set all static objects invisible
-
 	// Get all static objects that are inside the frustum (accelerated with quadtree)
-	//candidates_to_cull.clear();
 	BROFILER_CATEGORY("CullStatic: CompCamera", Profiler::Color::Blue);
 	App->scene->octree.CollectIntersections(candidates_to_cull, frustum);
-
-	//BROFILER_CATEGORY("Draw CullStatic: CompCamera", Profiler::Color::Blue);
-	// Set visible only these static objects
-	/*while (!candidates_to_cull.empty())
-	{
-		candidates_to_cull.front()->Draw(); // INSIDE CAMERA VISION
-		candidates_to_cull.pop_front();
-	}*/
 }
 
 void CompCamera::CullDynamicObjects()
@@ -367,32 +359,7 @@ void CompCamera::CullDynamicObjects()
 
 void CompCamera::UnCull()
 {
-	//// Push all active elements that are root & active
-	//for (uint i = 0; i < App->scene->root->GetNumChilds(); i++)
-	//{
-	//	if (App->scene->root->GetChildbyIndex(i)->IsActive())
-	//	{
-	//		candidates_to_cull.push_back(App->scene->root->GetChildbyIndex(i));
-	//	}
-	//}
-
-	//// Check candidates_to_cull vector until it's empty
-	//while (candidates_to_cull.empty() == false)
-	//{
-	//	candidates_to_cull.front()->SetVisible(true);
-
-	//	//Push all childs that are active to the candidates vector
-	//	for (std::vector<GameObject*>::iterator it = candidates_to_cull.front()->GetChildsPtr()->begin(); it != candidates_to_cull.front()->GetChildsPtr()->end(); it++)
-	//	{
-	//		if ((*it)->IsActive())
-	//		{
-	//			candidates_to_cull.push_back((*it));
-	//		}
-	//	}
-
-	//	// Delete from vector the object already checked
-	//	//candidates_to_cull.pop_front();
-	//}
+	
 }
 
 void CompCamera::UnCullDynamics()

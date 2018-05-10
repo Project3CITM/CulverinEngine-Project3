@@ -95,6 +95,10 @@ public:
 
 	void SaveMapNavigation(std::vector<std::string>& map, int height_map, int width_map, float separation, const char* name);
 	void LoadMapNavigation(std::vector<std::string>& map, int& height_map, int& width_map, float& separation, const char* name, std::string& file);
+	
+	void SaveMapOclusion(std::vector<std::string>& map, int height_map, int width_map, float separation, const char* name);
+	bool LoadMapOclusion(std::vector<std::string>& map, int& height_map, int& width_map, float& separation, const char* file, std::string& name_map);
+
 	// --------------------------------------
 
 	// SAVE & LOAD MATERIAL --------------------------

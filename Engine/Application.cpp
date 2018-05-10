@@ -302,7 +302,8 @@ void Application::FinishUpdate()
 	if (want_to_load == true || want_to_load_binary == true || want_to_load_json == true)
 	{
 		//Before Delete GameObjects Del Variables Scripts GameObject 
-		scene->octree.Clear(false);
+		//scene->octree.Clear(false);
+		scene->oclusion_culling->Clear();
 		scene->static_objects.clear();
 		scene->dynamic_objects.clear();
 
@@ -367,7 +368,8 @@ void Application::FinishUpdate()
 	if (dont_destroy_on_load)
 	{
 		//Before Delete GameObjects Del Variables Scripts GameObject 
-		scene->octree.Clear(false);
+		//scene->octree.Clear(false);
+		scene->oclusion_culling->Clear();
 		scene->static_objects.clear();
 
 		//App->scene->DeleteAllGameObjects(App->scene->root);
@@ -433,7 +435,8 @@ void Application::FinishUpdate()
 	{
 		/**/
 		//Before Delete GameObjects Del Variables Scripts GameObject 
-		scene->octree.Clear(false);
+		//scene->octree.Clear(false);
+		scene->oclusion_culling->Clear();
 		scene->static_objects.clear();
 
 		scene->ChangeRoot(scene->dontdestroyonload, scene->root);

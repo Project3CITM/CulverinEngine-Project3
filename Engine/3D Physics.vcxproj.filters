@@ -1236,6 +1236,11 @@
     <ClInclude Include="CubeMap_Texture.h">
       <Filter>Engine\Tools</Filter>
     </ClInclude>
+    <ClInclude Include="gif-h\gif.h" />
+    <ClInclude Include="Screenshot_and_gif.h" />
+    <ClInclude Include="OclusionCulling.h">
+      <Filter>Engine\Containers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -1684,6 +1689,10 @@
     </ClCompile>
     <ClCompile Include="SerializationBinary.cpp">
       <Filter>Engine\Importer</Filter>
+    </ClCompile>
+    <ClCompile Include="Screenshot_and_gif.cpp" />
+    <ClCompile Include="OclusionCulling.cpp">
+      <Filter>Engine\Containers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
