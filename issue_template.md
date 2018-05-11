@@ -2,7 +2,7 @@
 
 New
 
-- Category (Gamplay, animation, scripting, particles, physics,...)
+- Category (Gameplay, Animation, Scripting, Particles, Physics,...)
 
 
 
