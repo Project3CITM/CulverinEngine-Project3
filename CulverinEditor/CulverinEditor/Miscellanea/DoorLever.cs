@@ -17,10 +17,11 @@ public class DoorLever : CulverinBehaviour
     private CompAudio audio = null;
     private bool on_lever_range = false;
     private bool on_lever_animation = false;
-    private string lever_animation_name = "Lever_Down"; 
-   
+    private string lever_animation_name = "Lever_Down";
 
-    
+    public GameObject close_door_collider = null;
+    public bool do_collider_close_door = false;
+
 
     void Start()
     {
@@ -35,6 +36,8 @@ public class DoorLever : CulverinBehaviour
         {
             door_to_open2 = GetLinkedObject("door_to_open2");
         }
+
+        close_door_collider = GetLinkedObject("close_door_collider");
 
         audio = GetComponent<CompAudio>();
         if (audio == null)
@@ -175,8 +178,14 @@ public class DoorLever : CulverinBehaviour
 
         if (door_to_open2 != null)
         {
-            DoorLevel2 to_open = door_to_open1.GetComponent<DoorLevel2>();
+            DoorLevel2 to_open = door_to_open2.GetComponent<DoorLevel2>();
             to_open.OpenDoor();
+        }
+
+        if (do_collider_close_door)
+        {
+            DoorLevel2 to_open = close_door_collider.GetComponent<DoorLevel2>();
+            to_open.CloseDoorByCollider();
         }
     }
 

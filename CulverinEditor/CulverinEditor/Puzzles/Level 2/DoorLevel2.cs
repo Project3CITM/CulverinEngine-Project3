@@ -21,6 +21,8 @@ public class DoorLevel2 : CulverinBehaviour
     private bool go_close = false;
     private bool go_open = false;
 
+    private bool go_close_by_collider = false;
+
     CompAudio audio;
 
     void Start()
@@ -128,6 +130,26 @@ public class DoorLevel2 : CulverinBehaviour
             audio.PlayEvent("DoorLoop");
             Input.RumblePlay(0.3f, 5000);
             GetLinkedObject("map_obj").GetComponent<LevelMap>().UpdateMap(door_pos_x, door_pos_y, 1);
+        }
+    }
+
+    public void CloseDoorByCollider()
+    {
+        go_close_by_collider = true;
+    }
+
+    void OnTriggerEnter()
+    {
+        if (go_close_by_collider)
+        {
+            CompCollider col = GetComponent<CompCollider>();
+            GameObject obj_col = col.GetCollidedObject();
+            Debug.Log(obj_col.GetTag().ToString());
+
+            if (obj_col != null && obj_col.CompareTag("player"))
+            {
+                CloseDoor();
+            }
         }
     }
 }
