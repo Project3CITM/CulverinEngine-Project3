@@ -39,7 +39,7 @@ public class KeyBindingChangeStatus : CulverinBehaviour
     void SendMensage(string value)
     {
         GetComponent<CompText>().SetAlpha(1.0f);
-
+        actual_alpha = 1.0f;
         if (text!=value)
         {
         text = value;

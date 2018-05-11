@@ -171,7 +171,11 @@ bool PlayerActions::ReceiveEvent(SDL_Event * input_event)
 			{
 				key_change.change_active = false;
 				return true;
-			}		
+			}	
+			else
+			{
+				key_change.Clear();
+			}
 		}
 	}
 	
@@ -694,7 +698,28 @@ PlayerActions::KeyChange::KeyState PlayerActions::KeyChange::ReceiveEvent(SDL_Ev
 	case SDL_CONTROLLERAXISMOTION:
 		if (input_event->caxis.value < -5000 || input_event->caxis.value>5000)
 		{
-			return KeyState::INVALID_KEY_STATE;
+			KeyRelation* key = nullptr;
+
+			if (change_negative)
+				key = key_to_change->negative_button;
+			key = key_to_change->positive_button;
+
+			if (key == nullptr || key->event_value == input_event->caxis.axis||
+				input_event->caxis.axis == SDL_CONTROLLER_AXIS_RIGHTX ||
+				input_event->caxis.axis == SDL_CONTROLLER_AXIS_RIGHTY ||
+				input_event->caxis.axis == SDL_CONTROLLER_AXIS_LEFTX ||
+				input_event->caxis.axis == SDL_CONTROLLER_AXIS_LEFTY)
+				return KeyState::INVALID_KEY_STATE;
+
+			if (key_to_change->my_manager == nullptr)
+				return KeyState::INVALID_KEY_STATE;
+
+			key_to_change->my_manager->ClearSameEvent(input_event, key_to_change->key_device);
+			key = App->input->FindKeyBinding(key_to_change->key_device, input_event->caxis.axis);
+			if (change_negative)
+				key_to_change->negative_button = key;
+			key_to_change->positive_button = key;
+			return KeyState::VALID_KEY_STATE;
 		}
 		break;
 	case SDL_MOUSEBUTTONDOWN:
