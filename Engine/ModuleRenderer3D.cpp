@@ -21,6 +21,9 @@
 #include "ModuleTextures.h"
 #include "ModuleLightning.h"
 #include "ModuleGUI.h"
+#include "ModuleResourceManager.h"
+#include "ImportMaterial.h"
+#include "ResourceMaterial.h"
 
 #pragma comment (lib, "Devil/libx86/DevIL.lib")
 #pragma comment (lib, "Devil/libx86/ILU.lib")
@@ -140,6 +143,9 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 		normals = json_object_get_boolean(node, "Normals");
 		smooth = json_object_get_boolean(node, "Smooth");
 
+		dmg_texture_uid = json_object_get_number(node, "dmg_texture_uid");
+		dmg_texture_name = json_object_get_string(node, "dmg_texture_name");
+
 		node = json_object_get_object(node, "Fog");
 		fog_active = json_object_get_boolean(node, "Active");
 		fog_density = json_object_get_number(node, "Density");
@@ -203,6 +209,29 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 	final_tex_material->GetProgramVariables();
 	App->module_shaders->materials.insert(std::pair<uint, Material*>(final_tex_material->GetProgramID(), final_tex_material));
 	final_tex_material->active_num = 1;
+
+	// Dmg texture
+	if (dmg_texture_uid != 0)
+	{
+		// Load it
+		dmg_texture_res = dynamic_cast<ResourceMaterial*>(App->resource_manager->GetResource(dmg_texture_name.c_str()));
+	}
+	else
+	{
+		// Create a new one
+		App->importer->Import("Assets/bloodHurt2.png", Resource::Type::MATERIAL);
+		dmg_texture_res = dynamic_cast<ResourceMaterial*>(App->resource_manager->GetResource("bloodHurt2.png"));
+	}
+
+	if (dmg_texture_res)
+	{
+		App->importer->iMaterial->LoadResource(std::to_string(dmg_texture_res->GetUUID()).c_str(), dmg_texture_res);
+	}
+	else
+	{
+		LOG("ERROR: Could not load damage texture resource");
+	}
+
 	dmg_texture_id = App->textures->LoadTexture("Assets/bloodHurt2.png");
 
 	default_material = new Material();
@@ -402,6 +431,12 @@ update_status ModuleRenderer3D::UpdateConfig(float dt)
 		}
 	}
 
+	ImGui::Text("Dmg texture: "); ImGui::SameLine();
+	ImGui::TextColored(ImVec4(1, 1, 0, 1), "%d - %s", dmg_texture_res->GetUUID(), dmg_texture_res->name.c_str());
+
+	ImGui::Image((ImTextureID*)dmg_texture_res->GetTextureID(), ImVec2(200, 200)); ImGui::SameLine();
+	ImGui::Image((ImTextureID*)dmg_texture_id, ImVec2(200, 200));
+
 	ImGui::PopStyleVar();
 	return UPDATE_CONTINUE;
 }
@@ -417,6 +452,9 @@ bool ModuleRenderer3D::SaveConfig(JSON_Object * node)
 	json_object_set_boolean(node, "Wireframe", wireframe);
 	json_object_set_boolean(node, "Normals", normals);
 	json_object_set_boolean(node, "Smooth", smooth);
+
+	json_object_set_number(node, "dmg_texture_uid", dmg_texture_res->GetUUID());
+	json_object_set_string(node, "dmg_texture_name", dmg_texture_res->name.c_str());
 
 	node = json_object_get_object(node, "Fog");
 	json_object_set_boolean(node, "Active", fog_active);
