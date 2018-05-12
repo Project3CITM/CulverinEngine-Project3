@@ -226,13 +226,12 @@ bool ModuleRenderer3D::Init(JSON_Object* node)
 	if (dmg_texture_res)
 	{
 		App->importer->iMaterial->LoadResource(std::to_string(dmg_texture_res->GetUUID()).c_str(), dmg_texture_res);
+		dmg_texture_res->num_game_objects_use_me++;
 	}
 	else
 	{
 		LOG("ERROR: Could not load damage texture resource");
 	}
-
-	dmg_texture_id = App->textures->LoadTexture("Assets/bloodHurt2.png");
 
 	default_material = new Material();
 	default_material->name = "Default Material";
@@ -434,8 +433,38 @@ update_status ModuleRenderer3D::UpdateConfig(float dt)
 	ImGui::Text("Dmg texture: "); ImGui::SameLine();
 	ImGui::TextColored(ImVec4(1, 1, 0, 1), "%d - %s", dmg_texture_res->GetUUID(), dmg_texture_res->name.c_str());
 
-	ImGui::Image((ImTextureID*)dmg_texture_res->GetTextureID(), ImVec2(200, 200)); ImGui::SameLine();
-	ImGui::Image((ImTextureID*)dmg_texture_id, ImVec2(200, 200));
+	static bool dmg_tex_selected = false;
+	if(ImGui::ImageButton((ImTextureID*)dmg_texture_res->GetUUID(), ImVec2(64, 64), ImVec2(-1, 1), ImVec2(0, 0)))
+	{
+		dmg_tex_selected = true;
+	}
+
+	if(dmg_tex_selected)
+	{
+		ResourceMaterial* tmp = dynamic_cast<ResourceMaterial*>(App->resource_manager->ShowResources(dmg_tex_selected, Resource::Type::MATERIAL));
+
+		if (tmp)
+		{
+			if(tmp != dmg_texture_res)
+			{
+				// Unload the old one
+				if (dmg_texture_res->num_game_objects_use_me > 0)
+					dmg_texture_res->num_game_objects_use_me--;
+
+				// Reassign the damage texture and load it
+				dmg_texture_res = tmp;
+				if(dmg_texture_res->IsLoadedToMemory() == Resource::State::UNLOADED)
+				{
+					App->importer->iMaterial->LoadResource(std::to_string(dmg_texture_res->GetUUID()).c_str(), dmg_texture_res);
+					dmg_texture_res->num_game_objects_use_me++;
+				}
+				
+				dmg_tex_selected = false;
+			}
+		}
+	}
+
+	ImGui::Image((ImTextureID*)dmg_texture_res->GetTextureID(), ImVec2(200, 200)); // TODO: If the image button would display the image this is not necessary
 
 	ImGui::PopStyleVar();
 	return UPDATE_CONTINUE;
@@ -687,7 +716,7 @@ void ModuleRenderer3D::GlowShaderVars()
 
 	glActiveTexture(GL_TEXTURE2);
 	texLoc = glGetUniformLocation(final_shader_tex->programID, "_dmg_tex");
-	glBindTexture(GL_TEXTURE_2D, dmg_texture_id);
+	glBindTexture(GL_TEXTURE_2D, dmg_texture_res->GetTextureID());
 	glUniform1i(texLoc, 2);
 
 }

@@ -109,7 +109,6 @@ public:
 	std::string dmg_texture_name = "";
 	uint dmg_texture_uid = 0;
 	ResourceMaterial* dmg_texture_res = nullptr;
-	GLuint dmg_texture_id = 0;
 
 	//Reflexion Cubemaps
 	CubeMap_Texture*	temp_cubemap = nullptr;
