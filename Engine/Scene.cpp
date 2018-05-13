@@ -80,7 +80,7 @@ Scene::~Scene()
 	RELEASE(search_name);
 	RELEASE(dontdestroyonload);
 
-	RELEASE(oclusion_culling);
+	//RELEASE(oclusion_culling);
 	RELEASE(scene_buff);
 	RELEASE(skybox);
 }
@@ -91,7 +91,7 @@ bool Scene::Init(JSON_Object* node)
 	/* Init Octree */
 	//octree.Boundaries(AABB(float3(-1.0f, -1.0f, -1.0f), float3(1.0f, 1.0f, 1.0f)));
 
-	oclusion_culling = new OclusionCulling();
+	//oclusion_culling = new OclusionCulling();
 
 	skybox_index = json_object_get_number(node, "Skybox Index");
 	Awake_t = perf_timer.ReadMs();
@@ -113,7 +113,7 @@ bool Scene::Start()
 	size_quadtree = 5000.0f;
 //	quadtree.Init(size_quadtree);
 	//octree.limits.octreeMinSize = 50;
-	//octree.Boundaries(AABB(float3(-size_quadtree, -size_quadtree, -size_quadtree), float3(size_quadtree, size_quadtree, size_quadtree)));
+	octree.Boundaries(AABB(float3(-size_quadtree, -size_quadtree, -size_quadtree), float3(size_quadtree, size_quadtree, size_quadtree)));
 
 
 	/* Set size of the plane of the scene */
@@ -260,7 +260,7 @@ update_status Scene::Update(float dt)
 	}
 
 	// Draw Quadtree
-	//if (octree_draw) octree.DebugDraw();
+	if (octree_draw) octree.DebugDraw();
 
 	App->scene->scene_buff->UnBind("Scene");
 	// Draw GUI
@@ -340,7 +340,7 @@ bool Scene::CleanUp()
 {
 	skybox->DeleteSkyboxTex();
 	
-	//octree.Clear();
+	octree.Clear();
 	static_objects.clear();
 	dynamic_objects.clear();
 
@@ -447,7 +447,7 @@ void Scene::EditorQuadtree()
 		/* Remake Quadtree with actual static objects*/
 		if (ImGui::Button("UPDATE QUADTREE"))
 		{
-			//octree.Clear(false);
+			octree.Clear(false);
 			static_objects.clear();
 			dynamic_objects.clear();
 			//Clac adaptative size of scene octree
@@ -474,8 +474,8 @@ void Scene::EditorQuadtree()
 			for (std::vector<GameObject*>::const_iterator item = game_objects_scene.cbegin(); item != game_objects_scene.cend(); ++item)
 				if ((*item)->IsStatic())
 				{
-					//octree.Insert(*item);
-					oclusion_culling->InsertCandidate(*item);
+					octree.Insert(*item);
+					//oclusion_culling->InsertCandidate(*item);
 				}
 				else
 				{
@@ -1106,8 +1106,8 @@ void Scene::DrawCube(float size)
 
 void Scene::RecalculateStaticObjects()
 {
-	//static_objects.clear();
-	//octree.CollectAllObjects(static_objects);
+	static_objects.clear();
+	octree.CollectAllObjects(static_objects);
 }
 
 const std::vector<GameObject*>* Scene::GetAllSceneObjects()
