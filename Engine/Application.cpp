@@ -275,7 +275,7 @@ void Application::FinishUpdate()
 			{
 				actual_scene = json_seria->SaveScene();
 			}
-			else if (want_to_save_binary)
+			if (want_to_save_binary)
 			{
 				actual_scene = json_seria->SaveSceneBinary();
 			}
