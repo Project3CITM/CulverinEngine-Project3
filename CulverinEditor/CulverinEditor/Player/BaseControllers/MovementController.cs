@@ -591,6 +591,15 @@ public class MovementController : CulverinBehaviour
         return true;
     }
 
+    public bool CheckIsValyrianFire(int x, int y)
+    {
+        if (level_map[x, y] == 3)
+        {
+            return true;
+        }
+        return false;
+    }
+
     public bool IsMoving()
     {
         if (moving || rotating)

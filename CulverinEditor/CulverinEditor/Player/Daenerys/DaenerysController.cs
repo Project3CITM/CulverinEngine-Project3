@@ -587,7 +587,7 @@ public class DaenerysController : CharacterController
                         break;
                     }
             }
-            if (movement.CheckIsWalkable(tile_x, tile_y))
+            if (movement.CheckIsWalkable(tile_x, tile_y) && !movement.CheckIsValyrianFire(tile_x, tile_y))
             {
                 float mana_cost = right_ability_cost * max_mana / 100.0f;
                 if (CanWasteMana(mana_cost))
