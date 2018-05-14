@@ -606,6 +606,7 @@ void ModuleRenderer3D::RenderSceneWiewport()
 
 void ModuleRenderer3D::BlurShaderVars(int i)
 {
+	glViewport(0, 0, 128, 128);
 	blur_shader_tex->Bind();
 
 	glActiveTexture(GL_TEXTURE0);

@@ -128,7 +128,7 @@ update_status ModuleEventSystemV2::PostUpdate(float dt)
 	glUseProgram(NULL);
 	if (App->renderer3D->active_camera)
 		App->scene->skybox->DrawSkybox(800, App->renderer3D->active_camera->frustum.pos, App->scene->skybox_index);
-	glViewport(0, 0, 128, 128);
+	glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
 	if (App->renderer3D->wireframe) glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
