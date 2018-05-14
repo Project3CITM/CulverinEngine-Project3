@@ -1301,7 +1301,7 @@ void GameObject::FreezeTransforms(bool freeze, bool change_childs)
 	else
 	{
 		App->scene->octree.Remove(this);
-		//App->scene->dynamic_objects.push_back(this);
+		App->scene->dynamic_objects.push_back(this);
 	}
 }
 
