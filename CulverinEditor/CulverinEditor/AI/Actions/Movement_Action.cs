@@ -129,25 +129,36 @@ public class Movement_Action : Action
 
     public override bool ActionStart()
     {
-        if (chase == false)
-        {
-            anim_comp.PlayAnimationNode("Patrol");
-            anim_comp.SetFirstActiveBlendingClip("Idle");
-        }
-        else
-        {
-            anim_comp.PlayAnimationNode("Chase");
-            anim_comp.SetFirstActiveBlendingClip("IdleAttack");
-
-            if (moving_sideways == true)
-                MoveSideways(path[0]);
-        }
-
         if (path.Count != 0)
         {
-            tile = new PathNode(0, 0);
             tile.SetCoords(path[0].GetTileX(), path[0].GetTileY());
-        }
+
+            arrive.SetEnabled(true);
+            seek.SetEnabled(true);
+
+            if (chase == false)
+            {
+                anim_comp.PlayAnimationNode("Patrol");
+                anim_comp.SetFirstActiveBlendingClip("Idle");
+
+                LookAtNextTile();
+                Debug.Log("Look at next tile: " + path[0].GetTileX() + "," + path[0].GetTileY(), Department.IA);
+            }
+            else
+            {
+                anim_comp.PlayAnimationNode("Chase");
+                anim_comp.SetFirstActiveBlendingClip("IdleAttack");
+
+                if (LookingAtPlayer() == false)
+                    LookAtPlayer();
+                else
+                {
+                    rotation_finished = true;
+                    moving_sideways = true;
+                    MoveSideways(path[0]);
+                }
+            }
+        }        
 
         fx_played = false;
 
@@ -316,7 +327,6 @@ public class Movement_Action : Action
         //Audio Footsteps
         //audio_comp.PlayEvent("Footsteps");
 
-
         Vector3 pos = new Vector3(transform_comp.position);
         if (path.Count > 0)
         {
@@ -343,8 +353,6 @@ public class Movement_Action : Action
                     {
                         rotation_finished = true;
                         moving_sideways = true;
-                        Debug.Log("Moving sideways to x: " + path[0].GetTileX() + " y: " + path[0].GetTileY());
-                        Debug.Log("Translation finished == " + translation_finished);
                         MoveSideways(path[0]);
                     }
                 }
@@ -384,17 +392,6 @@ public class Movement_Action : Action
                 translation_finished = true;
                 arrive.SetEnabled(false);
                 seek.SetEnabled(false);
-            }
-
-            if (chase == true)
-            {
-                if (LookingAtPlayer() == false)
-                    LookAtPlayer();
-                else
-                {
-                    rotation_finished = true;
-                    moving_sideways = true;
-                }
             }
         }
     }
@@ -479,6 +476,8 @@ public class Movement_Action : Action
         Vector3 pos = new Vector3(transform_comp.position);
         Vector3 obj_vec = new Vector3(target_position - pos);
 
+        Debug.Log("Forward into utopia = forward int wwIII: " + forward, Department.IA);
+
         float delta = Vector3.AngleBetweenXZ(forward, obj_vec);
 
         if (delta > Mathf.PI)
@@ -493,6 +492,8 @@ public class Movement_Action : Action
             rotation_finished = false;
             align.SetRotation(delta);
 
+            Debug.Log("Euthanasy ruins gulags cus workers die willingly", Department.IA);
+
             /*if (delta < 0.0f)
                 anim_comp.SetSecondActiveBlendingClip("RotateRight");
             else
@@ -502,8 +503,13 @@ public class Movement_Action : Action
 
     public void LookAtNextTile()
     {
+        Debug.Log("Capitalim is for the ich not the able and competent: " + path.Count, Department.IA);
         if (path != null && path.Count > 0)
+        {
+            Debug.Log("Autaritarian governments can do what is necesary", Department.IA);
             LookAtTile(path[0]);
+            Debug.Log("Marxism says inteligence does not exsist", Department.IA);
+        }
         else
             Debug.Log("There is no next tile to look at", Department.GENERAL, Color.RED);
     }

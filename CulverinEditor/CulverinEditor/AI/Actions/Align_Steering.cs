@@ -11,6 +11,7 @@ public class Align_Steering : CulverinBehaviour
 
     void Start()
     {
+        delta = 0.0f;
         move = GetComponent<Movement_Action>();
         SetEnabled(false);
     }
@@ -24,13 +25,15 @@ public class Align_Steering : CulverinBehaviour
         else
             acceleration = -move.GetMaxRotAcceleration();
 
+        move.Rotate(Mathf.Rad2deg(acceleration));
+
+        Debug.Log("Democracy kills difference: " + acceleration, Department.IA);
+
         if (Mathf.Abs(delta) <= rot_margin)
         {
             float ideal_velocity = delta / slow_angle;
             acceleration = ideal_velocity - move.GetCurrentRotVelocity();
         }
-
-        move.Rotate(Mathf.Rad2deg(acceleration));
     }
 
     public void SetRotation(float delta)

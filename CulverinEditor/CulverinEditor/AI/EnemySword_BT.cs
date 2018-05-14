@@ -120,7 +120,6 @@ public class EnemySword_BT : Enemy_BT
 
     protected override void OutOfCombatDecesion()
     {
-
         if (Disable_Movement_Gameplay_Debbuger) return;
 
         //Investigate
