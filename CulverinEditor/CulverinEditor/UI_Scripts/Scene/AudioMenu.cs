@@ -27,7 +27,7 @@ public class AudioMenu : CulverinBehaviour
         mute_cb = GetLinkedObject("mute_cb");
 
         audio_menu.SetActive(false);
-
+        IsMuted();
     }
 
     public void OpenAudioMenu()
@@ -50,5 +50,13 @@ public class AudioMenu : CulverinBehaviour
         GetComponent<CompAudio>().PlayEvent("Push");
         mute = !mute;
         Audio.Mute(mute);
-    }  
+    }
+
+    public void IsMuted()
+    {
+        if (Audio.IsMuted())
+            return;
+        else
+            mute_cb.GetComponent<CompCheckBox>().HideTick();
+    }
 }

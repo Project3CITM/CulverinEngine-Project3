@@ -6,7 +6,6 @@ using CulverinEditor.Debug;
 
 public class Volume : CulverinBehaviour
 {
-
     public float audio_multiplier = 100;
     float value = 0.0f;
     float last_value = 0.0f;
@@ -35,7 +34,10 @@ public class Volume : CulverinBehaviour
         value = GetComponent<CompSlider>().GetFill();
         if (value == last_value)
             return;
-        Audio.ChangeVolume(value * audio_multiplier);
+        if (Audio.IsMuted()==false)
+        {
+            Audio.ChangeVolume(value * audio_multiplier);
+        }
         last_value = value;
     }
 

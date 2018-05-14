@@ -234,6 +234,7 @@ private:
 	static float GetVolume();
 	static void ChangeVolume(float volume);
 	static void Mute(bool m);
+	static bool IsMuted();
 
 	/*Component Particle*/
 	static void ActivateEmission(MonoObject* obj, bool active);

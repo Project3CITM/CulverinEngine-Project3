@@ -1193,6 +1193,7 @@ void ImportScript::LinkFunctions()
 
 	mono_add_internal_call("CulverinEditor.Audio::ChangeVolume", (const void*)ChangeVolume);
 	mono_add_internal_call("CulverinEditor.Audio::Mute", (const void*)Mute);
+	mono_add_internal_call("CulverinEditor.Audio::IsMuted", (const void*)IsMuted);
 	
 	//COMPONENT PARTICLE FUNCTION ----------------
 	mono_add_internal_call("CulverinEditor.CompParticleSystem::ActivateEmission", (const void*)ActivateEmission);
@@ -2097,6 +2098,11 @@ void ImportScript::ChangeVolume(float volume)
 void ImportScript::Mute(bool m)
 {
 	App->audio->Mute(m);
+}
+
+bool ImportScript :: IsMuted()
+{
+	return App->audio->IsMuted();
 }
 
 //Component Particle Functions ------------
