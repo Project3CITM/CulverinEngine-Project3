@@ -1585,6 +1585,13 @@ public class CharactersManager : CulverinBehaviour
         {
             GetDamage(0.0f);
             current_character.GetComponent<JaimeController>().SetState(CharacterController.State.DEAD);
+            current_character.GetComponent<JaimeController>().jaime_icon_obj.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+            current_character.GetComponent<JaimeController>().jaime_icon_obj_stamina.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+            current_character.GetComponent<JaimeController>().jaime_icon_obj_stamina.GetComponent<CompImage>().SetRender(false);
+
+            jaime_s_button.Deactivate();
+            jaime_s_script.Die();
+
             if (theoninfo > 0.0f)
             {
                 ChangeLeft();
