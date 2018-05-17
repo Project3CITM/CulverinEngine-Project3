@@ -78,6 +78,7 @@ private:
 	float2 maxpos = float2::zero;
 
 	float2 origin = float2::zero;
+	float2 fpos = float2::zero;
 
 	Oclussion_orientation curr_orientation = Oclussion_orientation::OCLUDE_DOWN;
 

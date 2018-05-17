@@ -66,13 +66,16 @@ void OclusionCulling::InsertCandidate(GameObject * obj)
 	if (obj->box_fixed.IsFinite())
 	{
 		float3 center_pos = obj->box_fixed.CenterPoint();
-		uint x = (uint)((center_pos.x + 12.7f) / tile_size);
-		uint y = (uint)((center_pos.z + 12.7f) / tile_size);
+		int x = (int)((center_pos.x + 12.7f) / tile_size);
+		int y = (int)((center_pos.z + 12.7f) / tile_size);
 
-		if (x >= 0 && x < 50 && y >= 0 && y < 50)
-		{
-			g_map[x][y].push_back(obj);
-		}
+		if (x < 0) x = 0;
+		else if (x > 49) x = 49;
+
+		if (y < 0) y = 0;
+		else if (y > 49) y = 49;
+
+		g_map[x][y].push_back(obj);
 	}
 }
 
@@ -136,6 +139,8 @@ void OclusionCulling::CheckOclusionMap(Frustum &frustum)
 	RevertOclusionFrame();
 
 	AABB frust_box = frustum.MinimalEnclosingAABB();
+
+	fpos = float2(frustum.pos.x,frustum.pos.z) / tile_size;
 
 	minpos.x = (frust_box.minPoint.x + 12.7f) / tile_size;
 	minpos.y = (frust_box.minPoint.z + 12.7f) / tile_size;
@@ -416,11 +421,114 @@ void OclusionCulling::OcludeTiles(float2 tile_pos)
 
 void OclusionCulling::OcludeFront(float2 curr_pos)
 {
-	curr_pos += dir.forward;
-	while (o_map[(int)curr_pos.x][(int)curr_pos.y].state == TILE_TO_CHECK)
+	int x = curr_pos.x;
+	int y = curr_pos.y;
+
+	float2 vertex0 = (curr_pos + (dir.left - dir.forward)*0.5f)- fpos;
+	float2 vertex1 = (curr_pos + (dir.right - dir.forward)*0.5f)- fpos;
+
+	float left_limit = 0;
+	float right_limit = 0;
+	int min_left = 0;
+	int max_right = 0;
+	float left_increment = 0;
+	float right_increment = 0;
+
+	switch (curr_orientation)
 	{
-		o_map[(int)curr_pos.x][(int)curr_pos.y].state = TILE_SKIP;
-		curr_pos += dir.forward;
+	case OCLUDE_UP:
+		left_increment = math::Sin(Atan2(vertex0.x, vertex0.y));
+		right_increment = math::Sin(Atan2(vertex1.x, vertex1.y));
+
+		left_limit = curr_pos.x - 0.5 + 0.5*left_increment;
+		right_limit = curr_pos.x + 0.5 + 0.5*right_increment;
+		for (y = y-1; y > minpos.y; y--)
+		{
+			left_limit += left_increment;
+			right_limit += right_increment;
+			min_left = math::Round(left_limit);
+			max_right = math::Round(right_limit);
+
+			if (min_left < minpos.x) min_left = minpos.x;
+
+			for (x = min_left+1; x < max_right && x < maxpos.x; x++)
+			{
+				if (o_map[x][y].state == TILE_TO_CHECK)
+					o_map[x][y].state = TILE_SKIP;
+			}
+		}
+		break;
+	case OCLUDE_DOWN:
+		left_increment = math::Sin(Atan2(vertex0.x, vertex0.y));
+		right_increment = math::Sin(Atan2(vertex1.x, vertex1.y));
+
+		left_limit = curr_pos.x + 0.5 + 0.5*left_increment;
+		right_limit = curr_pos.x - 0.5 + 0.5*right_increment;
+		for (y = y + 1; y < maxpos.y; y++)
+		{
+			left_limit += left_increment;
+			right_limit += right_increment;
+			
+			min_left = math::Round(left_limit);
+			max_right = math::Round(right_limit);
+
+			if (min_left > maxpos.x) min_left = maxpos.x;
+
+			for (x = min_left-1; x > max_right && x > minpos.x; x--)
+			{
+				if (o_map[x][y].state == TILE_TO_CHECK)
+					o_map[x][y].state = TILE_SKIP;
+			}
+		}
+		break;
+	case OCLUDE_LEFT:
+		left_increment = math::Sin(Atan2(vertex0.y, vertex0.x));
+		right_increment = math::Sin(Atan2(vertex1.y, vertex1.x));
+
+		y = curr_pos.x;
+		left_limit = curr_pos.y + 0.5 + 0.5*left_increment;
+		right_limit = curr_pos.y - 0.5 + 0.5*right_increment;
+		for (y = y - 1; y > minpos.x; y--)
+		{
+			left_limit += left_increment;
+			right_limit += right_increment;
+
+			min_left = math::Round(left_limit);
+			max_right = math::Round(right_limit);
+
+			if (min_left > maxpos.y) min_left = maxpos.y;
+
+			for (x = min_left-1; x > max_right && x > minpos.y; x--)
+			{
+				if (o_map[y][x].state == TILE_TO_CHECK)
+					o_map[y][x].state = TILE_SKIP;
+			}
+		}
+		break;
+	case OCLUDE_RIGHT:
+		left_increment = math::Sin(Atan2(vertex0.y, vertex0.x));
+		right_increment = math::Sin(Atan2(vertex1.y, vertex1.x));
+
+		y = curr_pos.x;
+		left_limit = curr_pos.y - 0.5 + 0.5*left_increment;
+		right_limit = curr_pos.y + 0.5 + 0.5*right_increment;
+		for (y = y + 1; y < maxpos.x; y++)
+		{
+			left_limit += left_increment;
+			right_limit += right_increment;
+
+			min_left = math::Round(left_limit);
+			max_right = math::Round(right_limit);
+
+			if (min_left < minpos.y) min_left = minpos.y;
+
+			for (x = min_left+1; x > max_right && x < maxpos.y; x++)
+			{
+				if (o_map[y][x].state == TILE_TO_CHECK)
+					o_map[y][x].state = TILE_SKIP;
+			}
+		}
+		break;
 	}
 }
 
