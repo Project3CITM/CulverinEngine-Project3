@@ -1523,7 +1523,7 @@ void ModuleMap::ImportMap(bool used_in_mono)
 				}
 			}
 
-			//App->scene->oclusion_culling->LoadOclusionMap(map, width_map, height_map);
+			App->scene->oclusion_culling->LoadOclusionMap(map, width_map, height_map);
 
 			LOG("Walkable Map Loaded -----------");
 		}

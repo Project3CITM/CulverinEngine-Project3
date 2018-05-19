@@ -308,9 +308,9 @@ void CompCamera::DoCulling()
 	else
 	{
 		// First check culling with static objects (optimized with quadtree)
-		CullStaticObjects();
+		//CullStaticObjects();
 		//BROFILER_CATEGORY("Oclusion Culling: CompCamera", Profiler::Color::Blue);
-		//App->scene->oclusion_culling->CheckOclusionMap(frustum);
+		App->scene->oclusion_culling->CheckOclusionMap(frustum);
 	}
 
 	// Then check dynamic objects

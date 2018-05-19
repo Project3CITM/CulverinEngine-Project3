@@ -91,7 +91,7 @@ bool Scene::Init(JSON_Object* node)
 	/* Init Octree */
 	//octree.Boundaries(AABB(float3(-1.0f, -1.0f, -1.0f), float3(1.0f, 1.0f, 1.0f)));
 
-	//oclusion_culling = new OclusionCulling();
+	oclusion_culling = new OclusionCulling();
 
 	skybox_index = json_object_get_number(node, "Skybox Index");
 	Awake_t = perf_timer.ReadMs();
@@ -340,7 +340,7 @@ bool Scene::CleanUp()
 {
 	skybox->DeleteSkyboxTex();
 	
-	octree.Clear();
+	//octree.Clear();
 	static_objects.clear();
 	dynamic_objects.clear();
 
@@ -348,6 +348,8 @@ bool Scene::CleanUp()
 	secondary_root->CleanUp();
 	temporary_scene->CleanUp();
 	dontdestroyonload->CleanUp();
+
+	RELEASE(oclusion_culling);
 
 	RELEASE(scene_buff);
 	RELEASE(glow_buff);
@@ -474,8 +476,8 @@ void Scene::EditorQuadtree()
 			for (std::vector<GameObject*>::const_iterator item = game_objects_scene.cbegin(); item != game_objects_scene.cend(); ++item)
 				if ((*item)->IsStatic())
 				{
-					octree.Insert(*item);
-					//oclusion_culling->InsertCandidate(*item);
+					//octree.Insert(*item);
+					oclusion_culling->InsertCandidate(*item);
 				}
 				else
 				{

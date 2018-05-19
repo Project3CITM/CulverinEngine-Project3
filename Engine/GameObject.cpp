@@ -1294,13 +1294,13 @@ void GameObject::FreezeTransforms(bool freeze, bool change_childs)
 	}
 	if (static_obj)
 	{
-		App->scene->octree.Insert(this);
-		//App->scene->oclusion_culling->InsertCandidate(this);
+		//App->scene->octree.Insert(this);
+		App->scene->oclusion_culling->InsertCandidate(this);
 		App->scene->RemoveDynamicObject(this);
 	}
 	else
 	{
-		App->scene->octree.Remove(this);
+		//App->scene->octree.Remove(this);
 		App->scene->dynamic_objects.push_back(this);
 	}
 }

@@ -246,8 +246,8 @@ void JSONSerialization::LoadScene(const char* sceneName)
 		{
 			if (scene_ptr[i].go->IsStatic())
 			{
-				App->scene->octree.Insert(scene_ptr[i].go);
-				//App->scene->oclusion_culling->InsertCandidate(scene_ptr[i].go);
+				//App->scene->octree.Insert(scene_ptr[i].go);
+				App->scene->oclusion_culling->InsertCandidate(scene_ptr[i].go);
 			}
 			else
 			{
@@ -486,8 +486,8 @@ void JSONSerialization::LoadPrefab(const char* prefab)
 			{
 				if (templist[i].go->IsStatic())
 				{
-					App->scene->octree.Insert(templist[i].go);
-					//App->scene->oclusion_culling->InsertCandidate(templist[i].go);
+					//App->scene->octree.Insert(templist[i].go);
+					App->scene->oclusion_culling->InsertCandidate(templist[i].go);
 				}
 				else
 				{

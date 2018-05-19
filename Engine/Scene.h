@@ -135,7 +135,7 @@ public:
 	// Quadtree ----------------
 	//Quadtree quadtree;
 	Octree octree;
-	//OclusionCulling* oclusion_culling;
+	OclusionCulling* oclusion_culling;
 	bool octree_draw = false;
 	// -------------------------
 

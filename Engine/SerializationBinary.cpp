@@ -273,8 +273,8 @@ void JSONSerialization::LoadSceneBinary(std::string scene)
 		{
 			if (scene_ptr[i].go->IsStatic())
 			{
-				App->scene->octree.Insert(scene_ptr[i].go);
-				//App->scene->oclusion_culling->InsertCandidate(scene_ptr[i].go);
+				//App->scene->octree.Insert(scene_ptr[i].go);
+				App->scene->oclusion_culling->InsertCandidate(scene_ptr[i].go);
 			}
 			else
 			{
