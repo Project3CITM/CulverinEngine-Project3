@@ -1475,18 +1475,6 @@ void ModuleMap::ImportMap(bool used_in_mono)
 					//t += 1;
 				}
 			}
-			map_string = "";
-			for (int y = 0; y < height_map; y++)
-			{
-				for (int x = 0; x < width_map; x++)
-				{
-					if (map[x][y] > 17)
-					{
-						map[x][y] = -1;
-					}
-					map_string += std::to_string(map[x][y]);
-				}
-			}
 			go_select_prefab = true;
 			LOG("Walkable Map Loaded -----------");
 		}
@@ -1499,12 +1487,13 @@ void ModuleMap::ImportMap(bool used_in_mono)
 	}
 	case TypeMap::MAP_OCLUSION:
 	{
-		if (App->json_seria->LoadMapOclusion(vector_map, height_map, width_map, size_separation, imported_map.c_str(), name_map))
+		int tem_height, tem_width;
+		if (App->json_seria->LoadMapOclusion(vector_map, tem_height, tem_width, size_separation, imported_map.c_str(), name_map))
 		{
-			for (int y = 0; y < height_map; y++)
+			for (int y = 0; y < tem_height; y++)
 			{
 				std::string line = vector_map[y];
-				for (int x = 0; x < width_map; x++)
+				for (int x = 0; x < tem_width; x++)
 				{
 					std::string number;
 					number += line[x];
@@ -1512,9 +1501,9 @@ void ModuleMap::ImportMap(bool used_in_mono)
 					//t += 1;
 				}
 			}
-			for (int y = 0; y < height_map; y++)
+			for (int y = 0; y < tem_height; y++)
 			{
-				for (int x = 0; x < width_map; x++)
+				for (int x = 0; x < tem_width; x++)
 				{
 					if (map[x][y] > 3)
 					{
