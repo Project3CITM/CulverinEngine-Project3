@@ -1123,6 +1123,7 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::BlockGUIinput", (const void*)BlockGUIinput);
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::QuitScene", (const void*)QuitScene);
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::LoadNewWalkableMap", (const void*)LoadNewWalkableMap);
+	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::LoadNewOclusionMap", (const void*)LoadNewOclusionMap);
 	//mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::PushSaveInfo(object)", (const void*)PushSaveInfoV2);
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::PushSaveInfo(single)", (const void*)PushSaveInfo);
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::PopLoadInfo", (const void*)PopLoadInfo);
@@ -1473,7 +1474,17 @@ void ImportScript::LoadNewWalkableMap(MonoString* walkable_map)
 	{
 		const char* map = mono_string_to_utf8(walkable_map);
 		App->map->imported_map = map;
-		App->map->ImportMap(true);
+		App->map->ImportMap(true, TypeMap::MAP_WALKABLE);
+	}
+}
+
+void ImportScript::LoadNewOclusionMap(MonoString * oclusion_map)
+{
+	if (oclusion_map != nullptr)
+	{
+		const char* map = mono_string_to_utf8(oclusion_map);
+		App->map->imported_map = map;
+		App->map->ImportMap(true, TypeMap::MAP_OCLUSION);
 	}
 }
 

@@ -1393,19 +1393,25 @@ void ModuleMap::ShowEditableStyle()
 	ImGui::InputInt("##item_spacing_y", &item_spacing_y);
 }
 
-void ModuleMap::ImportMap(bool used_in_mono)
+void ModuleMap::ImportMap(bool used_in_mono, TypeMap type_map)
 {
-	if (used_in_mono)
+	if (used_in_mono && type_map == TypeMap::MAP_WALKABLE)
 	{
-
 		std::string import_map_tmp;
 		import_map_tmp = App->fs->GetMainDirectory();
 		import_map_tmp += "/Maps/";
 		import_map_tmp += imported_map;
 		imported_map = import_map_tmp;
 		imported_map += ".mapwalk.json";
-
-
+	}
+	else if (used_in_mono && type_map == TypeMap::MAP_OCLUSION)
+	{
+		std::string import_map_tmp;
+		import_map_tmp = App->fs->GetMainDirectory();
+		import_map_tmp += "/Maps/";
+		import_map_tmp += imported_map;
+		imported_map = import_map_tmp;
+		imported_map += ".mapoclusion.json";
 	}
 
 	TypeMap type = App->map->CheckTypeMap(imported_map.c_str());

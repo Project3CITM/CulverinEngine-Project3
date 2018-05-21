@@ -43,7 +43,7 @@ public:
 	void CompletNoWalk();
 	void ShowEditableStyle();
 
-	void ImportMap(bool used_in_mono = false);
+	void ImportMap(bool used_in_mono = false, TypeMap type_map = TypeMap::MAP_NON);
 	TypeMap CheckTypeMap(const char* map);
 
 	int GetHeightMap();
