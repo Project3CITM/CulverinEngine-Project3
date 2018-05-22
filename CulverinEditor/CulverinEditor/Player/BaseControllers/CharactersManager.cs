@@ -1546,7 +1546,7 @@ public class CharactersManager : CulverinBehaviour
         }
     }
 
-    public void LoadInfoPlayer()
+    public void LoadInfoPlayer() 
     {
         float theoninfo = SceneManager.PopLoadInfo();
         float daenerysinfo = SceneManager.PopLoadInfo();
@@ -1568,10 +1568,12 @@ public class CharactersManager : CulverinBehaviour
         if (theoninfo == 0.0f)
         {
             LeftCharacterDie();
+            left_character.GetComponent<TheonController>().theon_icon_obj_hp.GetComponent<CompImage>().SetRender(false);
         }
         if (daenerysinfo == 0.0f)
         {
             RightCharacterDie();
+            left_character.GetComponent<DaenerysController>().daenerys_icon_obj_hp.GetComponent<CompImage>().SetRender(false);
         }
 
         Debug.Log("INFO PLAYER", Department.PLAYER, Color.RED);
@@ -1588,6 +1590,7 @@ public class CharactersManager : CulverinBehaviour
             current_character.GetComponent<JaimeController>().jaime_icon_obj.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
             current_character.GetComponent<JaimeController>().jaime_icon_obj_stamina.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
             current_character.GetComponent<JaimeController>().jaime_icon_obj_stamina.GetComponent<CompImage>().SetRender(false);
+            current_character.GetComponent<JaimeController>().jaime_icon_obj_hp.GetComponent<CompImage>().SetRender(false);
 
             jaime_s_button.Deactivate();
             jaime_s_script.Die();
