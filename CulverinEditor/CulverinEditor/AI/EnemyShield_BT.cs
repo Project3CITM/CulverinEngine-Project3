@@ -165,6 +165,7 @@ public class EnemyShield_BT : Enemy_BT
         {
             GetComponent<Movement_Action>().GoTo(origin_path_x, origin_path_y);
             GetComponent<Movement_Action>().ActionStart();
+            current_action.action_type = Action.ACTION_TYPE.MOVE_ACTION;
             current_action = GetComponent<Movement_Action>();
             return;
         }
@@ -172,6 +173,7 @@ public class EnemyShield_BT : Enemy_BT
         {
             GetComponent<Movement_Action>().GoTo(end_path_x, end_path_y);
             GetComponent<Movement_Action>().ActionStart();
+            current_action.action_type = Action.ACTION_TYPE.MOVE_ACTION;
             current_action = GetComponent<Movement_Action>();
             return;
         }

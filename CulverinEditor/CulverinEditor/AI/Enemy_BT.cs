@@ -112,7 +112,6 @@ public class Enemy_BT : BT
     {
         //Update attack cooldown
         attack_timer += Time.deltaTime;
-        Debug.Log(state, Department.PHYSICS);
 
         if (GetCurrentHP() <= 0 && state != AI_STATE.AI_DEAD)
         {
@@ -208,7 +207,18 @@ public class Enemy_BT : BT
         }
         else
         {
-            Debug.Log("Not push hit", Department.PHYSICS, Color.PINK);
+            Debug.Log("Not push hit", Department.STAGE, Color.PINK);
+        }
+
+        if(current_action.action_type == Action.ACTION_TYPE.MOVE_ACTION || current_action.action_type == Action.ACTION_TYPE.INVESTIGATE_ACTION)
+        {
+            Debug.Log("TIME TO FIGHT",Department.PHYSICS,Color.PINK);
+
+            current_action.Interupt();
+            current_action = GetComponent<Engage_Action>();
+            in_combat = true;
+            current_action.ActionStart();
+            
         }
 
         current_hp -= damage;
