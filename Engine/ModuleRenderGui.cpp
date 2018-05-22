@@ -155,23 +155,7 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 			if(selected->GetParent()->IsActive())
 				selected->OnMove(this_event);
 		}
-		else
-		{
-		//Find 
-			std::vector<CompInteractive*>::reverse_iterator it = iteractive_vector.rbegin();
-
-			for (; it != iteractive_vector.rend(); it++)
-			{
-				CompInteractive* find=(*it)->FindInteractive(float3(1, 1,1));
-				if (find != nullptr)
-				{
-					PassSelected(find);
-					find->OnInteractiveSelected(this_event);
-					break;
-				}
-			}
-
-		}
+	
 		break;
 	case EventType::EVENT_SUBMIT:
 		if (selected != nullptr)
@@ -210,6 +194,7 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 					
 					if ((*it)->PointerInside(this_event.pointer.position))
 					{
+						
 						if (positive_colision)
 						{
 							(*it)->ForceClear();
@@ -234,6 +219,11 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 							mouse_down = false;
 							break;
 						case EventType::EVENT_MOUSE_MOTION:
+							if (selected != nullptr)
+							{
+								selected->ForceClear();
+								selected = nullptr;
+							}
 							if ((*it)->IsDragrable())
 							{
 								(*it)->OnDrag(this_event);
@@ -305,7 +295,20 @@ void ModuleRenderGui::ScreenSpaceDraw(bool debug)
 		screen_space_canvas[i]->DrawGraphic(debug_draw);
 	}	
 }
-
+void ModuleRenderGui::ClearInteractive()
+{
+	if (focus != nullptr)
+	{
+		focus->ForceClear();
+		focus = nullptr;
+	}
+	if (selected != nullptr)
+	{
+		selected->ForceClear();
+		selected = nullptr;
+	}
+	ClearInteractiveVector();
+}
 void ModuleRenderGui::ClearInteractiveVector()
 {
 	iteractive_vector.clear();

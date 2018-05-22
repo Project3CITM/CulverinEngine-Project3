@@ -1529,7 +1529,7 @@ float ImportScript::PopLoadInfo()
 
 void ImportScript::SendInteractiveSelected(MonoObject * interactive)
 {
-	if (interactive != nullptr)
+	if (interactive != nullptr && App->input->GetActualDeviceCombo() == DeviceCombinationType::CONTROLLER_COMB_DEVICE)
 	{
 		
 		GameObject*  go = App->importer->iScript->GetGameObject(interactive);

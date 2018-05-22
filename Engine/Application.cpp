@@ -285,9 +285,8 @@ void Application::FinishUpdate()
 	}
 	if (remove_secondary_scene)
 	{
-		render_gui->focus = nullptr;
-		render_gui->selected = nullptr;
-		render_gui->ClearInteractiveVector();
+		render_gui->ClearInteractive();
+
 
 		scene->DeleteAllGameObjects(scene->secondary_root, false);
 
@@ -303,6 +302,8 @@ void Application::FinishUpdate()
 	{
 		//Before Delete GameObjects Del Variables Scripts GameObject 
 		//scene->octree.Clear(false);
+		render_gui->ClearInteractive();
+
 		scene->oclusion_culling->Clear();
 		scene->static_objects.clear();
 		scene->dynamic_objects.clear();
@@ -316,9 +317,7 @@ void Application::FinishUpdate()
 		scene->ClearAllTags();
 		App->particles->CleanUp();
 
-		render_gui->focus = nullptr;
-		render_gui->selected = nullptr;
-		render_gui->ClearInteractiveVector();
+
 
 		if (want_to_load)
 		{
@@ -407,9 +406,8 @@ void Application::FinishUpdate()
 
 	if (remove_dont_destroy_on_load)
 	{
-		render_gui->focus = nullptr;
-		render_gui->selected = nullptr;
-		render_gui->ClearInteractiveVector();
+		render_gui->ClearInteractive();
+
 
 		scene->DeleteAllGameObjects(App->scene->dontdestroyonload);
 
@@ -504,9 +502,8 @@ void Application::FinishUpdate()
 		if (scene->secondary_root->GetChildsVec().size() > 0)
 		{
 			// Reset gui inputs?
-			render_gui->focus = nullptr;
-			render_gui->selected = nullptr;
-			render_gui->ClearInteractiveVector();
+			render_gui->ClearInteractive();
+			
 
 			//First swap main camera
 			//GameObject* camera = scene->root->FindGameObjectWithTag("camera");
