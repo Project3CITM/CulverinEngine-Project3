@@ -26,6 +26,16 @@ OclusionCulling::~OclusionCulling()
 
 void OclusionCulling::Clear()
 {
+	// Clear Oclusion Map
+	for (int x = 0; x < 49; x++)
+	{
+		for (int y = 0; y < 49; y++)
+		{
+			o_map[x][y].state = TILE_SKIP;
+			o_map[x][y].ocludes = false;
+		}
+	}
+
 	// Clear GameObjects
 	for (uint i = 0; i < 50; i++)
 		for (uint j = 0; j < 50; j++)
