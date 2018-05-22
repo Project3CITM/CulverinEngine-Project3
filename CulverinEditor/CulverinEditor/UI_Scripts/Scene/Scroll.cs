@@ -37,6 +37,8 @@ public class Scroll : CulverinBehaviour
             loading_text.SetActive(true);
             end_scroll = true;
             start_load = true;
+
+            SceneManager.LoadNewOclusionMap("Map_Level_Tutorial_oclusion");
             SceneManager.LoadNewWalkableMap("Map_Level_Tutorial");
             SceneManager.LoadMultiSceneNoDestroy("Tutorial Real Scene", "PauseMenu");
         }

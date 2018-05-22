@@ -50,11 +50,17 @@ void OclusionCulling::LoadOclusionMap(int map[100][100], int width, int height)
 		{
 			if (map[x][y] == 0)
 			{
+				o_map[x][y].state = TILE_SKIP;
 				o_map[x][y].ocludes = true;
 			}
 			else if (map[x][y] == 1)
 			{
 				o_map[x][y].state = TILE_IGNORE;
+			}
+			else
+			{
+				o_map[x][y].ocludes = false;
+				o_map[x][y].state = TILE_SKIP;
 			}
 		}
 	}
@@ -66,8 +72,8 @@ void OclusionCulling::InsertCandidate(GameObject * obj)
 	if (obj->box_fixed.IsFinite())
 	{
 		float3 center_pos = obj->box_fixed.CenterPoint();
-		int x = (int)((center_pos.x + 12.7f) / tile_size);
-		int y = (int)((center_pos.z + 12.7f) / tile_size);
+		int x = (int)((center_pos.x+12.7) / tile_size);
+		int y = (int)((center_pos.z+12.7) / tile_size);
 
 		if (x < 0) x = 0;
 		else if (x > 49) x = 49;
@@ -142,11 +148,11 @@ void OclusionCulling::CheckOclusionMap(Frustum &frustum)
 
 	fpos = float2(frustum.pos.x,frustum.pos.z) / tile_size;
 
-	minpos.x = (frust_box.minPoint.x + 12.7f) / tile_size;
-	minpos.y = (frust_box.minPoint.z + 12.7f) / tile_size;
+	minpos.x = (frust_box.minPoint.x+12.7) / tile_size;
+	minpos.y = (frust_box.minPoint.z+12.7) / tile_size;
 
-	(minpos.x < 0) ? minpos.x = 1 : minpos.x = (uint)minpos.x;
-	(minpos.y < 0) ? minpos.y = 1 : minpos.y = (uint)minpos.y;
+	(minpos.x < 0) ? minpos.x = 0 : minpos.x = (uint)minpos.x;
+	(minpos.y < 0) ? minpos.y = 0 : minpos.y = (uint)minpos.y;
 
 	maxpos.x = (frust_box.maxPoint.x + 12.7f) / tile_size;
 	maxpos.y = (frust_box.maxPoint.z + 12.7f) / tile_size;
@@ -356,6 +362,8 @@ void OclusionCulling::RevertOclusionFrame()
 
 void OclusionCulling::OcludeTiles(float2 tile_pos)
 {
+	if (origin.x == tile_pos.x && origin.y == tile_pos.y) return;
+
 	float2 curr_pos = tile_pos;
 	switch (curr_orientation)
 	{
@@ -431,102 +439,141 @@ void OclusionCulling::OcludeFront(float2 curr_pos)
 	float right_limit = 0;
 	int min_left = 0;
 	int max_right = 0;
-	float left_increment = 0;
-	float right_increment = 0;
 
+	float2 left_increment_v = float2::zero;
+	float2 right_increment_v = float2::zero;
+	
+	left_increment_v.x = math::Sin(Atan2(vertex0.x, vertex0.y))/5;
+	left_increment_v.y = math::Cos(Atan2(vertex0.x, vertex0.y))/5;
+
+	right_increment_v.x = math::Sin(Atan2(vertex1.x, vertex1.y))/5;
+	right_increment_v.y = math::Cos(Atan2(vertex1.x, vertex1.y))/5;
+
+	float curr_y = 0;
+	int last_y = 0;
 	switch (curr_orientation)
 	{
 	case OCLUDE_UP:
-		left_increment = math::Sin(Atan2(vertex0.x, vertex0.y));
-		right_increment = math::Sin(Atan2(vertex1.x, vertex1.y));
+		last_y = curr_pos.y;
+		curr_y = curr_pos.y - 0.5;
 
-		left_limit = curr_pos.x - 0.5 + 0.5*left_increment;
-		right_limit = curr_pos.x + 0.5 + 0.5*right_increment;
-		for (y = y-1; y > minpos.y; y--)
+		left_limit = curr_pos.x - 0.5 + left_increment_v.x;
+		right_limit = curr_pos.x + 0.5 + right_increment_v.x;
+
+		y = math::Round(curr_y);
+		while(y >= minpos.y)
 		{
-			left_limit += left_increment;
-			right_limit += right_increment;
-			min_left = math::Round(left_limit);
-			max_right = math::Round(right_limit);
-
-			if (min_left < minpos.x) min_left = minpos.x;
-
-			for (x = min_left+1; x < max_right && x < maxpos.x; x++)
+			if (last_y != y)
 			{
-				if (o_map[x][y].state == TILE_TO_CHECK)
-					o_map[x][y].state = TILE_SKIP;
+				min_left = math::Round(left_limit);
+				max_right = math::Round(right_limit);
+
+				if (min_left < minpos.x) min_left = minpos.x;
+
+				for (x = min_left + 1; x < max_right && x < maxpos.x; x++)
+				{
+					if (o_map[x][y].state == TILE_TO_CHECK)
+						o_map[x][y].state = TILE_SKIP;
+				}
+				last_y = y;
 			}
+			curr_y += left_increment_v.y;
+			left_limit += left_increment_v.x;
+			right_limit += right_increment_v.x;
+			y = math::Round(curr_y);
 		}
 		break;
 	case OCLUDE_DOWN:
-		left_increment = math::Sin(Atan2(vertex0.x, vertex0.y));
-		right_increment = math::Sin(Atan2(vertex1.x, vertex1.y));
+		last_y = curr_pos.y;
+		curr_y = curr_pos.y + 0.5;
 
-		left_limit = curr_pos.x + 0.5 + 0.5*left_increment;
-		right_limit = curr_pos.x - 0.5 + 0.5*right_increment;
-		for (y = y + 1; y < maxpos.y; y++)
+		left_limit = curr_pos.x + 0.5 + left_increment_v.x;
+		right_limit = curr_pos.x - 0.5 + right_increment_v.x;
+
+		y = math::Round(curr_y);
+		while(y <= maxpos.y)
 		{
-			left_limit += left_increment;
-			right_limit += right_increment;
-			
-			min_left = math::Round(left_limit);
-			max_right = math::Round(right_limit);
-
-			if (min_left > maxpos.x) min_left = maxpos.x;
-
-			for (x = min_left-1; x > max_right && x > minpos.x; x--)
+			if (last_y != y)
 			{
-				if (o_map[x][y].state == TILE_TO_CHECK)
-					o_map[x][y].state = TILE_SKIP;
+				min_left = math::Round(left_limit);
+				max_right = math::Round(right_limit);
+
+				if (min_left > maxpos.x) min_left = maxpos.x;
+
+				for (x = min_left - 1; x > max_right && x > minpos.x; x--)
+				{
+					if (o_map[x][y].state == TILE_TO_CHECK)
+						o_map[x][y].state = TILE_SKIP;
+				}
+				last_y = y;
 			}
+			left_limit += left_increment_v.x;
+			right_limit += right_increment_v.x;
+			curr_y += left_increment_v.y;
+			y = math::Round(curr_y);
 		}
 		break;
 	case OCLUDE_LEFT:
-		left_increment = math::Sin(Atan2(vertex0.y, vertex0.x));
-		right_increment = math::Sin(Atan2(vertex1.y, vertex1.x));
+		last_y = curr_pos.x;
+		curr_y = curr_pos.x - 0.5;
 
-		y = curr_pos.x;
-		left_limit = curr_pos.y + 0.5 + 0.5*left_increment;
-		right_limit = curr_pos.y - 0.5 + 0.5*right_increment;
-		for (y = y - 1; y > minpos.x; y--)
+		left_limit = curr_pos.y + 0.5 + 0.5*left_increment_v.y;
+		right_limit = curr_pos.y - 0.5 + 0.5*right_increment_v.y;
+
+		y = math::Round(curr_y);
+		while(y >= minpos.x)
 		{
-			left_limit += left_increment;
-			right_limit += right_increment;
-
-			min_left = math::Round(left_limit);
-			max_right = math::Round(right_limit);
-
-			if (min_left > maxpos.y) min_left = maxpos.y;
-
-			for (x = min_left-1; x > max_right && x > minpos.y; x--)
+			if (last_y != y)
 			{
-				if (o_map[y][x].state == TILE_TO_CHECK)
-					o_map[y][x].state = TILE_SKIP;
+				min_left = math::Round(left_limit);
+				max_right = math::Round(right_limit);
+
+				if (min_left > maxpos.y) min_left = maxpos.y;
+
+				for (x = min_left - 1; x > max_right && x > minpos.y; x--)
+				{
+					if (o_map[y][x].state == TILE_TO_CHECK)
+						o_map[y][x].state = TILE_SKIP;
+				}
+				last_y = y;
 			}
+			left_limit += left_increment_v.y;
+			right_limit += right_increment_v.y;
+			curr_y += left_increment_v.x;
+			y = math::Round(curr_y);
 		}
 		break;
 	case OCLUDE_RIGHT:
-		left_increment = math::Sin(Atan2(vertex0.y, vertex0.x));
-		right_increment = math::Sin(Atan2(vertex1.y, vertex1.x));
+		last_y = curr_pos.x;
+		curr_y = curr_pos.x + 0.5;
+		
+		left_limit = curr_pos.y - 0.5 + 0.5*left_increment_v.y;
+		right_limit = curr_pos.y + 0.5 + 0.5*right_increment_v.y;
 
-		y = curr_pos.x;
-		left_limit = curr_pos.y - 0.5 + 0.5*left_increment;
-		right_limit = curr_pos.y + 0.5 + 0.5*right_increment;
-		for (y = y + 1; y < maxpos.x; y++)
+		y = math::Round(curr_y);
+		while(y <= maxpos.x)
 		{
-			left_limit += left_increment;
-			right_limit += right_increment;
-
-			min_left = math::Round(left_limit);
-			max_right = math::Round(right_limit);
-
-			if (min_left < minpos.y) min_left = minpos.y;
-
-			for (x = min_left+1; x > max_right && x < maxpos.y; x++)
+			if (last_y != y)
 			{
-				if (o_map[y][x].state == TILE_TO_CHECK)
-					o_map[y][x].state = TILE_SKIP;
+				left_limit += left_increment_v.y;
+				right_limit += right_increment_v.y;
+
+				min_left = math::Round(left_limit);
+				max_right = math::Round(right_limit);
+
+				if (min_left < minpos.y) min_left = minpos.y;
+
+				for (x = min_left + 1; x < max_right && x < maxpos.y; x++)
+				{
+					if (o_map[y][x].state == TILE_TO_CHECK)
+						o_map[y][x].state = TILE_SKIP;
+				}
+				last_y = y;
 			}
+			left_limit += left_increment_v.y;
+			right_limit += right_increment_v.y;
+			curr_y += left_increment_v.x;
+			y = math::Round(curr_y);
 		}
 		break;
 	}
@@ -534,8 +581,165 @@ void OclusionCulling::OcludeFront(float2 curr_pos)
 
 void OclusionCulling::OcludeRight(float2 curr_pos)
 {
+	float2 v_left = (curr_pos + (dir.left + dir.forward)*0.5);
+	float2 v_right = (curr_pos + (dir.right - dir.forward)*0.5);
+
+	Plane left_plane = Plane(float3(fpos.x,0.0f,fpos.y),float3(0,1,0), float3(v_left.x, 0.0f, v_left.y));
+	Plane right_plane = Plane(float3(fpos.x, 0.0f, fpos.y), float3(0, -1, 0), float3(v_right.x, 0.0f, v_right.y));
+
+	float2 start_pos = curr_pos;
+
+	bool is_vertical = false;
+	float2 end_pos = float2::zero;
+	int add_x = 0;
+	int add_y = 0;
+
+	switch (curr_orientation)
+	{
+	case OCLUDE_UP: 
+		is_vertical = true;
+		end_pos = float2(maxpos.x, minpos.y);
+		add_x = dir.right.x;
+		add_y = dir.forward.y;
+		break;
+	case OCLUDE_DOWN:
+		is_vertical = true;
+		end_pos = float2(minpos.x, maxpos.y);
+		add_x = dir.right.x;
+		add_y = dir.forward.y;
+		break;
+	case OCLUDE_LEFT:
+		end_pos = minpos;
+		add_x = dir.forward.x;
+		add_y = dir.right.y;
+		break;
+	case OCLUDE_RIGHT:
+		end_pos = maxpos;
+		add_x = dir.forward.x;
+		add_y = dir.right.y;
+		break;
+	}
+
+	float3 corner = float3((float)-add_x*.5f, 0,(float)add_y*.5);
+	float3 point = float3::zero;
+	if (is_vertical)
+	{
+		float3 corner = float3((float)add_y*.5, 0, (float)-add_x * .5f);
+		for (uint y = start_pos.y; y != end_pos.y; y += add_y)
+		{
+			point.z = y;
+			for (uint x = start_pos.x; x != end_pos.x; x += add_x)
+			{
+				if (o_map[x][y].state == TILE_TO_CHECK)
+				{
+					point.x = x;
+					if (left_plane.normal.Dot((point + corner)) < left_plane.d && right_plane.normal.Dot((point - corner)) < right_plane.d)
+					{
+						o_map[x][y].state = TILE_SKIP;
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		for (uint x = start_pos.x; x != end_pos.x; x += add_x)
+		{
+			point.x = x;
+			for (uint y = start_pos.y; y != end_pos.y; y += add_y)
+			{
+				if (o_map[x][y].state == TILE_TO_CHECK)
+				{
+					point.z = y;
+					if (left_plane.normal.Dot((point - corner)) < left_plane.d && right_plane.normal.Dot((point + corner)) < right_plane.d)
+					{
+						o_map[x][y].state = TILE_SKIP;
+					}
+				}
+			}
+		}
+	}
 }
 
 void OclusionCulling::OcludeLeft(float2 curr_pos)
 {
+	float2 v_left = (curr_pos + (dir.left - dir.forward)*0.5);
+	float2 v_right = (curr_pos + (dir.right + dir.forward)*0.5);
+
+	Plane left_plane = Plane(float3(fpos.x, 0.0f, fpos.y), float3(0, 1, 0), float3(v_left.x, 0.0f, v_left.y));
+	Plane right_plane = Plane(float3(fpos.x, 0.0f, fpos.y), float3(0, -1, 0), float3(v_right.x, 0.0f, v_right.y));
+
+	float2 start_pos = curr_pos;
+
+	bool is_vertical = false;
+	float2 end_pos = float2::zero;
+	int add_x = 0;
+	int add_y = 0;
+
+	switch (curr_orientation)
+	{
+	case OCLUDE_UP:
+		is_vertical = true;
+		end_pos = minpos;
+		add_x = dir.left.x;
+		add_y = dir.forward.y;
+		break;
+	case OCLUDE_DOWN:
+		is_vertical = true;
+		end_pos = maxpos;
+		add_x = dir.left.x;
+		add_y = dir.forward.y;
+		break;
+	case OCLUDE_LEFT:
+		end_pos = float2(minpos.x, maxpos.y);
+		add_x = dir.forward.x;
+		add_y = dir.left.y;
+		break;
+	case OCLUDE_RIGHT:
+		end_pos = float2(maxpos.x, minpos.y);
+		add_x = dir.forward.x;
+		add_y = dir.left.y;
+		break;
+	}
+
+	float3 point = float3::zero;
+	if (is_vertical)
+	{
+		float3 corner = float3((float)add_y*.5, 0, (float)-add_x * .5f);
+		for (uint y = start_pos.y; y != end_pos.y; y += add_y)
+		{
+			point.z = y;
+			for (uint x = start_pos.x; x != end_pos.x; x += add_x)
+			{
+				if (o_map[x][y].state == TILE_TO_CHECK)
+				{
+					point.x = x;
+					if (left_plane.normal.Dot((point + corner)) < left_plane.d && right_plane.normal.Dot((point - corner)) < right_plane.d)
+					{
+						o_map[x][y].state = TILE_SKIP;
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		float3 corner = float3((float)add_y*.5, 0, (float)-add_x * .5f);
+		for (uint y = start_pos.y; y != end_pos.y; y += add_y)
+		{
+			point.z = y;
+			for (uint x = start_pos.x; x != end_pos.x; x += add_x)
+			{
+				if (o_map[x][y].state == TILE_TO_CHECK)
+				{
+					point.x = x;
+					
+					if (left_plane.normal.Dot((point + corner)) < left_plane.d && right_plane.normal.Dot((point - corner)) < right_plane.d)
+					{
+						o_map[x][y].state = TILE_SKIP;
+					}
+				}
+			}
+		}
+	}
 }

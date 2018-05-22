@@ -133,6 +133,7 @@ public class FadeToBlack : CulverinBehaviour
         {
             case SceneToLoad.TUTORIAL:
                 {
+                    SceneManager.LoadNewOclusionMap("Map_Level_Tutorial_oclusion");
                     SceneManager.LoadNewWalkableMap("Map_Level_Tutorial");
                     SceneManager.LoadScene("Tutorial Real Scene");
                     break;
@@ -149,12 +150,14 @@ public class FadeToBlack : CulverinBehaviour
                 }
             case SceneToLoad.ALPHA2_LEVEL_1_2:
                 {
+                    SceneManager.LoadNewOclusionMap("Map_Level_1_2_oclusion");
                     SceneManager.LoadNewWalkableMap("Map_Level_1_2");
                     SceneManager.LoadScene("Alpha2_Level_1_2");
                     break;
                 }
             case SceneToLoad.ALPHA2_LEVEL_1_3:
                 {
+                    SceneManager.LoadNewOclusionMap("Map_Level_1_3_oclusion");
                     SceneManager.LoadNewWalkableMap("Map_Level_1_3");
                     SceneManager.LoadScene("Alpha2_Level_1_3");
                     break;
@@ -171,12 +174,14 @@ public class FadeToBlack : CulverinBehaviour
                 }
             case SceneToLoad.LVL2_ZONE2:
                 {
+                    SceneManager.LoadNewOclusionMap("LVL2_Zone2_oclusion");
                     SceneManager.LoadNewWalkableMap("LVL2_Zone2");
                     SceneManager.LoadScene("LVL2_Zone_2");
                     break;
                 }
             case SceneToLoad.LVL2_ZONE3:
                 {
+                    SceneManager.LoadNewOclusionMap("LVL2_Zone3_oclusion");
                     SceneManager.LoadNewWalkableMap("LVL2_Zone3");
                     SceneManager.LoadScene("LVL2_Zone_3");
                     break;
