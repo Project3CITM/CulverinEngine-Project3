@@ -144,7 +144,7 @@ public class JaimeController : CharacterController
 
     public override void ControlCharacter()
     {
-        Debug.Log(state, Department.PLAYER, Color.GREEN);
+        //Debug.Log(state, Department.PLAYER, Color.GREEN);
         curr_hp = health.GetCurrentHealth();
         
         // First check if you are alive

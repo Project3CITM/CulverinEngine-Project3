@@ -15,10 +15,11 @@ public class Step
     }
 
     public State state = State.WAIT;
-    private Step next_step = null;
+    public Step next_step = null;
+    public string name = "Step";
 
     //Link to the next step
-    public virtual void InitStep(Step step)
+    public virtual void SetNextStep(Step step)
     {
         next_step = step;
     }
@@ -26,13 +27,20 @@ public class Step
     public virtual void StartStep()
     {
         state = Step.State.IN_PROGRESS;
+
+        Debug.Log("STEP START", Department.PLAYER, Color.BLUE);
     }
 
+    public virtual void FinishStep()
+    {
+        state = Step.State.FINISHED;
+
+        Debug.Log("STEP FINISH", Department.PLAYER, Color.RED);
+    }
 
     //Virtual method to override functions of the child steps
     public virtual void StepUpdate()
     {
-
     }
 
     public bool isFinished()
@@ -46,36 +54,88 @@ public class Step
             return false;
         }
     }
+}
 
-    public void InitNextStep()
+//Wait X secs until the next step is reproduced
+public class WaitStep : Step
+{
+    float secs_to_wait = 0.0f;
+
+    //CONSTRUCTOR
+    public WaitStep(float secs, string step_name)
     {
-        if(next_step != null)
+        secs_to_wait = secs;
+        name = step_name;
+    }
+
+    public override void StepUpdate()
+    {
+        secs_to_wait -= Time.deltaTime;
+
+        Debug.Log(secs_to_wait, Department.PLAYER, Color.YELLOW);
+
+        if (secs_to_wait <= 0.0f)
         {
-            next_step.StartStep();
+            FinishStep();
         }
     }
 }
 
+public class MoveStep : Step
+{
+
+}
+
+public class RotateStep: Step
+{
+
+}
 
 
 public class Cutscene
 {
-    public List<Step> steps = null;
     private Step curr_step;
+
+    //Steps in this cutscene ----
+    WaitStep wait_step;
+    WaitStep wait_step2;
+    WaitStep wait_step3;
+    RotateStep rotate_left_step;
+    MoveStep move_step1;
+    RotateStep rotate_right_step;
+    MoveStep move_step2;
+    MoveStep move_step3;
+    MoveStep move_step4;
+    MoveStep move_step5;
+    MoveStep move_step6;
+    // --------------------------
 
     public bool start_cutscene = false;
     public bool cutscene_finished = false;
 
-    public void CutsceneStart()
+    public void CutsceneInit()
     {
-        //Add all the steps and link them
-        steps = new List<Step>();
+        //Create all the steps
+        wait_step = new WaitStep(4.0f, "wait1");
+        wait_step2 = new WaitStep(2.0f, "wait2");
+        wait_step3 = new WaitStep(5.0f, "wait3");
 
 
+        //Link the steps
+        wait_step.SetNextStep(wait_step2);
+        wait_step2.SetNextStep(wait_step3);
 
         //Start the first step
-        //curr_step = steps[0];
-        //curr_step.StartStep();
+        curr_step = wait_step;
+        curr_step.StartStep();
+    }
+
+    public void StartCutscene()
+    {
+        start_cutscene = true;
+        cutscene_finished = false;
+
+        Debug.Log("Cutscene STARTED", Department.PLAYER);
     }
 
     public void CutsceneUpdate()
@@ -83,22 +143,50 @@ public class Cutscene
         // CUTSCENE IN PROGRESS ----------------------
         if (curr_step != null)
         {
-            //Update the current step while it's in progress
-            curr_step.StepUpdate();
+            if(curr_step.state == Step.State.IN_PROGRESS)
+            {
+                //Update the current step while it's in progress
+                curr_step.StepUpdate();
+            }
 
             //If the step is finished, init the next one
             if (curr_step.isFinished())
             {
-                curr_step.InitNextStep();
+                if (curr_step.next_step != null)
+                {
+                    //Set next step the current one
+                    curr_step = curr_step.next_step;
+                    curr_step.StartStep();
+
+                    Debug.Log("NEXT STEP", Department.PLAYER, Color.PINK);
+                }
+
+                //Finish the cutscene by setting the current step to null
+                else
+                {
+                    curr_step = null;
+                }
             }
         }
 
         // CUTSCENE FINISHED ------------------------
         else
         {
-            start_cutscene = false;
-            cutscene_finished = true;
+            FinishCutscene();
         }
+    }
+
+    public void FinishCutscene()
+    {
+        start_cutscene = false;
+        cutscene_finished = true;
+
+        Debug.Log("Cutscene FINISHED", Department.PLAYER, Color.GREEN);
+    }
+
+    public bool isFinished()
+    {
+        return cutscene_finished;
     }
 }
 // -----------------------------------------------------
@@ -111,7 +199,8 @@ public class CharactersManager : CulverinBehaviour
         CHANGING_LEFT,
         CHANGING_RIGHT,
         DROWNING,
-        DYING
+        DYING,
+        CUTSCENE
     }
 
     public enum Side
@@ -215,7 +304,10 @@ public class CharactersManager : CulverinBehaviour
     // ------------------------------
 
 
+    //CUTSCENE CONTROLLER -----
     public Cutscene cutscene;
+    public GameObject hud_obj = null;
+    // ------------------------
 
     void Start()
     {
@@ -248,6 +340,8 @@ public class CharactersManager : CulverinBehaviour
         theon_s_script = theon_s_button_obj.GetComponent<TheonCD_Secondary>();
 
         camera = GetLinkedObject("camera");
+
+        hud_obj = GetLinkedObject("hud_obj");
 
         //GOD MODE VARIABLES ----------------------------------------
         god_mode_sprite = GetLinkedObject("god_mode_sprite");
@@ -289,17 +383,34 @@ public class CharactersManager : CulverinBehaviour
 
         //CUTSCENE MANAGER ----------
         cutscene = new Cutscene();
-        cutscene.CutsceneStart();
+        cutscene.CutsceneInit();
         // --------------------------
     }
 
     void Update()
     {
         //CUTSCENE MANAGER ---------
+
+        if(Input.GetKeyDown(KeyCode.G))
+        {
+            //Start 
+            cutscene.StartCutscene();
+
+            //Change player state to block all inputs
+            state = State.CUTSCENE;
+        }
+
         if(cutscene.start_cutscene == true && cutscene.cutscene_finished == false)
         {
             //Update cutscene while any of its states is in progress
             cutscene.CutsceneUpdate();
+
+            //Check if cutscene is finished
+            if(cutscene.isFinished())
+            {
+                //Return the control to the player
+                state = State.IDLE;
+            }
         }
         // -------------------------
 
@@ -1162,6 +1273,12 @@ public class CharactersManager : CulverinBehaviour
 
     public bool IsIdle()
     {
+        //False if a cutscene is being reproduced
+        if(state == State.CUTSCENE)
+        {
+            return false;
+        }
+
         // CURRENT CHARACTER -------------------------------
         if (current_character.GetName() == "Jaime")
         {

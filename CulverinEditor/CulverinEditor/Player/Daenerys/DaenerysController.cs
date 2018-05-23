@@ -146,7 +146,7 @@ public class DaenerysController : CharacterController
 
     public override void ControlCharacter()
     {
-        Debug.Log(state, Department.PLAYER, Color.PINK);
+        //Debug.Log(state, Department.PLAYER, Color.PINK);
         curr_hp = health.GetCurrentHealth();
 
         // First check if you are alive
