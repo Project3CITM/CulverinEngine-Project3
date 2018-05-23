@@ -18,6 +18,11 @@ public class Step
     public Step next_step = null;
     public string name = "Step";
 
+    public Step(string step_name)
+    {
+        name = step_name;
+    }
+
     //Link to the next step
     public virtual void SetNextStep(Step step)
     {
@@ -62,10 +67,9 @@ public class WaitStep : Step
     float secs_to_wait = 0.0f;
 
     //CONSTRUCTOR
-    public WaitStep(float secs, string step_name)
+    public WaitStep(float secs, string step_name) :base(step_name)
     {
         secs_to_wait = secs;
-        name = step_name;
     }
 
     public override void StepUpdate()
@@ -81,14 +85,65 @@ public class WaitStep : Step
     }
 }
 
-public class MoveStep : Step
-{
+//public class MoveStep : Step
+//{
 
-}
+//}
 
 public class RotateStep: Step
 {
+    public enum Direction
+    {
+        NONE = -1,
+        LEFT,
+        RIGHT,
+    }
 
+    private Direction direction = Direction.NONE;
+    private MovementController movement = null;
+
+    //CONSTRUCTOR
+    public RotateStep(Direction dir, MovementController mov_player, string step_name) : base(step_name)
+    {
+        direction = dir;
+        movement = mov_player;
+    }
+
+    public override void StartStep()
+    {
+        base.StartStep();
+
+        switch(direction)
+        {
+            case Direction.LEFT:
+                {
+                    //Tell the player to rotate left
+                    movement.RotateLeft();
+                    Debug.Log("ROTATE LEFT", Department.PLAYER, Color.YELLOW);
+                    break;
+                }
+            case Direction.RIGHT:
+                {
+                    //Tell the player to rotate left
+                    movement.RotateRight();
+                    Debug.Log("ROTATE RIGHT", Department.PLAYER, Color.YELLOW);
+                    break;
+                }
+            default:
+                {
+                    break;
+                }
+        }
+    }
+
+    public override void StepUpdate()
+    {    
+        //Check if player finished the rotation
+        if (movement.IsMoving() == false)
+        {
+            FinishStep();
+        }
+    }
 }
 
 
@@ -98,32 +153,29 @@ public class Cutscene
 
     //Steps in this cutscene ----
     WaitStep wait_step;
-    WaitStep wait_step2;
-    WaitStep wait_step3;
     RotateStep rotate_left_step;
-    MoveStep move_step1;
+    //MoveStep move_step1;
     RotateStep rotate_right_step;
-    MoveStep move_step2;
-    MoveStep move_step3;
-    MoveStep move_step4;
-    MoveStep move_step5;
-    MoveStep move_step6;
+    //MoveStep move_step2;
+    //MoveStep move_step3;
+    //MoveStep move_step4;
+    //MoveStep move_step5;
+    //MoveStep move_step6;
     // --------------------------
 
     public bool start_cutscene = false;
     public bool cutscene_finished = false;
 
-    public void CutsceneInit()
+    public void CutsceneInit(MovementController mov)
     {
         //Create all the steps
-        wait_step = new WaitStep(4.0f, "wait1");
-        wait_step2 = new WaitStep(2.0f, "wait2");
-        wait_step3 = new WaitStep(5.0f, "wait3");
-
+        wait_step = new WaitStep(4.0f, "wait_1");
+        rotate_left_step = new RotateStep(RotateStep.Direction.LEFT, mov, "rotate_left_1");
+        rotate_right_step = new RotateStep(RotateStep.Direction.RIGHT, mov, "rotate_right_1");
 
         //Link the steps
-        wait_step.SetNextStep(wait_step2);
-        wait_step2.SetNextStep(wait_step3);
+        wait_step.SetNextStep(rotate_left_step);
+        rotate_left_step.SetNextStep(rotate_right_step);
 
         //Start the first step
         curr_step = wait_step;
@@ -307,6 +359,7 @@ public class CharactersManager : CulverinBehaviour
     //CUTSCENE CONTROLLER -----
     public Cutscene cutscene;
     public GameObject hud_obj = null;
+    private MovementController movement_controller = null;
     // ------------------------
 
     void Start()
@@ -382,8 +435,10 @@ public class CharactersManager : CulverinBehaviour
 
 
         //CUTSCENE MANAGER ----------
+        movement_controller = GetComponent<MovementController>();
+
         cutscene = new Cutscene();
-        cutscene.CutsceneInit();
+        cutscene.CutsceneInit(movement_controller);
         // --------------------------
     }
 

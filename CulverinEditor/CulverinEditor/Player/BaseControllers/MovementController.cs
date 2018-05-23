@@ -125,6 +125,7 @@ public class MovementController : CulverinBehaviour
                 // CHECK MOVEMENT --------------------------
                 CheckMovement();
             }
+
             // CHECK FACING --------------------------
             //CheckFacingRotation();
 
@@ -260,30 +261,40 @@ public class MovementController : CulverinBehaviour
 
     }
 
+    public void RotateLeft()
+    {
+        actual_angle = 0;
+        angle = 10;
+        rotating = true;
+        ModificateCurrentDirection(true);
+    }
+
+    public void RotateRight()
+    {
+        actual_angle = 0;
+        angle = -10;
+        rotating = true;
+        ModificateCurrentDirection(false);
+    }
+
     private bool CheckRotation()
     {
         if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().IsIdle() && drowning == false)
         {
             float variation = Input.GetInput_ControllerAxis("Rotate", "Player");
+
+            //Rotate Left
             if (variation < -0.8)
             {
-                actual_angle = 0;
-                angle = 10;
-                rotating = true;
-                ModificateCurrentDirection(true);
-
+                RotateLeft();
                 return true;
-
             }
+
+            //Rotate Right
             else if (variation > 0.8)
             {
-                actual_angle = 0;
-                angle = -10;
-                rotating = true;
-                ModificateCurrentDirection(false);
-
+                RotateRight();
                 return true;
-
             }
         }
         return false;
@@ -605,7 +616,9 @@ public class MovementController : CulverinBehaviour
         if (moving || rotating)
         {
             if (push == true)
+            {
                 return false;
+            }
             return true;
         }
         else
