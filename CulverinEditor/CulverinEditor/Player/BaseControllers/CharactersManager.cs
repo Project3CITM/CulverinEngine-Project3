@@ -2,6 +2,106 @@
 using CulverinEditor.Debug;
 using CulverinEditor.SceneManagement;
 using CulverinEditor.Pathfinding;
+using System.Collections.Generic;
+
+//CUTSCENE MANAGER -------------------------------------
+public class Step
+{   
+    public enum State
+    {
+        WAIT = 0,
+        IN_PROGRESS,
+        FINISHED
+    }
+
+    public State state = State.WAIT;
+    private Step next_step = null;
+
+    //Link to the next step
+    public virtual void InitStep(Step step)
+    {
+        next_step = step;
+    }
+
+    public virtual void StartStep()
+    {
+        state = Step.State.IN_PROGRESS;
+    }
+
+
+    //Virtual method to override functions of the child steps
+    public virtual void StepUpdate()
+    {
+
+    }
+
+    public bool isFinished()
+    {
+        if(state == Step.State.FINISHED)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public void InitNextStep()
+    {
+        if(next_step != null)
+        {
+            next_step.StartStep();
+        }
+    }
+}
+
+
+
+public class Cutscene
+{
+    public List<Step> steps = null;
+    private Step curr_step;
+
+    public bool start_cutscene = false;
+    public bool cutscene_finished = false;
+
+    public void CutsceneStart()
+    {
+        //Add all the steps and link them
+        steps = new List<Step>();
+
+
+
+        //Start the first step
+        //curr_step = steps[0];
+        //curr_step.StartStep();
+    }
+
+    public void CutsceneUpdate()
+    {
+        // CUTSCENE IN PROGRESS ----------------------
+        if (curr_step != null)
+        {
+            //Update the current step while it's in progress
+            curr_step.StepUpdate();
+
+            //If the step is finished, init the next one
+            if (curr_step.isFinished())
+            {
+                curr_step.InitNextStep();
+            }
+        }
+
+        // CUTSCENE FINISHED ------------------------
+        else
+        {
+            start_cutscene = false;
+            cutscene_finished = true;
+        }
+    }
+}
+// -----------------------------------------------------
 
 public class CharactersManager : CulverinBehaviour
 {
@@ -114,6 +214,9 @@ public class CharactersManager : CulverinBehaviour
     public float theon_tired_time = 0.0f;
     // ------------------------------
 
+
+    public Cutscene cutscene;
+
     void Start()
     {
         // LINK GAMEOBJECTS OF THE SCENE WITH VARIABLES
@@ -182,18 +285,25 @@ public class CharactersManager : CulverinBehaviour
         daenerys_tired_time = 0.0f;
         theon_tired = false;
         theon_tired_time = 0.0f;
+
+
+        //CUTSCENE MANAGER ----------
+        cutscene = new Cutscene();
+        cutscene.CutsceneStart();
+        // --------------------------
     }
 
     void Update()
     {
-        //if (dying == false) 
-        //{
-        //    Debug.Log("ALIVE", Department.PLAYER, Color.BLUE);
-        //}
-        //else
-        //{
-        //    Debug.Log("DEAD", Department.PLAYER, Color.RED);
-        //}
+        //CUTSCENE MANAGER ---------
+        if(cutscene.start_cutscene == true && cutscene.cutscene_finished == false)
+        {
+            //Update cutscene while any of its states is in progress
+            cutscene.CutsceneUpdate();
+        }
+        // -------------------------
+
+
         //MANAGE AUDIO CONTROLLER VARIABLES --
         if (jaime_tired) 
         {
