@@ -296,7 +296,7 @@ void CompLight::Load(const JSON_Object * object, std::string name)
 
 	parent->box_fixed.SetFromCenterAndSize(GetGameObjectPos(), float3(radius, radius, radius));
 
-	properties[0] = 1;
+	//properties[0] = 2;
 	/*if (radius == 0) radius = 50;
 
 	if (properties[3] > 0.0001f) {
@@ -359,7 +359,7 @@ void CompLight::LoadBinary(char** cursor)
 
 	parent->box_fixed.SetFromCenterAndSize(GetGameObjectPos(), float3(radius, radius, radius));
 
-	properties[0] = 1;
+	//properties[0] = 2;
 
 	/*if (radius == 0) radius = 50;
 
