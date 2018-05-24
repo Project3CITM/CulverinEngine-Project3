@@ -115,8 +115,6 @@ public class MovementController : CulverinBehaviour
 
         if (GetComponent<Transform>().local_position == endPosition && rotating == false && face_rotating == false && char_manager.GetManagerState() != CharactersManager.State.DROWNING && push == false)
         {
-            tile_mov_x = 0;
-            tile_mov_y = 0;
             moving = false;
 
             // CHECK ROTATION --------------------------
@@ -132,6 +130,8 @@ public class MovementController : CulverinBehaviour
             //Calculate endPosition
             if ((tile_mov_x != 0 || tile_mov_y != 0))
             {
+                Debug.Log("GOING TO MOVE", Department.PLAYER, Color.RED);
+
                 if (level_map[curr_x + tile_mov_x, curr_y + tile_mov_y] == 0)
                 {
                     audio = GetComponent<CompAudio>();
@@ -162,6 +162,9 @@ public class MovementController : CulverinBehaviour
                     }
                 }
             }
+
+            tile_mov_x = 0;
+            tile_mov_y = 0;
         }
         else if (push == true)
         {
@@ -318,8 +321,7 @@ public class MovementController : CulverinBehaviour
             {
                 if (!EnemyInRight())
                 {
-                    MoveRight(out tile_mov_x, out tile_mov_y);
-                    GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, time_in_memory, footstep_radius, curr_x, curr_y);
+                    MoveRight();
                     return true;
                 }
             }
@@ -327,8 +329,7 @@ public class MovementController : CulverinBehaviour
             {
                 if (!EnemyInLeft())
                 {
-                    MoveLeft(out tile_mov_x, out tile_mov_y);
-                    GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, time_in_memory, footstep_radius, curr_x, curr_y);
+                    MoveLeft();
                     return true;
                 }
             }
@@ -338,8 +339,7 @@ public class MovementController : CulverinBehaviour
             {
                 if (!EnemyBehind())
                 {
-                    MoveBackward(out tile_mov_x, out tile_mov_y);
-                    GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, time_in_memory, footstep_radius, curr_x, curr_y);
+                    MoveBackward();
                     return true;
                 }
 
@@ -348,8 +348,7 @@ public class MovementController : CulverinBehaviour
             {
                 if (!EnemyInFront())
                 {
-                    MoveForward(out tile_mov_x, out tile_mov_y);
-                    GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, time_in_memory, footstep_radius, curr_x, curr_y);
+                    MoveForward();
                     return true;
                 }
             }
@@ -458,8 +457,9 @@ public class MovementController : CulverinBehaviour
         }
     }
 
-    public void MoveForward(out int tile_mov_x, out int tile_mov_y)
+    public void MoveForward()
     {
+        GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, time_in_memory, footstep_radius, curr_x, curr_y);
         characters_camera.GetComponent<CompAnimation>().PlayAnimationNode("Walk");
         tile_mov_x = 0;
         tile_mov_y = 0;
@@ -479,6 +479,7 @@ public class MovementController : CulverinBehaviour
         {
             tile_mov_x = -1;
         }
+        Debug.Log("MOVE x: " + tile_mov_x + " y: " + tile_mov_y, Department.PLAYER);
     }
 
     public void MovePush(PathNode obj)
@@ -491,8 +492,9 @@ public class MovementController : CulverinBehaviour
         push = true;
     }
 
-    public void MoveRight(out int tile_mov_x, out int tile_mov_y)
+    public void MoveRight()
     {
+        GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, time_in_memory, footstep_radius, curr_x, curr_y);
         characters_camera.GetComponent<CompAnimation>().PlayAnimationNode("Walk");
         tile_mov_x = 0;
         tile_mov_y = 0;
@@ -514,8 +516,9 @@ public class MovementController : CulverinBehaviour
         }
     }
 
-    public void MoveBackward(out int tile_mov_x, out int tile_mov_y)
+    public void MoveBackward()
     {
+        GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, time_in_memory, footstep_radius, curr_x, curr_y);
         characters_camera.GetComponent<CompAnimation>().PlayAnimationNode("Walk");
         tile_mov_x = 0;
         tile_mov_y = 0;
@@ -537,8 +540,9 @@ public class MovementController : CulverinBehaviour
         }
     }
 
-    public void MoveLeft(out int tile_mov_x, out int tile_mov_y)
+    public void MoveLeft()
     {
+        GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, time_in_memory, footstep_radius, curr_x, curr_y);
         characters_camera.GetComponent<CompAnimation>().PlayAnimationNode("Walk");
         tile_mov_x = 0;
         tile_mov_y = 0;

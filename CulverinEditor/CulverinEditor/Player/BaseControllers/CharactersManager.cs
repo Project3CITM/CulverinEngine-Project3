@@ -17,10 +17,12 @@ public class Step
     public State state = State.WAIT;
     public Step next_step = null;
     public string name = "Step";
+    public float wait_time = 0.0f;
 
-    public Step(string step_name)
+    public Step(string step_name, float wait)
     {
         name = step_name;
+        wait_time = wait;
     }
 
     //Link to the next step
@@ -38,14 +40,34 @@ public class Step
 
     public virtual void FinishStep()
     {
-        state = Step.State.FINISHED;
-
-        Debug.Log("STEP FINISH", Department.PLAYER, Color.RED);
+        if (WaitFinished())
+        {
+            state = Step.State.FINISHED;
+            Debug.Log("STEP FINISH", Department.PLAYER, Color.RED);
+        }
+        else
+        {
+            Debug.Log("STEP WAITING FINISH", Department.PLAYER, Color.ORANGE);
+        }
     }
 
     //Virtual method to override functions of the child steps
     public virtual void StepUpdate()
     {
+    }
+
+    public bool WaitFinished()
+    {
+        //Wait X sec until pass to the next step
+        if (wait_time <= 0.0f) 
+        {
+            return true;
+        }
+        else
+        {
+            wait_time -= Time.deltaTime;
+            return false;
+        }
     }
 
     public bool isFinished()
@@ -64,46 +86,40 @@ public class Step
 //Wait X secs until the next step is reproduced
 public class WaitStep : Step
 {
-    float secs_to_wait = 0.0f;
-
-    //CONSTRUCTOR
-    public WaitStep(float secs, string step_name) :base(step_name)
+    public WaitStep(string step_name, float wait) : base(step_name, wait)
     {
-        secs_to_wait = secs;
     }
 
     public override void StepUpdate()
     {
-        secs_to_wait -= Time.deltaTime;
+        wait_time -= Time.deltaTime;
 
-        Debug.Log(secs_to_wait, Department.PLAYER, Color.YELLOW);
+        Debug.Log(wait_time, Department.PLAYER, Color.YELLOW);
 
-        if (secs_to_wait <= 0.0f)
+        if (wait_time <= 0.0f)
         {
             FinishStep();
         }
     }
 }
 
-//public class MoveStep : Step
-//{
-
-//}
-
-public class RotateStep: Step
+//Move the player to the desired direction
+public class MoveStep : Step
 {
-    public enum Direction
+    public enum MoveDirection
     {
         NONE = -1,
+        FORWARD,
+        BACKWARD,
         LEFT,
         RIGHT,
     }
 
-    private Direction direction = Direction.NONE;
+    private MoveDirection direction = MoveDirection.NONE;
     private MovementController movement = null;
 
     //CONSTRUCTOR
-    public RotateStep(Direction dir, MovementController mov_player, string step_name) : base(step_name)
+    public MoveStep(MoveDirection dir, MovementController mov_player, string step_name, float wait = 0.0f) : base(step_name, wait)
     {
         direction = dir;
         movement = mov_player;
@@ -113,16 +129,87 @@ public class RotateStep: Step
     {
         base.StartStep();
 
-        switch(direction)
+        switch (direction)
         {
-            case Direction.LEFT:
+            case MoveDirection.FORWARD:
+                {
+                    //Tell the player to rotate left
+                    movement.MoveForward();
+                    Debug.Log("MOVE FORWARD", Department.PLAYER, Color.YELLOW);
+                    break;
+                }
+            case MoveDirection.BACKWARD:
+                {
+                    //Tell the player to rotate left
+                    movement.MoveBackward();
+                    Debug.Log("MOVE BACKWARD", Department.PLAYER, Color.YELLOW);
+                    break;
+                }
+            case MoveDirection.LEFT:
+                {
+                    //Tell the player to rotate left
+                    movement.MoveLeft();
+                    Debug.Log("MOVE LEFT", Department.PLAYER, Color.YELLOW);
+                    break;
+                }
+            case MoveDirection.RIGHT:
+                {
+                    //Tell the player to rotate left
+                    movement.MoveRight();
+                    Debug.Log("MOVE RIGHT", Department.PLAYER, Color.YELLOW);
+                    break;
+                }
+            default:
+                {
+                    break;
+                }
+        }
+    }
+
+    public override void StepUpdate()
+    {
+        //Check if player finished the movement
+        if (movement.IsMoving() == false)
+        {
+            FinishStep();            
+        }
+    }
+}
+
+//Rotate the player to the desired direction
+public class RotateStep : Step
+{
+    public enum RotateDirection
+    {
+        NONE = -1,
+        LEFT,
+        RIGHT,
+    }
+
+    private RotateDirection direction = RotateDirection.NONE;
+    private MovementController movement = null;
+
+    //CONSTRUCTOR
+    public RotateStep(RotateDirection dir, MovementController mov_player, string step_name, float wait = 0.0f) : base(step_name, wait)
+    {
+        direction = dir;
+        movement = mov_player;
+    }
+
+    public override void StartStep()
+    {
+        base.StartStep();
+
+        switch (direction)
+        {
+            case RotateDirection.LEFT:
                 {
                     //Tell the player to rotate left
                     movement.RotateLeft();
                     Debug.Log("ROTATE LEFT", Department.PLAYER, Color.YELLOW);
                     break;
                 }
-            case Direction.RIGHT:
+            case RotateDirection.RIGHT:
                 {
                     //Tell the player to rotate left
                     movement.RotateRight();
@@ -137,7 +224,7 @@ public class RotateStep: Step
     }
 
     public override void StepUpdate()
-    {    
+    {
         //Check if player finished the rotation
         if (movement.IsMoving() == false)
         {
@@ -154,9 +241,9 @@ public class Cutscene
     //Steps in this cutscene ----
     WaitStep wait_step;
     RotateStep rotate_left_step;
-    //MoveStep move_step1;
+    MoveStep move_step1;
     RotateStep rotate_right_step;
-    //MoveStep move_step2;
+    MoveStep move_step2;
     //MoveStep move_step3;
     //MoveStep move_step4;
     //MoveStep move_step5;
@@ -169,13 +256,17 @@ public class Cutscene
     public void CutsceneInit(MovementController mov)
     {
         //Create all the steps
-        wait_step = new WaitStep(4.0f, "wait_1");
-        rotate_left_step = new RotateStep(RotateStep.Direction.LEFT, mov, "rotate_left_1");
-        rotate_right_step = new RotateStep(RotateStep.Direction.RIGHT, mov, "rotate_right_1");
+        wait_step = new WaitStep("wait_1", 2.0f);
+        rotate_left_step = new RotateStep(RotateStep.RotateDirection.LEFT, mov, "rotate_left_1", 1.0f);
+        rotate_right_step = new RotateStep(RotateStep.RotateDirection.RIGHT, mov, "rotate_right_1", 1.0f);
+        move_step1 = new MoveStep(MoveStep.MoveDirection.FORWARD, mov, "move_forward_1");
+        move_step2 = new MoveStep(MoveStep.MoveDirection.BACKWARD, mov, "move_backward_2");
 
         //Link the steps
         wait_step.SetNextStep(rotate_left_step);
         rotate_left_step.SetNextStep(rotate_right_step);
+        rotate_right_step.SetNextStep(move_step1);
+        move_step1.SetNextStep(move_step2);
 
         //Start the first step
         curr_step = wait_step;
@@ -449,8 +540,8 @@ public class CharactersManager : CulverinBehaviour
         if(Input.GetKeyDown(KeyCode.G))
         {
             //Start 
-            cutscene.StartCutscene();
-
+            cutscene.StartCutscene();   
+            
             //Change player state to block all inputs
             state = State.CUTSCENE;
         }
