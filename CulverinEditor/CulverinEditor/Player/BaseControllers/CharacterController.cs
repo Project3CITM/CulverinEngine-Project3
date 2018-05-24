@@ -183,7 +183,9 @@ public class CharacterController : CulverinBehaviour
 
     public virtual void Update()
     {
-        if (position == Position.CURRENT && state != State.GRABBED)
+        if (position == Position.CURRENT 
+            && state != State.GRABBED 
+            && characters_manager.GetState() != (int)CharactersManager.State.CUTSCENE)
         {
             ControlCharacter();
         }

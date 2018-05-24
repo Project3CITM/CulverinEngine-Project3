@@ -253,12 +253,13 @@ public class Cutscene
     public bool start_cutscene = false;
     public bool cutscene_finished = false;
 
+    //FRANCHESCO BONICO
     public void CutsceneInit(MovementController mov)
     {
         //Create all the steps
         wait_step = new WaitStep("wait_1", 2.0f);
-        rotate_left_step = new RotateStep(RotateStep.RotateDirection.LEFT, mov, "rotate_left_1", 1.0f);
-        rotate_right_step = new RotateStep(RotateStep.RotateDirection.RIGHT, mov, "rotate_right_1", 1.0f);
+        rotate_left_step = new RotateStep(RotateStep.RotateDirection.LEFT, mov, "rotate_left_1", 0.5f);
+        rotate_right_step = new RotateStep(RotateStep.RotateDirection.RIGHT, mov, "rotate_right_1", 0.5f);
         move_step1 = new MoveStep(MoveStep.MoveDirection.FORWARD, mov, "move_forward_1");
         move_step2 = new MoveStep(MoveStep.MoveDirection.BACKWARD, mov, "move_backward_2");
 
@@ -453,6 +454,22 @@ public class CharactersManager : CulverinBehaviour
     private MovementController movement_controller = null;
     // ------------------------
 
+    //Call this function to start the player cutscene to enter the boss room
+    public void StartPlayerCutscene()
+    {
+        if (hud_obj != null)
+        {
+            //Disable In-Game HUD
+            hud_obj.SetActive(false);
+        }
+
+        //Start 
+        cutscene.StartCutscene();
+
+        //Change player state to block all inputs
+        state = State.CUTSCENE;
+    }
+
     void Start()
     {
         // LINK GAMEOBJECTS OF THE SCENE WITH VARIABLES
@@ -535,15 +552,10 @@ public class CharactersManager : CulverinBehaviour
 
     void Update()
     {
-        //CUTSCENE MANAGER ---------
-
+        //CUTSCENE MANAGER ---------------------------------------------
         if(Input.GetKeyDown(KeyCode.G))
         {
-            //Start 
-            cutscene.StartCutscene();   
-            
-            //Change player state to block all inputs
-            state = State.CUTSCENE;
+            StartPlayerCutscene();
         }
 
         if(cutscene.start_cutscene == true && cutscene.cutscene_finished == false)
@@ -554,11 +566,17 @@ public class CharactersManager : CulverinBehaviour
             //Check if cutscene is finished
             if(cutscene.isFinished())
             {
+                if (hud_obj != null)
+                {
+                    //Enable In-Game HUD
+                    hud_obj.SetActive(true);
+                }
+
                 //Return the control to the player
                 state = State.IDLE;
             }
         }
-        // -------------------------
+        // ----------------------------------------------------------------
 
 
         //MANAGE AUDIO CONTROLLER VARIABLES --
@@ -1066,30 +1084,30 @@ public class CharactersManager : CulverinBehaviour
     {
         if (side == Side.LEFT)
         {
-            if (left_character.GetName() == "Jaime")
+            if (left_character.GetName() == "Jaime" && state != State.CUTSCENE)
             {
                 jaime_s_button.Clicked();
             }
-            else if (left_character.GetName() == "Daenerys")
+            else if (left_character.GetName() == "Daenerys" && state != State.CUTSCENE)
             {
                 daenerys_s_button.Clicked();
             }
-            else if (left_character.GetName() == "Theon")
+            else if (left_character.GetName() == "Theon" && state != State.CUTSCENE)
             {
                 theon_s_button.Clicked();
             }
         }
         else if (side == Side.RIGHT)
         {
-            if (right_character.GetName() == "Jaime")
+            if (right_character.GetName() == "Jaime" && state != State.CUTSCENE)
             {
                 jaime_s_button.Clicked();
             }
-            else if (right_character.GetName() == "Daenerys")
+            else if (right_character.GetName() == "Daenerys" && state != State.CUTSCENE)
             {
                 daenerys_s_button.Clicked();
             }
-            else if (right_character.GetName() == "Theon")
+            else if (right_character.GetName() == "Theon" && state != State.CUTSCENE)
             {
                 theon_s_button.Clicked();
             }
