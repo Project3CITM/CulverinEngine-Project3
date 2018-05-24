@@ -163,12 +163,16 @@ void OclusionCulling::CheckOclusionMap(Frustum &frustum)
 
 	(minpos.x < 0) ? minpos.x = 0 : minpos.x = (uint)minpos.x;
 	(minpos.y < 0) ? minpos.y = 0 : minpos.y = (uint)minpos.y;
+	if (minpos.x > 49) maxpos.x = 49;
+	if (minpos.y > 49) maxpos.y = 49;
 
 	maxpos.x = (frust_box.maxPoint.x + 12.7f) / tile_size;
 	maxpos.y = (frust_box.maxPoint.z + 12.7f) / tile_size;
 
 	(maxpos.x < 0) ? maxpos.x = 1 : maxpos.x = (uint)(maxpos.x+0.95);
 	(maxpos.y < 0) ? maxpos.y = 1 : maxpos.y = (uint)(maxpos.y+0.95);
+	if(maxpos.x > 49) maxpos.x = 49;
+	if(maxpos.y > 49) maxpos.y = 49;
 
 	origin.x = (frustum.pos.x + 12.7f) / tile_size;
 	if (origin.x >= 49) origin.x = 48;
@@ -591,13 +595,14 @@ void OclusionCulling::OcludeFront(float2 curr_pos)
 
 void OclusionCulling::OcludeRight(float2 curr_pos)
 {
+	float2 start_pos = curr_pos;
+	if (start_pos.x < 0 || start_pos.y < 0) return;
+
 	float2 v_left = (curr_pos + (dir.left + dir.forward)*0.5);
 	float2 v_right = (curr_pos + (dir.right - dir.forward)*0.5);
 
 	Plane left_plane = Plane(float3(fpos.x,0.0f,fpos.y),float3(0,1,0), float3(v_left.x, 0.0f, v_left.y));
 	Plane right_plane = Plane(float3(fpos.x, 0.0f, fpos.y), float3(0, -1, 0), float3(v_right.x, 0.0f, v_right.y));
-
-	float2 start_pos = curr_pos;
 
 	bool is_vertical = false;
 	float2 end_pos = float2::zero;
@@ -635,10 +640,10 @@ void OclusionCulling::OcludeRight(float2 curr_pos)
 	if (is_vertical)
 	{
 		float3 corner = float3((float)add_y*.5, 0, (float)-add_x * .5f);
-		for (uint y = start_pos.y; y != end_pos.y; y += add_y)
+		for (uint y = start_pos.y; y != end_pos.y && y >= 0; y += add_y)
 		{
 			point.z = y;
-			for (uint x = start_pos.x; x != end_pos.x; x += add_x)
+			for (uint x = start_pos.x; x != end_pos.x && x >= 0; x += add_x)
 			{
 				if (o_map[x][y].state == TILE_TO_CHECK)
 				{
@@ -653,10 +658,10 @@ void OclusionCulling::OcludeRight(float2 curr_pos)
 	}
 	else
 	{
-		for (uint x = start_pos.x; x != end_pos.x; x += add_x)
+		for (uint x = start_pos.x; x != end_pos.x && x >= 0; x += add_x)
 		{
 			point.x = x;
-			for (uint y = start_pos.y; y != end_pos.y; y += add_y)
+			for (uint y = start_pos.y; y != end_pos.y && y >= 0; y += add_y)
 			{
 				if (o_map[x][y].state == TILE_TO_CHECK)
 				{
@@ -673,13 +678,14 @@ void OclusionCulling::OcludeRight(float2 curr_pos)
 
 void OclusionCulling::OcludeLeft(float2 curr_pos)
 {
+	float2 start_pos = curr_pos;
+	if (start_pos.x < 0 || start_pos.y < 0) return;
+
 	float2 v_left = (curr_pos + (dir.left - dir.forward)*0.5);
 	float2 v_right = (curr_pos + (dir.right + dir.forward)*0.5);
 
 	Plane left_plane = Plane(float3(fpos.x, 0.0f, fpos.y), float3(0, 1, 0), float3(v_left.x, 0.0f, v_left.y));
 	Plane right_plane = Plane(float3(fpos.x, 0.0f, fpos.y), float3(0, -1, 0), float3(v_right.x, 0.0f, v_right.y));
-
-	float2 start_pos = curr_pos;
 
 	bool is_vertical = false;
 	float2 end_pos = float2::zero;
@@ -716,10 +722,10 @@ void OclusionCulling::OcludeLeft(float2 curr_pos)
 	if (is_vertical)
 	{
 		float3 corner = float3((float)add_y*.5, 0, (float)-add_x * .5f);
-		for (uint y = start_pos.y; y != end_pos.y; y += add_y)
+		for (uint y = start_pos.y; y != end_pos.y && y >= 0; y += add_y)
 		{
 			point.z = y;
-			for (uint x = start_pos.x; x != end_pos.x; x += add_x)
+			for (uint x = start_pos.x; x != end_pos.x && x >= 0; x += add_x)
 			{
 				if (o_map[x][y].state == TILE_TO_CHECK)
 				{
@@ -735,10 +741,10 @@ void OclusionCulling::OcludeLeft(float2 curr_pos)
 	else
 	{
 		float3 corner = float3((float)add_y*.5, 0, (float)-add_x * .5f);
-		for (uint y = start_pos.y; y != end_pos.y; y += add_y)
+		for (uint y = start_pos.y; y != end_pos.y && y >= 0; y += add_y)
 		{
 			point.z = y;
-			for (uint x = start_pos.x; x != end_pos.x; x += add_x)
+			for (uint x = start_pos.x; x != end_pos.x && x >= 0; x += add_x)
 			{
 				if (o_map[x][y].state == TILE_TO_CHECK)
 				{
