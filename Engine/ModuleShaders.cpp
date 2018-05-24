@@ -1239,7 +1239,7 @@ void ModuleShaders::SetGlobalVariables(float dt, bool all_lights)
 				SetLightUniform(ID, "type", i, (int)lights_vec[i]->type);
 				SetLightUniform(ID, "l_color", i, lights_vec[i]->color);
 				SetLightUniform(ID, "ambientCoefficient", i, lights_vec[i]->ambientCoefficient);
-
+				SetLightUniform(ID, "radius", i, lights_vec[i]->radius);
 				SetLightUniform(ID, "properties", i, lights_vec[i]->properties);
 
 				// Bias matrix. TODO: Might be better to set other place
