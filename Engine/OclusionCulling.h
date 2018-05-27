@@ -73,6 +73,7 @@ private:
 	std::queue<float2> bfs_oclusion;
 
 	float tile_size = 25.4f;
+	bool map_loaded = false;
 
 	float2 minpos = float2::zero;
 	float2 maxpos = float2::zero;

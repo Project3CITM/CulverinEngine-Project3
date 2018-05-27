@@ -26,15 +26,19 @@ OclusionCulling::~OclusionCulling()
 
 void OclusionCulling::Clear()
 {
-	// Clear Oclusion Map
-	for (int x = 0; x < 49; x++)
+	if (!map_loaded)
 	{
-		for (int y = 0; y < 49; y++)
+		// Clear Oclusion Map
+		for (int x = 0; x < 49; x++)
 		{
-			o_map[x][y].state = TILE_SKIP;
-			o_map[x][y].ocludes = false;
+			for (int y = 0; y < 49; y++)
+			{
+				o_map[x][y].state = TILE_SKIP;
+				o_map[x][y].ocludes = false;
+			}
 		}
 	}
+	else map_loaded = false;
 
 	// Clear GameObjects
 	for (uint i = 0; i < 50; i++)
@@ -75,6 +79,7 @@ void OclusionCulling::LoadOclusionMap(int map[100][100], int width, int height)
 		}
 	}
 
+	map_loaded = true;
 }
 
 void OclusionCulling::InsertCandidate(GameObject * obj)
@@ -118,35 +123,38 @@ void OclusionCulling::AddTilesToQueue()
 		{
 			OcludeTiles(curr);
 		}
-
-		// Add Adjacent Tiles
-		adj = curr + dir.forward;
-		if (o_map[(int)adj.x][(int)adj.y].state == TILE_TO_CHECK && !o_map[(int)adj.x][(int)adj.y].added_to_queue)
+		else
 		{
-			o_map[(int)adj.x][(int)adj.y].added_to_queue = true;
-			open.push(adj);
+			// Add Adjacent Tiles
+			adj = curr + dir.forward;
+			if (o_map[(int)adj.x][(int)adj.y].state == TILE_TO_CHECK && !o_map[(int)adj.x][(int)adj.y].added_to_queue)
+			{
+				o_map[(int)adj.x][(int)adj.y].added_to_queue = true;
+				open.push(adj);
+			}
 		}
-		
+
 		adj = curr + dir.right;
 		if (o_map[(int)adj.x][(int)adj.y].state == TILE_TO_CHECK && !o_map[(int)adj.x][(int)adj.y].added_to_queue)
 		{
 			o_map[(int)adj.x][(int)adj.y].added_to_queue = true;
 			open.push(adj);
 		}
-		
+
 		adj = curr + dir.left;
 		if (o_map[(int)adj.x][(int)adj.y].state == TILE_TO_CHECK && !o_map[(int)adj.x][(int)adj.y].added_to_queue)
 		{
 			o_map[(int)adj.x][(int)adj.y].added_to_queue = true;
 			open.push(adj);
 		}
-		
+
+		/*
 		adj = curr - dir.forward;
 		if (o_map[(int)adj.x][(int)adj.y].state == TILE_TO_CHECK && !o_map[(int)adj.x][(int)adj.y].added_to_queue)
 		{
 			o_map[(int)adj.x][(int)adj.y].added_to_queue = true;
 			open.push(adj);
-		}
+		}*/
 	}
 }
 
@@ -163,8 +171,8 @@ void OclusionCulling::CheckOclusionMap(Frustum &frustum)
 
 	(minpos.x < 0) ? minpos.x = 0 : minpos.x = (uint)minpos.x;
 	(minpos.y < 0) ? minpos.y = 0 : minpos.y = (uint)minpos.y;
-	if (minpos.x > 49) maxpos.x = 49;
-	if (minpos.y > 49) maxpos.y = 49;
+	if (minpos.x > 49) minpos.x = 49;
+	if (minpos.y > 49) minpos.y = 49;
 
 	maxpos.x = (frust_box.maxPoint.x + 12.7f) / tile_size;
 	maxpos.y = (frust_box.maxPoint.z + 12.7f) / tile_size;
@@ -316,26 +324,26 @@ void OclusionCulling::SetOclusionFrame(Frustum &frust)
 				for (int p = 0; p < 4; ++p) {
 					int iInCount = 4;
 
-					point.x = x * tile_size - 12.7f;
-					point.z = y * tile_size - 12.7f;
+					point.x = x * tile_size - 14.7f;
+					point.z = y * tile_size - 14.7f;
 					if (planes[p].normal.Dot(point) >= planes[p].d)
 					{
 						--iInCount;
 					}
 
-					point.x += tile_size;
+					point.x += tile_size +4;
 					if (planes[p].normal.Dot(point) >= planes[p].d)
 					{
 						--iInCount;
 					}
 
-					point.z += tile_size;
+					point.z += tile_size +4;
 					if (planes[p].normal.Dot(point) >= planes[p].d)
 					{
 						--iInCount;
 					}
 
-					point.x -= tile_size;
+					point.x -= (tile_size + 4);
 					if (planes[p].normal.Dot(point) >= planes[p].d)
 					{
 						--iInCount;
