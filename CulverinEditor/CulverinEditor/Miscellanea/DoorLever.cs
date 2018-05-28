@@ -16,7 +16,7 @@ public class DoorLever : CulverinBehaviour
     private CompAnimation anim_controller = null;
     private CompAudio audio = null;
     private bool on_lever_range = false;
-    private bool on_lever_animation = false;
+    public bool on_lever_animation = false;
     private string lever_animation_name = "Lever_Down";
 
     public GameObject close_door_collider = null;
