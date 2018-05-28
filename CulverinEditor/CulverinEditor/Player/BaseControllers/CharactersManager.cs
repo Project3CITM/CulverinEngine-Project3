@@ -246,14 +246,20 @@ public class Cutscene : CulverinBehaviour
     WaitStep wait_step4;
     WaitStep wait_step5;
     WaitStep wait_step6;
+    WaitStep wait_step7;
     RotateStep rotate_left_step;
+    RotateStep rotate_left_step2;
     MoveStep move_step1;
     RotateStep rotate_right_step;
+    RotateStep rotate_right_step2;
     MoveStep move_step2;
     MoveStep move_step3;
     MoveStep move_step4;
     MoveStep move_step5;
     MoveStep move_step6;
+
+    //Player position
+    MovementController player_position;
     // --------------------------
 
     public bool start_cutscene = false;
@@ -262,27 +268,36 @@ public class Cutscene : CulverinBehaviour
     //Boss presentation animation
     public void CutsceneInit(MovementController mov)
     {
+
+        player_position = GetComponent<MovementController>();
+
         //Create all the steps
         wait_step = new WaitStep("wait_1", 2.0f);
         rotate_left_step = new RotateStep(RotateStep.RotateDirection.LEFT, mov, "rotate_left_1", 0.5f);
         move_step1 = new MoveStep(MoveStep.MoveDirection.FORWARD, mov, "move_forward_1");
         rotate_right_step = new RotateStep(RotateStep.RotateDirection.RIGHT, mov, "rotate_right_1", 0.5f);
-        wait_step2 = new WaitStep("wait_1", 1.0f);
+        wait_step2 = new WaitStep("wait_2", 1.0f);
         move_step2 = new MoveStep(MoveStep.MoveDirection.FORWARD, mov, "move_forward_2");
-        wait_step3 = new WaitStep("wait_1", 0.5f);
+        wait_step3 = new WaitStep("wait_3", 0.5f);
         move_step3 = new MoveStep(MoveStep.MoveDirection.FORWARD, mov, "move_forward_3");
-        wait_step4 = new WaitStep("wait_1", 0.5f);
+        wait_step4 = new WaitStep("wait_4", 0.5f);
         move_step4 = new MoveStep(MoveStep.MoveDirection.FORWARD, mov, "move_forward_4");
-        wait_step5 = new WaitStep("wait_1", 0.5f);
+        wait_step5 = new WaitStep("wait_5", 0.5f);
         move_step5 = new MoveStep(MoveStep.MoveDirection.FORWARD, mov, "move_forward_5");
-        wait_step6 = new WaitStep("wait_1", 0.5f);
+        wait_step6 = new WaitStep("wait_6", 0.5f);
         move_step6 = new MoveStep(MoveStep.MoveDirection.FORWARD, mov, "move_forward_6");
         //move_step2 = new MoveStep(MoveStep.MoveDirection.BACKWARD, mov, "move_backward_2");
+
+        //If player triggers lever looking in other directions
+        rotate_left_step2 = new RotateStep(RotateStep.RotateDirection.LEFT, mov, "rotate_left_2", 0.5f);
+        rotate_right_step2 = new RotateStep(RotateStep.RotateDirection.RIGHT, mov, "rotate_right_1", 0.5f);
+        wait_step7 = new WaitStep("wait_7", 0.5f);
 
         //Link the steps
         wait_step.SetNextStep(rotate_left_step);
         rotate_left_step.SetNextStep(move_step1);
-        move_step1.SetNextStep(rotate_right_step);
+        move_step1.SetNextStep(wait_step7);
+        wait_step7.SetNextStep(rotate_right_step);
         rotate_right_step.SetNextStep(wait_step2);
         wait_step2.SetNextStep(move_step2);
         move_step2.SetNextStep(wait_step3);
@@ -301,8 +316,32 @@ public class Cutscene : CulverinBehaviour
 
     public void StartCutscene()
     {
+        switch (player_position.curr_dir)
+        {
+            case MovementController.Direction.NORTH:
+                {
+                    wait_step.SetNextStep(move_step1);
+                    break;
+                }
+            case MovementController.Direction.SOUTH:
+                {
+                    wait_step.SetNextStep(rotate_left_step2);
+                    rotate_left_step2.SetNextStep(rotate_left_step);
+                    break;
+                }
+            case MovementController.Direction.WEST:
+                {
+                    wait_step.SetNextStep(rotate_right_step2);
+                    rotate_right_step2.SetNextStep(move_step1);
+                    break;
+                }
+            default:
+                {
+                    break;
+                }
 
-        
+        }
+
 
         start_cutscene = true;
         cutscene_finished = false;
