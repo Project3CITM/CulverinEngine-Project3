@@ -194,6 +194,7 @@ public class RotateStep : Step
     {
         direction = dir;
         movement = mov_player;
+        
     }
 
     public override void StartStep()
@@ -234,20 +235,25 @@ public class RotateStep : Step
 }
 
 
-public class Cutscene
+public class Cutscene : CulverinBehaviour
 {
     private Step curr_step;
 
     //Steps in this cutscene ----
     WaitStep wait_step;
+    WaitStep wait_step2;
+    WaitStep wait_step3;
+    WaitStep wait_step4;
+    WaitStep wait_step5;
+    WaitStep wait_step6;
     RotateStep rotate_left_step;
     MoveStep move_step1;
     RotateStep rotate_right_step;
     MoveStep move_step2;
-    //MoveStep move_step3;
-    //MoveStep move_step4;
-    //MoveStep move_step5;
-    //MoveStep move_step6;
+    MoveStep move_step3;
+    MoveStep move_step4;
+    MoveStep move_step5;
+    MoveStep move_step6;
     // --------------------------
 
     public bool start_cutscene = false;
@@ -261,18 +267,32 @@ public class Cutscene
         rotate_left_step = new RotateStep(RotateStep.RotateDirection.LEFT, mov, "rotate_left_1", 0.5f);
         move_step1 = new MoveStep(MoveStep.MoveDirection.FORWARD, mov, "move_forward_1");
         rotate_right_step = new RotateStep(RotateStep.RotateDirection.RIGHT, mov, "rotate_right_1", 0.5f);
-        move_step1 = new MoveStep(MoveStep.MoveDirection.FORWARD, mov, "move_forward_1");
-        move_step1 = new MoveStep(MoveStep.MoveDirection.FORWARD, mov, "move_forward_1");
-        move_step1 = new MoveStep(MoveStep.MoveDirection.FORWARD, mov, "move_forward_1");
-        move_step1 = new MoveStep(MoveStep.MoveDirection.FORWARD, mov, "move_forward_1");
-        move_step1 = new MoveStep(MoveStep.MoveDirection.FORWARD, mov, "move_forward_1");
+        wait_step2 = new WaitStep("wait_1", 1.0f);
+        move_step2 = new MoveStep(MoveStep.MoveDirection.FORWARD, mov, "move_forward_2");
+        wait_step3 = new WaitStep("wait_1", 0.5f);
+        move_step3 = new MoveStep(MoveStep.MoveDirection.FORWARD, mov, "move_forward_3");
+        wait_step4 = new WaitStep("wait_1", 0.5f);
+        move_step4 = new MoveStep(MoveStep.MoveDirection.FORWARD, mov, "move_forward_4");
+        wait_step5 = new WaitStep("wait_1", 0.5f);
+        move_step5 = new MoveStep(MoveStep.MoveDirection.FORWARD, mov, "move_forward_5");
+        wait_step6 = new WaitStep("wait_1", 0.5f);
+        move_step6 = new MoveStep(MoveStep.MoveDirection.FORWARD, mov, "move_forward_6");
         //move_step2 = new MoveStep(MoveStep.MoveDirection.BACKWARD, mov, "move_backward_2");
 
         //Link the steps
         wait_step.SetNextStep(rotate_left_step);
-        rotate_left_step.SetNextStep(rotate_right_step);
-        rotate_right_step.SetNextStep(move_step1);
-        move_step1.SetNextStep(move_step2);
+        rotate_left_step.SetNextStep(move_step1);
+        move_step1.SetNextStep(rotate_right_step);
+        rotate_right_step.SetNextStep(wait_step2);
+        wait_step2.SetNextStep(move_step2);
+        move_step2.SetNextStep(wait_step3);
+        wait_step3.SetNextStep(move_step3);
+        move_step3.SetNextStep(wait_step4);
+        wait_step4.SetNextStep(move_step4);
+        move_step4.SetNextStep(wait_step5);
+        wait_step5.SetNextStep(move_step5);
+        move_step5.SetNextStep(wait_step6);
+        wait_step6.SetNextStep(move_step6);
 
         //Start the first step
         curr_step = wait_step;
@@ -281,6 +301,9 @@ public class Cutscene
 
     public void StartCutscene()
     {
+
+        
+
         start_cutscene = true;
         cutscene_finished = false;
 
