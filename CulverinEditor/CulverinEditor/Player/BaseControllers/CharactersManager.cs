@@ -253,15 +253,20 @@ public class Cutscene
     public bool start_cutscene = false;
     public bool cutscene_finished = false;
 
-    //FRANCHESCO BONICO
+    //Boss presentation animation
     public void CutsceneInit(MovementController mov)
     {
         //Create all the steps
         wait_step = new WaitStep("wait_1", 2.0f);
         rotate_left_step = new RotateStep(RotateStep.RotateDirection.LEFT, mov, "rotate_left_1", 0.5f);
+        move_step1 = new MoveStep(MoveStep.MoveDirection.FORWARD, mov, "move_forward_1");
         rotate_right_step = new RotateStep(RotateStep.RotateDirection.RIGHT, mov, "rotate_right_1", 0.5f);
         move_step1 = new MoveStep(MoveStep.MoveDirection.FORWARD, mov, "move_forward_1");
-        move_step2 = new MoveStep(MoveStep.MoveDirection.BACKWARD, mov, "move_backward_2");
+        move_step1 = new MoveStep(MoveStep.MoveDirection.FORWARD, mov, "move_forward_1");
+        move_step1 = new MoveStep(MoveStep.MoveDirection.FORWARD, mov, "move_forward_1");
+        move_step1 = new MoveStep(MoveStep.MoveDirection.FORWARD, mov, "move_forward_1");
+        move_step1 = new MoveStep(MoveStep.MoveDirection.FORWARD, mov, "move_forward_1");
+        //move_step2 = new MoveStep(MoveStep.MoveDirection.BACKWARD, mov, "move_backward_2");
 
         //Link the steps
         wait_step.SetNextStep(rotate_left_step);
