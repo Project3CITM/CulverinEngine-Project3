@@ -519,6 +519,8 @@ public class CharactersManager : CulverinBehaviour
     public Cutscene cutscene;
     public GameObject hud_obj = null;
     private MovementController movement_controller = null;
+    public GameObject black_bar_top = null;
+    public GameObject black_bar_bot = null;
     // ------------------------
 
     //Call this function to start the player cutscene to enter the boss room
@@ -528,6 +530,10 @@ public class CharactersManager : CulverinBehaviour
         {
             //Disable In-Game HUD
             hud_obj.SetActive(false);
+
+            // Black Bars
+            black_bar_top.GetComponent<CompImage>().SetEnabled(true);
+            black_bar_bot.GetComponent<CompImage>().SetEnabled(true);
         }
 
         //Start 
@@ -614,6 +620,13 @@ public class CharactersManager : CulverinBehaviour
 
         cutscene = new Cutscene();
         cutscene.CutsceneInit(movement_controller);
+
+        // Black Bars
+        black_bar_top = GetLinkedObject("black_bar_top");
+        black_bar_bot = GetLinkedObject("black_bar_bot");
+
+        black_bar_top.GetComponent<CompImage>().SetEnabled(false);
+        black_bar_bot.GetComponent<CompImage>().SetEnabled(false);
         // --------------------------
     }
 
@@ -637,6 +650,10 @@ public class CharactersManager : CulverinBehaviour
                 {
                     //Enable In-Game HUD
                     hud_obj.SetActive(true);
+
+                    // Black Bars
+                    black_bar_top.GetComponent<CompImage>().SetEnabled(false);
+                    black_bar_bot.GetComponent<CompImage>().SetEnabled(false);
                 }
 
                 //Return the control to the player
