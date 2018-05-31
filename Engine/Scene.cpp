@@ -1583,7 +1583,8 @@ GameObject * Scene::CreateCanvas(GameObject * parent)
 	CompRectTransform* transform = (CompRectTransform*)obj->AddComponent(Comp_Type::C_RECT_TRANSFORM);
 	transform->Init(float3(0, 0, 0), float3(0, 0, 0), float3(1, 1, 1));
 	transform->Enable();
-
+	transform->SetWidth(1920);
+	transform->SetHeight(1080);
 	// CANVAS COMPONENT -----------------
 	CompCanvas* canvas = (CompCanvas*)obj->AddComponent(Comp_Type::C_CANVAS);
 	canvas->Enable();
