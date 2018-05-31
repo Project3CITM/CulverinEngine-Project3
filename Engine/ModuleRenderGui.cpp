@@ -131,7 +131,17 @@ void ModuleRenderGui::ChangeSelected(Event & this_event)
 	}
 	selected = this_event.pass_selected.component;
 	if (selected != nullptr)
-		selected->OnInteractiveSelected(this_event);
+	{
+		if (selected->OnList())
+		{
+			selected->OnInteractiveSelected(this_event);
+
+		}
+		else
+		{
+			selected = nullptr;
+		}
+	}
 }
 
 

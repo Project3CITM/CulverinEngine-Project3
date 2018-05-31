@@ -1333,6 +1333,16 @@ void CompInteractive::OnCancel(Event event_data)
 {
 }
 
+bool CompInteractive::OnList()
+{
+	std::list<CompInteractive*>::iterator item = std::find(iteractive_list.begin(), iteractive_list.end(), this);
+	if (item == iteractive_list.end())
+	{
+		return false;
+	}
+	return true;
+}
+
 void CompInteractive::PrepareHandleTransition()
 {
 	SelectionStates selection_state = current_selection_state;
