@@ -127,6 +127,19 @@ void OclusionCulling::AddTilesToQueue()
 		{
 			// Add Adjacent Tiles
 			adj = curr + dir.forward;
+			if (adj.x >= 0 && adj.y >= 0 && adj.x < 50 && adj.y < 50)
+			{
+				if (o_map[(int)adj.x][(int)adj.y].state == TILE_TO_CHECK && !o_map[(int)adj.x][(int)adj.y].added_to_queue)
+				{
+					o_map[(int)adj.x][(int)adj.y].added_to_queue = true;
+					open.push(adj);
+				}
+			}
+		}
+
+		adj = curr + dir.right;
+		if (adj.x >= 0 && adj.y >= 0 && adj.x < 50 && adj.y < 50)
+		{
 			if (o_map[(int)adj.x][(int)adj.y].state == TILE_TO_CHECK && !o_map[(int)adj.x][(int)adj.y].added_to_queue)
 			{
 				o_map[(int)adj.x][(int)adj.y].added_to_queue = true;
@@ -134,20 +147,15 @@ void OclusionCulling::AddTilesToQueue()
 			}
 		}
 
-		adj = curr + dir.right;
-		if (o_map[(int)adj.x][(int)adj.y].state == TILE_TO_CHECK && !o_map[(int)adj.x][(int)adj.y].added_to_queue)
-		{
-			o_map[(int)adj.x][(int)adj.y].added_to_queue = true;
-			open.push(adj);
-		}
-
 		adj = curr + dir.left;
-		if (o_map[(int)adj.x][(int)adj.y].state == TILE_TO_CHECK && !o_map[(int)adj.x][(int)adj.y].added_to_queue)
+		if (adj.x >= 0 && adj.y >= 0 && adj.x < 50 && adj.y < 50)
 		{
-			o_map[(int)adj.x][(int)adj.y].added_to_queue = true;
-			open.push(adj);
+			if (o_map[(int)adj.x][(int)adj.y].state == TILE_TO_CHECK && !o_map[(int)adj.x][(int)adj.y].added_to_queue)
+			{
+				o_map[(int)adj.x][(int)adj.y].added_to_queue = true;
+				open.push(adj);
+			}
 		}
-
 		/*
 		adj = curr - dir.forward;
 		if (o_map[(int)adj.x][(int)adj.y].state == TILE_TO_CHECK && !o_map[(int)adj.x][(int)adj.y].added_to_queue)
