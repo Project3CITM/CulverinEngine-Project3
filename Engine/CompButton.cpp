@@ -98,7 +98,7 @@ void CompButton::ShowInspectorInfo()
 	int selected_opt = current_transition_mode;
 	ImGui::Text("Transition"); ImGui::SameLine(op + 30);
 
-	if (ImGui::Combo("##transition", &selected_opt, "Color tint transition\0Sprite transition\0 Animation transition\0"))
+	if (ImGui::Combo("##transition", &selected_opt, "Color tint transition\0Sprite transition\0 "))
 	{
 		if (selected_opt == Transition::TRANSITION_COLOR)
 			current_transition_mode = Transition::TRANSITION_COLOR;
