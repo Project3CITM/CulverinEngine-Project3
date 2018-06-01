@@ -14,7 +14,7 @@ public class ChargeAttack_Action : Action
     public float attack_duration = 1.0f;
     public float damage = 1.0f;
     float speed = 1.0f;
-    public float after_cd = 1.0f;
+    public float after_cd = 10000.0f;
     Transform trans;
     float timer = 1.0f;
     int player_x = -1;
