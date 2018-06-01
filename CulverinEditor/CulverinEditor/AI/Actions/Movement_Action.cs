@@ -374,10 +374,11 @@ public class Movement_Action : Action
 
             arrive.SetEnabled(true);
             seek.SetEnabled(true);
-
             translation_finished = false;
 
             path = map.GetComponent<Pathfinder>().CalculatePath(new PathNode(current_x, current_y), new PathNode(obj_x, obj_y));
+
+            
 
             if (arrive.ReachedTile())
             {
@@ -395,6 +396,10 @@ public class Movement_Action : Action
                     rotation_finished = true;
                     moving_sideways = true;
                 }
+            }
+            else
+            {
+                LookAtNextTile();
             }
         }
     }
