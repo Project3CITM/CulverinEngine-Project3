@@ -819,14 +819,14 @@ void Application::Config()
 			}
 			else
 			{
-				ImGui::BulletText("ACCUMULATED");
+				/*ImGui::BulletText("ACCUMULATED");
 				ImGui::Text("- Actual Memory:"); ImGui::SameLine();
 				ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.08f, 1.0f), "%i", stats.accumulatedActualMemory);
 				ImGui::Text("- Allocated memory:"); ImGui::SameLine();
 				ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.08f, 1.0f), "%i", stats.accumulatedAllocUnitCount);
 				ImGui::Text("- Reported memory:"); ImGui::SameLine();
 				ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.08f, 1.0f), "%i", stats.accumulatedReportedMemory);
-				ImGui::Spacing();
+				ImGui::Spacing();*/
 
 				ImGui::BulletText("PEAK");
 				ImGui::Text("- Actual Memory:"); ImGui::SameLine();
