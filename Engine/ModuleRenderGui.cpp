@@ -229,14 +229,18 @@ void ModuleRenderGui::OnEvent(Event & this_event)
 							mouse_down = false;
 							break;
 						case EventType::EVENT_MOUSE_MOTION:
-							if (selected != nullptr)
-							{
-								selected->ForceClear();
-								selected = nullptr;
-							}
+							
 							if ((*it)->IsDragrable())
 							{
 								(*it)->OnDrag(this_event);
+							}
+							else
+							{
+								if (selected != nullptr)
+								{
+									selected->ForceClear();
+									selected = nullptr;
+								}
 							}
 							(*it)->OnPointEnter(this_event);
 							break;
