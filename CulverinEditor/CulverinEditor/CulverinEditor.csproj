@@ -98,6 +98,7 @@
     <Compile Include="Miscellanea\FloorBlood.cs" />
     <Compile Include="Miscellanea\MusicController.cs" />
     <Compile Include="Puzzles\Level 2\BarrelPuzzle\ChainMove.cs" />
+    <Compile Include="Puzzles\Level 2\CloseDoor_EnemyDead.cs" />
     <Compile Include="UI_Scripts\Component\CompSlider.cs" />
     <Compile Include="UI_Scripts\Component\CompCheckBox.cs" />
     <Compile Include="Player\Fountain.cs" />
