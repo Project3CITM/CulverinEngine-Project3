@@ -76,6 +76,7 @@ public class CloseDoor_EnemyDead : CulverinBehaviour
             if (pos.y > min_height)
             {
                 pos.y -= speed_down * Time.deltaTime;
+                //Debug.Log("Closing Door POS", Department.PHYSICS, Color.GREEN);
                 GetComponent<Transform>().SetPosition(pos);
             }
             else
@@ -175,16 +176,11 @@ public class CloseDoor_EnemyDead : CulverinBehaviour
 
     void OnTriggerEnter()
     {
+        Debug.Log("Detected collision", Department.PHYSICS, Color.YELLOW);
         if (want_to_close && !door_closed && !enemy_is_dead)
         {
-            CompCollider col = GetComponent<CompCollider>();
-            GameObject obj_col = col.GetCollidedObject();
-            Debug.Log(obj_col.GetTag().ToString());
-
-            if (obj_col != null && obj_col.CompareTag("player"))
-            {
+                Debug.Log("Closing Door", Department.PHYSICS, Color.GREEN);
                 CloseDoor();
-            }
         }
 
     }
