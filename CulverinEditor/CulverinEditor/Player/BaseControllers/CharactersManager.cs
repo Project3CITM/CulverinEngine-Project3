@@ -600,46 +600,54 @@ public class CharactersManager : CulverinBehaviour
         //CUTSCENE MANAGER ----------
         movement_controller = GetComponent<MovementController>();
 
-        cutscene = new Cutscene();
-        cutscene.CutsceneInit(movement_controller);
+        //Init cutscene only in the final level, at the boss floor
+        if (hud_obj != null)
+        {
+            cutscene = new Cutscene();
+            cutscene.CutsceneInit(movement_controller);
+        }
 
         // Black Bars
         black_bar_top = GetLinkedObject("black_bar_top");
         black_bar_bot = GetLinkedObject("black_bar_bot");
 
-        black_bar_top.GetComponent<CompImage>().SetEnabled(false);
-        black_bar_bot.GetComponent<CompImage>().SetEnabled(false);
+        if (black_bar_top != null)
+        {
+            black_bar_top.GetComponent<CompImage>().SetEnabled(false);
+        }
+        if (black_bar_bot != null)
+        {
+            black_bar_bot.GetComponent<CompImage>().SetEnabled(false);
+        }
         // --------------------------
     }
 
     void Update()
     {
-        //CUTSCENE MANAGER ---------------------------------------------
-        if(Input.GetKeyDown(KeyCode.G))
+        // CUTSCENE MANAGER ------------------------------------------------------
+        if (cutscene != null)
         {
-            StartPlayerCutscene();
-        }
-
-        if(cutscene.start_cutscene == true && cutscene.cutscene_finished == false)
-        {
-            //Update cutscene while any of its states is in progress
-            cutscene.CutsceneUpdate();
-
-            //Check if cutscene is finished
-            if(cutscene.isFinished())
+            if (cutscene.start_cutscene == true && cutscene.cutscene_finished == false)
             {
-                if (hud_obj != null)
+                //Update cutscene while any of its states is in progress
+                cutscene.CutsceneUpdate();
+
+                //Check if cutscene is finished
+                if (cutscene.isFinished())
                 {
-                    //Enable In-Game HUD
-                    hud_obj.SetActive(true);
+                    if (hud_obj != null)
+                    {
+                        //Enable In-Game HUD
+                        hud_obj.SetActive(true);
 
-                    // Black Bars
-                    black_bar_top.GetComponent<CompImage>().SetEnabled(false);
-                    black_bar_bot.GetComponent<CompImage>().SetEnabled(false);
+                        // Black Bars
+                        black_bar_top.GetComponent<CompImage>().SetEnabled(false);
+                        black_bar_bot.GetComponent<CompImage>().SetEnabled(false);
+                    }
+
+                    //Return the control to the player
+                    state = State.IDLE;
                 }
-
-                //Return the control to the player
-                state = State.IDLE;
             }
         }
         // ----------------------------------------------------------------
