@@ -22,6 +22,7 @@ public class ReturnToMenu : CulverinBehaviour
         {
             SceneManager.RemoveSecondaryScene();
         }
+        GetComponent<CompAudio>().PlayEvent("Push");
         SceneManager.LoadScene("3D Menu intro");
     }
 
