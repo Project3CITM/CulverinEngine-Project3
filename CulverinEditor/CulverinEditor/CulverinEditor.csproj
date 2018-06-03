@@ -62,6 +62,7 @@
     <Compile Include="AI\Actions\Align_Steering.cs" />
     <Compile Include="AI\Actions\Arrive_Steering.cs" />
     <Compile Include="AI\AnimationTrigger.cs" />
+    <Compile Include="AI\BlackBarsCutscene.cs" />
     <Compile Include="AI\BossHPBar.cs" />
     <Compile Include="AI\BossSight.cs" />
     <Compile Include="AI\Boss_BT.cs" />

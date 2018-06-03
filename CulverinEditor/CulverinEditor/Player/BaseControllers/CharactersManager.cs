@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 //CUTSCENE MANAGER -------------------------------------
 public class Step
-{   
+{
     public enum State
     {
         WAIT = 0,
@@ -59,7 +59,7 @@ public class Step
     public bool WaitFinished()
     {
         //Wait X sec until pass to the next step
-        if (wait_time <= 0.0f) 
+        if (wait_time <= 0.0f)
         {
             return true;
         }
@@ -72,7 +72,7 @@ public class Step
 
     public bool isFinished()
     {
-        if(state == Step.State.FINISHED)
+        if (state == Step.State.FINISHED)
         {
             return true;
         }
@@ -171,7 +171,7 @@ public class MoveStep : Step
         //Check if player finished the movement
         if (movement.IsMoving() == false)
         {
-            FinishStep();            
+            FinishStep();
         }
     }
 }
@@ -194,7 +194,7 @@ public class RotateStep : Step
     {
         direction = dir;
         movement = mov_player;
-        
+
     }
 
     public override void StartStep()
@@ -336,7 +336,7 @@ public class Cutscene : CulverinBehaviour
         // CUTSCENE IN PROGRESS ----------------------
         if (curr_step != null)
         {
-            if(curr_step.state == Step.State.IN_PROGRESS)
+            if (curr_step.state == Step.State.IN_PROGRESS)
             {
                 //Update the current step while it's in progress
                 curr_step.StepUpdate();
@@ -501,8 +501,7 @@ public class CharactersManager : CulverinBehaviour
     public Cutscene cutscene;
     public GameObject hud_obj = null;
     private MovementController movement_controller = null;
-    public GameObject black_bar_top = null;
-    public GameObject black_bar_bot = null;
+    public GameObject black_bars = null;
     // ------------------------
 
     //Call this function to start the player cutscene to enter the boss room
@@ -514,8 +513,7 @@ public class CharactersManager : CulverinBehaviour
             hud_obj.SetActive(false);
 
             // Black Bars
-            black_bar_top.GetComponent<CompImage>().SetEnabled(true);
-            black_bar_bot.GetComponent<CompImage>().SetEnabled(true);
+            black_bars.GetComponent<BlackBarsCutscene>().ActivateBlackBar(true);
         }
 
         //Start 
@@ -605,19 +603,9 @@ public class CharactersManager : CulverinBehaviour
         {
             cutscene = new Cutscene();
             cutscene.CutsceneInit(movement_controller);
-        }
 
-        // Black Bars
-        black_bar_top = GetLinkedObject("black_bar_top");
-        black_bar_bot = GetLinkedObject("black_bar_bot");
-
-        if (black_bar_top != null)
-        {
-            black_bar_top.GetComponent<CompImage>().SetEnabled(false);
-        }
-        if (black_bar_bot != null)
-        {
-            black_bar_bot.GetComponent<CompImage>().SetEnabled(false);
+            // Black Bars
+            black_bars = GetLinkedObject("black_bars");
         }
         // --------------------------
     }
@@ -641,8 +629,7 @@ public class CharactersManager : CulverinBehaviour
                         hud_obj.SetActive(true);
 
                         // Black Bars
-                        black_bar_top.GetComponent<CompImage>().SetEnabled(false);
-                        black_bar_bot.GetComponent<CompImage>().SetEnabled(false);
+                        black_bars.GetComponent<BlackBarsCutscene>().ActivateBlackBar(false);
                     }
 
                     //Return the control to the player
@@ -654,10 +641,10 @@ public class CharactersManager : CulverinBehaviour
 
 
         //MANAGE AUDIO CONTROLLER VARIABLES --
-        if (jaime_tired) 
+        if (jaime_tired)
         {
             jaime_tired_time += Time.deltaTime;
-            if (jaime_tired_time >= 3.0f) 
+            if (jaime_tired_time >= 3.0f)
             {
                 jaime_tired = false;
                 jaime_tired_time = 0.0f;
@@ -997,7 +984,7 @@ public class CharactersManager : CulverinBehaviour
             right_character.GetComponent<JaimeController>().ToggleMesh(true);
             right_character.GetComponent<JaimeController>().jaime_sword_obj.GetComponent<CompCollider>().CollisionActive(true);
             right_character.GetComponent<JaimeController>().force_audio = true;
-            GetLinkedObject("this_obj_lasthp").GetComponent<CompImage>().FillAmount(right_character.GetComponent<JaimeController>().curr_hp/100.0f);
+            GetLinkedObject("this_obj_lasthp").GetComponent<CompImage>().FillAmount(right_character.GetComponent<JaimeController>().curr_hp / 100.0f);
         }
         else if (right_character.GetName() == "Daenerys")
         {
@@ -1192,7 +1179,7 @@ public class CharactersManager : CulverinBehaviour
     public bool GetDamage(float dmg)
     {
         //Rumble Gamepad
-        if(dmg != 0.0f)
+        if (dmg != 0.0f)
             Input.RumblePlay(0.5f, 200);
 
         // Shield Ability Consumable
@@ -1230,7 +1217,7 @@ public class CharactersManager : CulverinBehaviour
                             jaime_s_button.Deactivate();
                             jaime_s_script.Die();
 
-                            if(dmg != 0.0f)
+                            if (dmg != 0.0f)
                                 jaime_controller.PlayFx("JaimeDead");
                         }
                         return true;
@@ -1512,7 +1499,7 @@ public class CharactersManager : CulverinBehaviour
     public bool IsIdle()
     {
         //False if a cutscene is being reproduced
-        if(state == State.CUTSCENE)
+        if (state == State.CUTSCENE)
         {
             return false;
         }
@@ -1561,7 +1548,7 @@ public class CharactersManager : CulverinBehaviour
     {
         if (character.GetName() == "Jaime")
         {
-          character.GetComponent<JaimeController>().SetState(CharacterController.State.DEAD);  
+            character.GetComponent<JaimeController>().SetState(CharacterController.State.DEAD);
         }
         else if (character.GetName() == "Daenerys")
         {
@@ -2011,13 +1998,13 @@ public class CharactersManager : CulverinBehaviour
         }
     }
 
-    public void LoadInfoPlayer() 
+    public void LoadInfoPlayer()
     {
         float theoninfo = SceneManager.PopLoadInfo();
         float daenerysinfo = SceneManager.PopLoadInfo();
         float jaimeinfo = SceneManager.PopLoadInfo();
 
-        if(theoninfo == 1503.0f)
+        if (theoninfo == 1503.0f)
         {
             left_character.GetComponent<TheonController>().curr_hp = left_character.GetComponent<TheonController>().max_hp;
         }
@@ -2090,17 +2077,17 @@ public class CharactersManager : CulverinBehaviour
 
     public void RightCharacterDie()
     {
-            StatsScore.CharacterDead();
+        StatsScore.CharacterDead();
 
-            DaenerysController daenerys_controller = right_character.GetComponent<DaenerysController>();
-            daenerys_controller.SetState(CharacterController.State.DEAD);
-            daenerys_controller.daenerys_icon_obj.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
-            daenerys_controller.daenerys_icon_obj_mana.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
-            daenerys_controller.daenerys_icon_obj_mana.GetComponent<CompImage>().SetRender(false);
+        DaenerysController daenerys_controller = right_character.GetComponent<DaenerysController>();
+        daenerys_controller.SetState(CharacterController.State.DEAD);
+        daenerys_controller.daenerys_icon_obj.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+        daenerys_controller.daenerys_icon_obj_mana.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+        daenerys_controller.daenerys_icon_obj_mana.GetComponent<CompImage>().SetRender(false);
 
-            //Deactivate Secondary ability button
-            daenerys_s_button.Deactivate();
-            daenerys_s_script.Die();
+        //Deactivate Secondary ability button
+        daenerys_s_button.Deactivate();
+        daenerys_s_script.Die();
     }
     public void LeftCharacterDie()
     {
