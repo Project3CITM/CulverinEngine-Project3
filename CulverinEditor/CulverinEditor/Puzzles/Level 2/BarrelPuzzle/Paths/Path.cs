@@ -33,7 +33,7 @@ public class Path
 
     // ---------------------------------
 
-    public void CreateWalkability(int path_index)
+    public void CreateWalkability(int path_index, bool easy_mode)
     {
         for (int x = 0; x < width; ++x)
         {
@@ -44,206 +44,175 @@ public class Path
             }
         }
 
-         switch (path_index)
+        if (easy_mode)
         {
-            case 0:
-                walkability[1, 0] = 0;
-                walkability[1, 1] = 0;
-                walkability[2, 1] = 0;
-                walkability[2, 2] = 0;
-                walkability[2, 3] = 0;
-                walkability[3, 3] = 0;
-                walkability[3, 4] = 0;
-                walkability[3, 5] = 0;
-                /*SetWalkability(0, 0, 0);
-                SetWalkability(1, 0, 0);
-                SetWalkability(1, 1, 0);
-                SetWalkability(2, 1, 0);
-                SetWalkability(2, 2, 0);
-                SetWalkability(2, 3, 0);
-                SetWalkability(3, 3, 0);
-                SetWalkability(3, 4, 0);
-                SetWalkability(3, 5, 0);*/
-                break;
-            case 1:
-                walkability[4, 0] = 0;
-                walkability[4, 1] = 0;
-                walkability[4, 2] = 0;
-                walkability[3, 2] = 0;
-                walkability[3, 3] = 0;
-                walkability[2, 3] = 0;
-                walkability[2, 4] = 0;
-                walkability[2, 5] = 0;
-                /*SetWalkability(4, 0, 0);
-                SetWalkability(4, 1, 0);
-                SetWalkability(4, 2, 0);
-                SetWalkability(3, 2, 0);
-                SetWalkability(3, 3, 0);
-                SetWalkability(2, 3, 0);
-                SetWalkability(2, 4, 0);
-                SetWalkability(2, 5, 0);*/
-                break;
-            case 2:
-                walkability[2, 0] = 0;
-                walkability[2, 1] = 0;
-                walkability[2, 2] = 0;
-                walkability[2, 3] = 0;
-                walkability[3, 3] = 0;
-                walkability[4, 3] = 0;
-                walkability[5, 3] = 0;
-                walkability[5, 4] = 0;
-                walkability[5, 5] = 0;
-                /*SetWalkability(2, 0, 0);
-                SetWalkability(2, 1, 0);
-                SetWalkability(2, 2, 0);
-                SetWalkability(2, 3, 0);
-                SetWalkability(3, 3, 0);
-                SetWalkability(4, 3, 0);
-                SetWalkability(5, 3, 0);
-                SetWalkability(5, 4, 0);
-                SetWalkability(5, 5, 0);*/
-                break;
-            case 3:
-                walkability[5, 0] = 0;
-                walkability[5, 1] = 0;
-                walkability[4, 1] = 0;
-                walkability[3, 1] = 0;
-                walkability[2, 1] = 0;
-                walkability[1, 1] = 0;
-                walkability[1, 2] = 0;
-                walkability[1, 3] = 0;
-                walkability[2, 3] = 0;
-                walkability[3, 3] = 0;
-                walkability[4, 3] = 0;
-                walkability[4, 4] = 0;
-                walkability[5, 4] = 0;
-                walkability[5, 5] = 0;
-                /*SetWalkability(5, 0, 0);
-                SetWalkability(5, 1, 0);
-                SetWalkability(4, 1, 0);
-                SetWalkability(3, 1, 0);
-                SetWalkability(2, 1, 0);
-                SetWalkability(1, 1, 0);
-                SetWalkability(1, 2, 0);
-                SetWalkability(1, 3, 0);
-                SetWalkability(2, 3, 0);
-                SetWalkability(3, 3, 0);
-                SetWalkability(4, 3, 0);
-                SetWalkability(4, 4, 0);
-                SetWalkability(5, 4, 0);
-                SetWalkability(5, 5, 0);*/
-                break;
-            case 4:
-                walkability[4, 0] = 0;
-                walkability[4, 1] = 0;
-                walkability[3, 1] = 0;
-                walkability[3, 2] = 0;
-                walkability[2, 2] = 0;
-                walkability[2, 3] = 0;
-                walkability[2, 4] = 0;
-                walkability[1, 4] = 0;
-                walkability[1, 5] = 0;
-                break;
-            case 5:
-                walkability[4, 0] = 0;
-                walkability[4, 1] = 0;
-                walkability[4, 2] = 0;
-                walkability[3, 2] = 0;
-                walkability[2, 2] = 0;
-                walkability[2, 3] = 0;
-                walkability[2, 4] = 0;
-                walkability[3, 4] = 0;
-                walkability[3, 5] = 0;
-                break;
-            case 6:
-                walkability[3, 0] = 0;
-                walkability[3, 1] = 0;
-                walkability[4, 1] = 0;
-                walkability[4, 2] = 0;
-                walkability[4, 3] = 0;
-                walkability[3, 3] = 0;
-                walkability[3, 4] = 0;
-                walkability[2, 4] = 0;
-                walkability[1, 4] = 0;
-                walkability[1, 5] = 0;
-                break;
-            case 7:
-                walkability[5, 0] = 0;
-                walkability[5, 1] = 0;
-                walkability[5, 2] = 0;
-                walkability[4, 2] = 0;
-                walkability[4, 3] = 0;
-                walkability[3, 3] = 0;
-                walkability[3, 4] = 0;
-                walkability[2, 4] = 0;
-                walkability[1, 4] = 0;
-                walkability[1, 5] = 0;
-                break;
-            case 8:
-                walkability[1, 0] = 0;
-                walkability[1, 1] = 0;
-                walkability[2, 1] = 0;
-                walkability[2, 2] = 0;
-                walkability[3, 2] = 0;
-                walkability[3, 3] = 0;
-                walkability[4, 3] = 0;
-                walkability[4, 4] = 0;
-                walkability[5, 4] = 0;
-                walkability[5, 5] = 0;
-                break;
-            case 9:
-                walkability[2, 0] = 0;
-                walkability[2, 1] = 0;
-                walkability[3, 1] = 0;
-                walkability[3, 2] = 0;
-                walkability[3, 3] = 0;
-                walkability[2, 3] = 0;
-                walkability[2, 4] = 0;
-                walkability[1, 4] = 0;
-                walkability[1, 5] = 0;
-                break;
-            case 10:
-                walkability[5, 0] = 0;
-                walkability[5, 1] = 0;
-                walkability[4, 1] = 0;
-                walkability[3, 1] = 0;
-                walkability[3, 2] = 0;
-                walkability[3, 3] = 0;
-                walkability[2, 3] = 0;
-                walkability[2, 4] = 0;
-                walkability[1, 4] = 0;
-                walkability[1, 5] = 0;
-                break;
-            case 11:
-                walkability[4, 0] = 0;
-                walkability[4, 1] = 0;
-                walkability[3, 1] = 0;
-                walkability[2, 1] = 0;
-                walkability[2, 2] = 0;
-                walkability[2, 3] = 0;
-                walkability[3, 3] = 0;
-                walkability[4, 3] = 0;
-                walkability[4, 4] = 0;
-                walkability[5, 4] = 0;
-                walkability[5, 5] = 0;
-                break;
-            case 12:
-                walkability[4, 0] = 0;
-                walkability[4, 1] = 0;
-                walkability[4, 2] = 0;
-                walkability[3, 2] = 0;
-                walkability[2, 2] = 0;
-                walkability[2, 1] = 0;
-                walkability[1, 1] = 0;
-                walkability[0, 1] = 0;
-                walkability[0, 2] = 0;
-                walkability[0, 3] = 0;
-                walkability[0, 4] = 0;
-                walkability[1, 4] = 0;
-                walkability[2, 4] = 0;
-                walkability[3, 4] = 0;
-                walkability[3, 5] = 0;
-                break;
+            switch (path_index)
+            {
+                case 0:
+                    walkability[1, 0] = 0;
+                    walkability[1, 1] = 0;
+                    walkability[2, 1] = 0;
+                    walkability[2, 2] = 0;
+                    walkability[2, 3] = 0;
+                    walkability[3, 3] = 0;
+                    walkability[3, 4] = 0;
+                    walkability[3, 5] = 0;
+                    break;
+                case 1:
+                    walkability[4, 0] = 0;
+                    walkability[4, 1] = 0;
+                    walkability[4, 2] = 0;
+                    walkability[3, 2] = 0;
+                    walkability[3, 3] = 0;
+                    walkability[2, 3] = 0;
+                    walkability[2, 4] = 0;
+                    walkability[2, 5] = 0;
+                    break;
+                case 2:
+                    walkability[2, 0] = 0;
+                    walkability[2, 1] = 0;
+                    walkability[2, 2] = 0;
+                    walkability[2, 3] = 0;
+                    walkability[3, 3] = 0;
+                    walkability[4, 3] = 0;
+                    walkability[5, 3] = 0;
+                    walkability[5, 4] = 0;
+                    walkability[5, 5] = 0;
+                    break;
+                case 3:
+                    walkability[5, 0] = 0;
+                    walkability[5, 1] = 0;
+                    walkability[4, 1] = 0;
+                    walkability[3, 1] = 0;
+                    walkability[2, 1] = 0;
+                    walkability[1, 1] = 0;
+                    walkability[1, 2] = 0;
+                    walkability[1, 3] = 0;
+                    walkability[2, 3] = 0;
+                    walkability[3, 3] = 0;
+                    walkability[4, 3] = 0;
+                    walkability[4, 4] = 0;
+                    walkability[5, 4] = 0;
+                    walkability[5, 5] = 0;
+                    break;
+                case 4:
+                    walkability[4, 0] = 0;
+                    walkability[4, 1] = 0;
+                    walkability[3, 1] = 0;
+                    walkability[3, 2] = 0;
+                    walkability[2, 2] = 0;
+                    walkability[2, 3] = 0;
+                    walkability[2, 4] = 0;
+                    walkability[1, 4] = 0;
+                    walkability[1, 5] = 0;
+                    break;
+                case 5:
+                    walkability[4, 0] = 0;
+                    walkability[4, 1] = 0;
+                    walkability[4, 2] = 0;
+                    walkability[3, 2] = 0;
+                    walkability[2, 2] = 0;
+                    walkability[2, 3] = 0;
+                    walkability[2, 4] = 0;
+                    walkability[3, 4] = 0;
+                    walkability[3, 5] = 0;
+                    break;
+            }
+        }
+        else
+        {
+            switch (path_index)
+            {
+                case 0:
+                    walkability[3, 0] = 0;
+                    walkability[3, 1] = 0;
+                    walkability[4, 1] = 0;
+                    walkability[4, 2] = 0;
+                    walkability[4, 3] = 0;
+                    walkability[3, 3] = 0;
+                    walkability[3, 4] = 0;
+                    walkability[2, 4] = 0;
+                    walkability[1, 4] = 0;
+                    walkability[1, 5] = 0;
+                    break;
+                case 1:
+                    walkability[5, 0] = 0;
+                    walkability[5, 1] = 0;
+                    walkability[5, 2] = 0;
+                    walkability[4, 2] = 0;
+                    walkability[4, 3] = 0;
+                    walkability[3, 3] = 0;
+                    walkability[3, 4] = 0;
+                    walkability[2, 4] = 0;
+                    walkability[1, 4] = 0;
+                    walkability[1, 5] = 0;
+                    break;
+                case 2:
+                    walkability[1, 0] = 0;
+                    walkability[1, 1] = 0;
+                    walkability[2, 1] = 0;
+                    walkability[2, 2] = 0;
+                    walkability[3, 2] = 0;
+                    walkability[3, 3] = 0;
+                    walkability[4, 3] = 0;
+                    walkability[4, 4] = 0;
+                    walkability[5, 4] = 0;
+                    walkability[5, 5] = 0;
+                    break;
+                case 3:
+                    walkability[2, 0] = 0;
+                    walkability[2, 1] = 0;
+                    walkability[3, 1] = 0;
+                    walkability[3, 2] = 0;
+                    walkability[3, 3] = 0;
+                    walkability[2, 3] = 0;
+                    walkability[2, 4] = 0;
+                    walkability[1, 4] = 0;
+                    walkability[1, 5] = 0;
+                    break;
+                case 4:
+                    walkability[5, 0] = 0;
+                    walkability[5, 1] = 0;
+                    walkability[4, 1] = 0;
+                    walkability[3, 1] = 0;
+                    walkability[3, 2] = 0;
+                    walkability[3, 3] = 0;
+                    walkability[2, 3] = 0;
+                    walkability[2, 4] = 0;
+                    walkability[1, 4] = 0;
+                    walkability[1, 5] = 0;
+                    break;
+                case 5:
+                    walkability[4, 0] = 0;
+                    walkability[4, 1] = 0;
+                    walkability[3, 1] = 0;
+                    walkability[2, 1] = 0;
+                    walkability[2, 2] = 0;
+                    walkability[2, 3] = 0;
+                    walkability[3, 3] = 0;
+                    walkability[4, 3] = 0;
+                    walkability[4, 4] = 0;
+                    walkability[5, 4] = 0;
+                    walkability[5, 5] = 0;
+                    break;
+                case 6:
+                    walkability[4, 0] = 0;
+                    walkability[4, 1] = 0;
+                    walkability[4, 2] = 0;
+                    walkability[3, 2] = 0;
+                    walkability[2, 2] = 0;
+                    walkability[2, 1] = 0;
+                    walkability[1, 1] = 0;
+                    walkability[0, 1] = 0;
+                    walkability[0, 2] = 0;
+                    walkability[0, 3] = 0;
+                    walkability[0, 4] = 0;
+                    walkability[1, 4] = 0;
+                    walkability[2, 4] = 0;
+                    walkability[3, 4] = 0;
+                    walkability[3, 5] = 0;
+                    break;
+            }
         }
 
         /**

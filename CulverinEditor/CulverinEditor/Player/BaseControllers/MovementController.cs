@@ -106,7 +106,7 @@ public class MovementController : CulverinBehaviour
             char_manager.SetCurrentPosition();
         }
 
-        if(Input.GetKeyDown(KeyCode.Num9))
+        if(Input.GetKeyRepeat(KeyCode.Num9) && Input.GetKeyRepeat(KeyCode.Num8) && Input.GetKeyRepeat(KeyCode.Q) && Input.GetKeyRepeat(KeyCode.E) && Input.GetKeyRepeat(KeyCode.Space))
         {
             Audio.prank = true;
         }
