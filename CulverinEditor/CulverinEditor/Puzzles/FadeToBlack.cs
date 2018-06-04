@@ -69,6 +69,7 @@ public class FadeToBlack : CulverinBehaviour
                 case StateFade.GO_NORMAL:
                     {
                         actual_alpha -= speed_fade * Time.deltaTimespecial;
+                        Time.timeScale += speed_fade * Time.deltaTimespecial;
                         break;
                     }
             }
