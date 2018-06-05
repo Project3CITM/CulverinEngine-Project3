@@ -122,7 +122,13 @@ public class EnemyShield_BT : Enemy_BT
         }
         else if (player_detected == true && Disable_Movement_Gameplay_Debbuger == false)
         {
-            if (player.GetComponent<CharactersManager>().GetCurrentCharacterName() == "Jaime")
+            if (!GetComponent<Movement_Action>().LookingAtPlayer())
+            {
+                current_action.Interupt();
+                next_action = GetComponent<FacePlayer_Action>();
+                return;
+            }
+            else if (player.GetComponent<CharactersManager>().GetCurrentCharacterName() == "Jaime")
             {
                 GetComponent<ChasePlayer_Action>().SetBlocking(false);
                 GetComponent<ChasePlayer_Action>().ActionStart();

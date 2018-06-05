@@ -604,6 +604,7 @@ public class Movement_Action : Action
             delta = delta + 2 * Mathf.PI;
 
         delta = Mathf.Rad2deg(delta);
+        Debug.Log("delta looking at player: " + delta, Department.PHYSICS, Color.BLUE);
 
         if (delta >= -50.0f && delta <= 50.0f)
             return true;

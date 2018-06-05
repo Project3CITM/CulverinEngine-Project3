@@ -217,6 +217,12 @@ public class Enemy_BT : BT
             current_action.Interupt();
             current_action = GetComponent<Engage_Action>();
             in_combat = true;
+            MovementController temp_move = player.GetComponent<MovementController>();
+            GetComponent<PerceptionEmitter>().TriggerPlayerSeenEvent(10.0f, temp_move.curr_x, temp_move.curr_y, this.gameObject, 
+                GetComponent<Movement_Action>().GetCurrentTileX(), GetComponent<Movement_Action>().GetCurrentTileY());
+            // GetComponent<PerceptionSightEnemy>().player_seen = true;
+            //player_detected = true;
+
             current_action.ActionStart();
             
         }
