@@ -143,7 +143,6 @@ public class Boss_BT : BT
             if (boss_dead_delay_timer >= boss_dead_delay_time)
             {
                 StatsScore.boss_time = boss_fight_timer;
-                StatsScore.combat_points += GetLinkedObject("player_obj").GetComponent<CharactersManager>().GetTotalHP();
                 if (SceneManager.CheckMultiSceneReady())
                     SceneManager.RemoveSecondaryScene();
                 SceneManager.LoadScene("ScoreScenev2");

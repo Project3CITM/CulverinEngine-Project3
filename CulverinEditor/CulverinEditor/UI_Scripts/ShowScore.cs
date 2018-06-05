@@ -5,6 +5,8 @@ using CulverinEditor.Debug;
 
 public class ShowScore : CulverinBehaviour
 {
+    //Deprecated, left here as a reference for the new score
+    /*
     //Boss dead
     public GameObject coin1_boss;
     public GameObject coin2_boss;
@@ -232,4 +234,5 @@ public class ShowScore : CulverinBehaviour
 
         }
     }
+    */
 }
