@@ -409,6 +409,40 @@ public class JaimeController : CharacterController
         }
     }
 
+    public bool GetFullDamage(float dmg)
+    {
+        health.GetDamage(dmg);
+        if (health.GetCurrentHealth() > 0)
+        {
+            if (GetState() == 0 && characters_manager.changing == false)
+            {
+                Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("Hit");
+                anim_controller.PlayAnimationNode("Hit");
+                SetState(State.HIT);
+            }
+
+            PlayFx("JaimeHurt");
+            play_breathing_audio = true;
+
+            //Damage Feedback
+            damage_feedback.SetDamage(health.GetCurrentHealth(), max_hp);
+        }
+        else
+        {
+            Global_Camera.GetComponent<CompAnimation>().PlayAnimationNode("J_Death");
+            Debug.Log("JAIME DEAD", Department.PLAYER, Color.YELLOW);
+            anim_controller.PlayAnimationNode("Death");
+            SetState(State.DEAD);
+            if (dmg != 0.0f)
+                PlayFx("JaimeDead");
+        }
+
+        //Reset hit count
+        combo_controller.ResetHitStreak();
+
+        return true;
+    }
+
     public override bool Push(float dmg, PathNode tile)
     {
         if (state == State.COVER)
