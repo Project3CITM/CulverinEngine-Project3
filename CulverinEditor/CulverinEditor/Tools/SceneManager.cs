@@ -97,5 +97,11 @@ namespace CulverinEditor.SceneManagement
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern float PopLoadInfo();
 
+        /// <summary>  
+        ///     Get actual name Scene.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern string GetNameActualScene();
+
     }
 }

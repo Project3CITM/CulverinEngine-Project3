@@ -107,6 +107,7 @@ private:
 	static void PushSaveInfoV2(MonoObject* info);
 	static void PushSaveInfo(float hp);
 	static float PopLoadInfo();
+	static MonoString* GetNameActualScene();
 
 	/* Scene Management */
 	static void SendInteractiveSelected(MonoObject* interactive);

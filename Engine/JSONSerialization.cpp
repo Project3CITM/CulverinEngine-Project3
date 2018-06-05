@@ -1580,6 +1580,25 @@ void JSONSerialization::Create_Json_Doc(JSON_Value **root_value_scene, JSON_Obje
 
 }
 
+void JSONSerialization::SaveActualScene(std::string scene)
+{
+	if (strcmpi(scene.c_str(), "Tutorial Real Scene") == 0 || strcmpi(scene.c_str(), "Tutorial Real Scene EASY") == 0 || strcmpi(scene.c_str(), "Tutorial Real Scene HARD") == 0
+		|| strcmpi(scene.c_str(), "Alpha2_Level_1_1") == 0 || strcmpi(scene.c_str(), "Alpha2_Level_1_1_EASY") == 0 || strcmpi(scene.c_str(), "Alpha2_Level_1_1_HARD") == 0
+		|| strcmpi(scene.c_str(), "Alpha2_Level_1_2") == 0 || strcmpi(scene.c_str(), "Alpha2_Level_1_2_EASY") == 0 || strcmpi(scene.c_str(), "Alpha2_Level_1_2_HARD") == 0
+		|| strcmpi(scene.c_str(), "Alpha2_Level_1_3") == 0 || strcmpi(scene.c_str(), "Alpha2_Level_1_3_EASY") == 0 || strcmpi(scene.c_str(), "Alpha2_Level_1_3_HARD") == 0
+		|| strcmpi(scene.c_str(), "LVL2_Zone_1") == 0 || strcmpi(scene.c_str(), "LVL2_Zone_1_EASY") == 0 || strcmpi(scene.c_str(), "LVL2_Zone_1_HARD") == 0 
+		|| strcmpi(scene.c_str(), "LVL2_Zone_2") == 0 || strcmpi(scene.c_str(), "LVL2_Zone_2_EASY") == 0 || strcmpi(scene.c_str(), "LVL2_Zone_2_HARD") == 0
+		|| strcmpi(scene.c_str(), "LVL2_Zone_3") == 0 || strcmpi(scene.c_str(), "LVL2_Zone_3_EASY") == 0 || strcmpi(scene.c_str(), "LVL2_Zone_3_HARD") == 0)
+	{
+		actual_scene = scene;
+	}
+}
+
+std::string JSONSerialization::GetActualScene()
+{
+	return actual_scene;
+}
+
 void JSONSerialization::ChangeUUIDs(GameObject& gameObject)
 {
 	gameObject.SetUUIDRandom();

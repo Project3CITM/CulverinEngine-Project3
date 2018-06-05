@@ -155,6 +155,10 @@ public:
 	void Create_Json_Doc(JSON_Value **root_value_scene, JSON_Object **root_object_scene, const char* namefile);
 	//----------------------------------------------------------------
 
+	// Restry Level (Save actual Scene)
+	void SaveActualScene(std::string scene);
+	std::string GetActualScene();
+
 private:
 	// UUID & Name
 	void ChangeUUIDs(GameObject& gameObject);
@@ -164,6 +168,7 @@ private:
 
 private:
 	std::vector<const char*> namesScene;
+	std::string actual_scene;
 };
 
 #endif

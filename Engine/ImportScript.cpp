@@ -1127,6 +1127,7 @@ void ImportScript::LinkFunctions()
 	//mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::PushSaveInfo(object)", (const void*)PushSaveInfoV2);
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::PushSaveInfo(single)", (const void*)PushSaveInfo);
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::PopLoadInfo", (const void*)PopLoadInfo);
+	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::GetNameActualScene", (const void*)GetNameActualScene);
 	//EVENT SYSTEM FUNCTIONS ----------------------------
 	mono_add_internal_call("CulverinEditor.EventSystem.EventSystem::SendInteractiveSelected", (const void*)SendInteractiveSelected);
 	mono_add_internal_call("CulverinEditor.EventSystem.EventSystem::GetInteractiveSelectedActive", (const void*)GetInteractiveSelectedActive);
@@ -1525,6 +1526,11 @@ float ImportScript::PopLoadInfo()
 		return ret;
 	}
 	return  1503.0f;
+}
+
+MonoString* ImportScript::GetNameActualScene()
+{
+	return mono_string_new_wrapper(App->json_seria->GetActualScene().c_str());
 }
 
 void ImportScript::SendInteractiveSelected(MonoObject * interactive)

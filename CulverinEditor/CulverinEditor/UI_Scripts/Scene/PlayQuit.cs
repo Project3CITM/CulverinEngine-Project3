@@ -20,4 +20,10 @@ public class PlayQuit : CulverinBehaviour
         GetComponent<CompAudio>().PlayEvent("Push");
         SceneManager.QuitScene();
     }
+
+    public void RetryLevel()
+    {
+        GetComponent<CompAudio>().PlayEvent("Push");
+        SceneManager.LoadScene(SceneManager.GetNameActualScene());
+    }
 }

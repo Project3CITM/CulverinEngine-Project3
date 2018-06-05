@@ -120,6 +120,7 @@ void JSONSerialization::LoadSceneBinary(std::string scene)
 	timetp.Start();
 	char* buffer;
 	uint size_file = App->fs->LoadFile(scene.c_str(), &buffer);
+	SaveActualScene(App->fs->GetOnlyName(scene));
 	char* cursor = buffer;
 	LOG("---- Loading Scene: %s", scene.c_str());
 
