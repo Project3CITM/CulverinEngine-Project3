@@ -129,6 +129,7 @@
     <Compile Include="Tests\TestParticlesV2.cs" />
     <Compile Include="UI_Scripts\Input\InputShow.cs" />
     <Compile Include="UI_Scripts\Scene\AudioMenu.cs" />
+    <Compile Include="UI_Scripts\Scene\DifficultySelector.cs" />
     <Compile Include="UI_Scripts\Scene\Screen.cs" />
     <Compile Include="UI_Scripts\Scene\ScreenOptions.cs" />
     <Compile Include="UI_Scripts\Scene\DisplayMenu.cs" />

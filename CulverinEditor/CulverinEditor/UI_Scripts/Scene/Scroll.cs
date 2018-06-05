@@ -38,9 +38,19 @@ public class Scroll : CulverinBehaviour
             end_scroll = true;
             start_load = true;
 
-            SceneManager.LoadNewOclusionMap("Map_Level_Tutorial_oclusion");
-            SceneManager.LoadNewWalkableMap("Map_Level_Tutorial");
-            SceneManager.LoadMultiSceneNoDestroy("Tutorial Real Scene", "PauseMenu");
+            if(DifficultySelector.hard_mode == true)
+            {
+                SceneManager.LoadNewOclusionMap("Map_Level_Tutorial_oclusion");
+                SceneManager.LoadNewWalkableMap("Map_Level_Tutorial");
+                SceneManager.LoadMultiSceneNoDestroy("Tutorial Real Scene HARD", "PauseMenu");
+            }
+            else
+            {
+                SceneManager.LoadNewOclusionMap("Map_Level_Tutorial_oclusion");
+                SceneManager.LoadNewWalkableMap("Map_Level_Tutorial");
+                SceneManager.LoadMultiSceneNoDestroy("Tutorial Real Scene EASY", "PauseMenu");
+            }
+         
         }
         if (start_load)
         {
