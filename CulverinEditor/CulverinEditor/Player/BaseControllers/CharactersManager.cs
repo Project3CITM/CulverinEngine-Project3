@@ -1838,71 +1838,142 @@ public class CharactersManager : CulverinBehaviour
         current_character.GetComponent<CharacterController>().SetState(state);
     }
 
-    public void HealCharacters(float percentage)
+    public bool HealCharacters(float percentage)
     {
-        is_healing = true;
+        if(is_healing == true)
+        {
+            return false;
+        }
+
+        is_healing = false;
 
         if (current_character.GetName() == "Jaime")
         {
             float max_hp = current_character.GetComponent<JaimeController>().max_hp;
-            heal_destination = max_hp * percentage + health.GetCurrentHealth();
-
-            if (heal_destination > max_hp)
+            if (health.GetCurrentHealth() < max_hp)
             {
-                heal_destination = max_hp;
+                heal_destination = max_hp * percentage + health.GetCurrentHealth();
+
+                if (heal_destination > max_hp)
+                {
+                    heal_destination = max_hp;
+                }
+
+                is_healing = true;
             }
+
             if (left_character.GetName() == "Daenerys")
             {
-                left_character.GetComponent<DaenerysController>().Heal(percentage);
-                right_character.GetComponent<TheonController>().Heal(percentage);
+                DaenerysController temp_daenerys = left_character.GetComponent<DaenerysController>();
+                TheonController temp_theon = right_character.GetComponent<TheonController>();
+
+                if (temp_daenerys.curr_hp < temp_daenerys.max_hp || temp_theon.curr_hp < temp_theon.max_hp)
+                {
+                    temp_daenerys.Heal(percentage);
+                    temp_theon.Heal(percentage);
+                    is_healing = true;
+                }
             }
             else if (left_character.GetName() == "Theon")
             {
-                right_character.GetComponent<DaenerysController>().Heal(percentage);
-                left_character.GetComponent<TheonController>().Heal(percentage);
+                DaenerysController temp_daenerys = right_character.GetComponent<DaenerysController>();
+                TheonController temp_theon = left_character.GetComponent<TheonController>();
+
+                if (temp_daenerys.curr_hp < temp_daenerys.max_hp || temp_theon.curr_hp < temp_theon.max_hp)
+                {
+                    temp_daenerys.Heal(percentage);
+                    temp_theon.Heal(percentage);
+                    is_healing = true;
+                }
             }
         }
 
         else if (current_character.GetName() == "Daenerys")
         {
             float max_hp = current_character.GetComponent<DaenerysController>().max_hp;
-            heal_destination = max_hp * percentage + health.GetCurrentHealth();
-            if (heal_destination > max_hp)
+
+            if (health.GetCurrentHealth() < max_hp)
             {
-                heal_destination = max_hp;
+                heal_destination = max_hp * percentage + health.GetCurrentHealth();
+
+                if (heal_destination > max_hp)
+                {
+                    heal_destination = max_hp;
+                }
+
+                is_healing = true;
             }
+
             if (left_character.GetName() == "Jaime")
             {
-                left_character.GetComponent<JaimeController>().Heal(percentage);
-                right_character.GetComponent<TheonController>().Heal(percentage);
+                JaimeController temp_jaime = left_character.GetComponent<JaimeController>();
+                TheonController temp_theon = right_character.GetComponent<TheonController>();
+
+                if (temp_jaime.curr_hp < temp_jaime.max_hp || temp_theon.curr_hp < temp_theon.max_hp)
+                {
+                    temp_jaime.Heal(percentage);
+                    temp_theon.Heal(percentage);
+                    is_healing = true;
+                }
             }
+
             else if (left_character.GetName() == "Theon")
             {
-                right_character.GetComponent<JaimeController>().Heal(percentage);
-                left_character.GetComponent<TheonController>().Heal(percentage);
+                JaimeController temp_jaime = right_character.GetComponent<JaimeController>();
+                TheonController temp_theon = left_character.GetComponent<TheonController>();
+
+                if (temp_jaime.curr_hp < temp_jaime.max_hp || temp_theon.curr_hp < temp_theon.max_hp)
+                {
+                    temp_jaime.Heal(percentage);
+                    temp_theon.Heal(percentage);
+                    is_healing = true;
+                }
             }
         }
 
         else if (current_character.GetName() == "Theon")
         {
             float max_hp = current_character.GetComponent<TheonController>().max_hp;
-            heal_destination = max_hp * percentage + health.GetCurrentHealth();
-            if (heal_destination > max_hp)
+
+            if (health.GetCurrentHealth() < max_hp)
             {
-                heal_destination = max_hp;
+                heal_destination = max_hp * percentage + health.GetCurrentHealth();
+
+                if (heal_destination > max_hp)
+                {
+                    heal_destination = max_hp;
+                }
+
+                is_healing = true;
             }
 
             if (left_character.GetName() == "Daenerys")
             {
-                left_character.GetComponent<DaenerysController>().Heal(percentage);
-                right_character.GetComponent<JaimeController>().Heal(percentage);
+                DaenerysController temp_daenerys = left_character.GetComponent<DaenerysController>();
+                JaimeController temp_jaime = right_character.GetComponent<JaimeController>();
+
+                if (temp_jaime.curr_hp < temp_jaime.max_hp || temp_daenerys.curr_hp < temp_daenerys.max_hp)
+                {
+                    temp_jaime.Heal(percentage);
+                    temp_daenerys.Heal(percentage);
+                    is_healing = true;
+                }
             }
             else if (left_character.GetName() == "Jaime")
             {
-                right_character.GetComponent<DaenerysController>().Heal(percentage);
-                left_character.GetComponent<JaimeController>().Heal(percentage);
+                DaenerysController temp_daenerys = right_character.GetComponent<DaenerysController>();
+                JaimeController temp_jaime = left_character.GetComponent<JaimeController>();
+
+                if (temp_jaime.curr_hp < temp_jaime.max_hp || temp_daenerys.curr_hp < temp_daenerys.max_hp)
+                {
+                    temp_jaime.Heal(percentage);
+                    temp_daenerys.Heal(percentage);
+                    is_healing = true;
+                }
             }
         }
+
+        return is_healing;
     }
 
     public void CheckGodMode()
