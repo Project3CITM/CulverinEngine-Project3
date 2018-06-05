@@ -334,7 +334,7 @@ private:
 	static mono_bool IsAnimationStopped(MonoObject* object, MonoString* string);
 	static mono_bool IsAnimationRunning(MonoObject* object, MonoString* string);
 	static mono_bool IsAnimOverXTime(MonoObject* object, float num_between_0_1);
-	static void SetClipsSpeed(MonoObject* object, float speed_value);
+	static void SetClipSpeed(MonoObject* object, MonoString* string, float speed_value);
 	static float GetClipDuration(MonoObject* object, MonoString* string);
 	static void SetClipDuration(MonoObject* object, MonoString* string, float duration);
 	static void SetFirstActiveBlendingClip(MonoObject* object, MonoString* string);

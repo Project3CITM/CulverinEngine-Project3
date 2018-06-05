@@ -118,7 +118,7 @@ public class JaimeController : CharacterController
 
         //Start Idle animation
         anim_controller.PlayAnimation("Idle");
-
+        anim_controller.SetClipSpeed("Attack1", 0.75f);
         //Disable Jaime secondary ability button
         sec_button.SetInteractivity(false);
         sec_button_img.SetRender(false);

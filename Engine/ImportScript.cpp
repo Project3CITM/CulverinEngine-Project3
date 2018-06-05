@@ -1296,7 +1296,7 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.CompAnimation::IsAnimationStopped", (const void*)IsAnimationStopped);
 	mono_add_internal_call("CulverinEditor.CompAnimation::IsAnimationRunning", (const void*)IsAnimationRunning);
 	mono_add_internal_call("CulverinEditor.CompAnimation::IsAnimOverXTime", (const void*)IsAnimOverXTime);
-	mono_add_internal_call("CulverinEditor.CompAnimation::SetClipsSpeed", (const void*)SetClipsSpeed);
+	mono_add_internal_call("CulverinEditor.CompAnimation::SetClipSpeed", (const void*)SetClipSpeed);
 	mono_add_internal_call("CulverinEditor.CompAnimation::GetClipDuration", (const void*)GetClipDuration);
 	mono_add_internal_call("CulverinEditor.CompAnimation::SetClipDuration", (const void*)SetClipDuration);
 	mono_add_internal_call("CulverinEditor.CompAnimation::SetFirstActiveBlendingClip", (const void*)SetFirstActiveBlendingClip);
@@ -2401,9 +2401,9 @@ mono_bool ImportScript::IsAnimOverXTime(MonoObject * object, float num_between_0
 	return current->IsAnimOverXTime(object, num_between_0_1);
 }
 
-void ImportScript::SetClipsSpeed(MonoObject * object, float speed_value)
+void ImportScript::SetClipSpeed(MonoObject * object, MonoString* string,float speed_value)
 {
-	current->SetClipsSpeed(object, speed_value);
+	current->SetClipSpeed(object, string, speed_value);
 }
 
 float ImportScript::GetClipDuration(MonoObject * object, MonoString * string)

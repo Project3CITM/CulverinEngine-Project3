@@ -31,7 +31,7 @@ namespace CulverinEditor
         public extern bool IsAnimOverXTime(float num_between_0_1);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern void SetClipsSpeed(float speed_value);
+        public extern void SetClipSpeed(string name, float speed_value);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         public extern float GetClipDuration(string name);
