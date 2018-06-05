@@ -196,22 +196,25 @@ public class EnemyShield_BT : Enemy_BT
                     else if(damage_type == ENEMY_GET_DAMAGE_TYPE.FIREBALL)
                     {
                         Debug.Log("FIREBALL BLOCKED!", Department.PLAYER, Color.RED);
+                        audio_comp.PlayEvent("Enemy3_Hurt");
                         return base.ApplyDamage(damage * fireball_pen, damage_type);
                     }
                     else if(damage_type == ENEMY_GET_DAMAGE_TYPE.ARROW)
                     {
                         Debug.Log("ARROW BLOCKED!", Department.PLAYER, Color.RED);
+                        audio_comp.PlayEvent("Enemy3_Hurt");
                         return base.ApplyDamage(damage * arrow_pen, damage_type);
                     }
                     else if(damage_type == ENEMY_GET_DAMAGE_TYPE.FIREBREATH)
                     {
                         Debug.Log("FIREBREATH BLOCKED!", Department.PLAYER, Color.RED);
+                        audio_comp.PlayEvent("Enemy3_Hurt");
                         return base.ApplyDamage(damage * firebreath_pen, damage_type);
                     }
                     else
                     {
                         GetComponent<ShieldBlock_Action>().DecreaseBlockTime();
-                        GetComponent<CompAudio>().PlayEvent("Enemy3_ShieldBlock");
+                        audio_comp.PlayEvent("Enemy3_ShieldBlock");
                         base.UpdateHUD();
                         return false;
                     }
@@ -233,23 +236,26 @@ public class EnemyShield_BT : Enemy_BT
                     else if (damage_type == ENEMY_GET_DAMAGE_TYPE.FIREBALL)
                     {
                         Debug.Log("FIREBALL BLOCKED!", Department.PLAYER, Color.RED);
+                        audio_comp.PlayEvent("Enemy3_Hurt");
                         return base.ApplyDamage(damage * fireball_pen, damage_type);
                     }
                     else if (damage_type == ENEMY_GET_DAMAGE_TYPE.ARROW)
                     {
                         Debug.Log("ARROW BLOCKED!", Department.PLAYER, Color.RED);
+                        audio_comp.PlayEvent("Enemy3_Hurt");
                         return base.ApplyDamage(damage * arrow_pen, damage_type);
                     }
                     else if (damage_type == ENEMY_GET_DAMAGE_TYPE.FIREBREATH)
                     {
                         Debug.Log("FIREBREATH BLOCKED!", Department.PLAYER, Color.RED);
+                        audio_comp.PlayEvent("Enemy3_Hurt");
                         return base.ApplyDamage(damage * firebreath_pen, damage_type);
                     }
                     else
                     {
                         GetComponent<ShieldBlock_Action>().DecreaseBlockTime();
                         GetComponent<CompAnimation>().PlayAnimationNode("Block");
-                        GetComponent<CompAudio>().PlayEvent("Enemy3_ShieldBlock");
+                        audio_comp.PlayEvent("Enemy3_ShieldBlock");
                         base.UpdateHUD();
                         return false;
                     }
