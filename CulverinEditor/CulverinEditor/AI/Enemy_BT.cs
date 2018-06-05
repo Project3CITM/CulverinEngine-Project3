@@ -146,13 +146,17 @@ public class Enemy_BT : BT
 
             current_action = next_action;
             next_action = null_action;
+
+            Debug.Log("errrorr " + in_combat, Department.PHYSICS, Color.GREEN);
+
             current_action.ActionStart();
             return;
         }
 
         if (in_combat)
-        {            
-            if (next_action.action_type == Action.ACTION_TYPE.DISENGAGE_ACTION)
+        {
+
+            if (next_action.action_type == Action.ACTION_TYPE.DISENGAGE_ACTION || next_action.action_type == Action.ACTION_TYPE.MOVE_ACTION)
             {
                 in_combat = false;
                 current_action = GetComponent<Disengage_Action>();
