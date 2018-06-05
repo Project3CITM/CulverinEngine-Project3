@@ -1182,8 +1182,10 @@ public class CharactersManager : CulverinBehaviour
         if (dmg != 0.0f)
             Input.RumblePlay(0.5f, 200);
 
+        bool drowning = GetComponent<MovementController>().drowning;
+
         // Shield Ability Consumable
-        if (player_obj.GetComponent<Shield>().IsActive())
+        if (drowning == false && player_obj.GetComponent<Shield>().IsActive())
         {
             player_obj.GetComponent<Shield>().Break();
             return false;
@@ -1201,7 +1203,31 @@ public class CharactersManager : CulverinBehaviour
             {
                 if (current_character.GetName() == "Jaime")
                 {
-                    if (current_character.GetComponent<JaimeController>().GetDamage(dmg))
+                    if (drowning == true)
+                    {
+                        current_character.GetComponent<JaimeController>().GetFullDamage(dmg);
+
+                        if (health.GetCurrentHealth() <= 0)
+                        {
+                            StatsScore.CharacterDead();
+
+                            JaimeController jaime_controller = current_character.GetComponent<JaimeController>();
+                            jaime_controller.SetState(CharacterController.State.DEAD);
+                            jaime_controller.jaime_icon_obj.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+                            jaime_controller.jaime_icon_obj_stamina.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+                            jaime_controller.jaime_icon_obj_stamina.GetComponent<CompImage>().SetRender(false);
+
+                            //Deactivate Secondary ability button
+                            jaime_s_button.Deactivate();
+                            jaime_s_script.Die();
+
+                            if (dmg != 0.0f)
+                                jaime_controller.PlayFx("JaimeDead");
+                        }
+                        return true;
+
+                    }
+                    else if (current_character.GetComponent<JaimeController>().GetDamage(dmg))
                     {
                         if (health.GetCurrentHealth() <= 0)
                         {
@@ -1492,8 +1518,7 @@ public class CharactersManager : CulverinBehaviour
 
     public void Drown()
     {
-        GetDamage(drown_dmg);
-        //state = State.DROWNING;
+        state = State.DROWNING;
     }
 
     public bool IsIdle()
