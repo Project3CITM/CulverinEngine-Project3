@@ -1413,14 +1413,9 @@ void CompInteractive::ShowInspectorColorTransition()
 	ImGui::Text("Fade duration"); ImGui::SameLine(op + 30);
 	if (ImGui::DragFloat("##fade_duration", &fade_duration, 0.1f, 0.0f, 2.0f))
 	{
-		if (fade_duration < 0.0001)
-		{
+		
 			no_fade = true;
-		}
-		else
-		{
-			no_fade = false;
-		}
+	
 	}
 }
 
