@@ -170,6 +170,7 @@ public class Enemy_BT : BT
         {
             if (next_action.action_type == Action.ACTION_TYPE.ENGAGE_ACTION)
             {
+                Debug.Log("ENGAGE PAPUUUUUU", Department.PHYSICS);
                 in_combat = true;
                 current_action = next_action;
                 next_action = null_action;
@@ -219,15 +220,10 @@ public class Enemy_BT : BT
             Debug.Log("TIME TO FIGHT",Department.PHYSICS,Color.PINK);
 
             current_action.Interupt();
-            current_action = GetComponent<Engage_Action>();
-            in_combat = true;
+            next_action = GetComponent<Engage_Action>();
             MovementController temp_move = player.GetComponent<MovementController>();
             GetComponent<PerceptionEmitter>().TriggerPlayerSeenEvent(10.0f, temp_move.curr_x, temp_move.curr_y, this.gameObject, 
-                GetComponent<Movement_Action>().GetCurrentTileX(), GetComponent<Movement_Action>().GetCurrentTileY());
-            // GetComponent<PerceptionSightEnemy>().player_seen = true;
-            //player_detected = true;
-
-            current_action.ActionStart();
+            GetComponent<Movement_Action>().GetCurrentTileX(), GetComponent<Movement_Action>().GetCurrentTileY());
             
         }
 
