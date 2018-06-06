@@ -204,7 +204,7 @@
                             I started working in the implementation of PhysX in the engine with the collaboration of Pere Rifà.
                         </p>
                         <p>
-                            I focused on creating the basic component classes for the engine so they can be edited with the engine, also I worked on the save and load of the physics components, and the synchronization between them so we were able to remove and/or add them safely in the engine, also it allowed to use rigidbodies and colliders independent from one another.
+                            I focused on creating the basic component classes for the engine so they can be edited with the engine, also I worked on the save and load of the physics components, and the synchronization between them so we were able to remove and/or add them safely in the engine, also it allowed to use rigidbodies and colliders independently from one another.
                         </p>
                     </div>
                 </div>
@@ -227,7 +227,7 @@
                             After that I tried to reduces the memory leaks our engine had, with the help of members from other departments we managed to reduce the memory leaks by half, but we left some since we had very little time and we needed to fix other issues.
                         </p>
                         <p>
-                            We were struggling to have a high framerate so I started working in a camera culling, I did a first culling for the Vertical Slice 2 but had to be removed at that time due critical bugs that were detected too late, after the first failure I continued working in the camera culling, in this second iteration I realized that a lot of problems were coming from the transformation that the engine was using or the bounding boxes that were used to make the object search faster. After solving those issues I optimized the octree used for the culling so it will go a little faster.
+                            We were struggling to have a high framerate so I started working in a camera culling, I did a first culling for the Vertical Slice 2 but had to be removed at that time due critical bugs that were detected too late, after the first failure I continued working in the camera culling, in this second iteration I realized that a lot of problems were coming from the transformation that the engine was using or the bounding boxes that were used to make the object search faster. After solving those issues I optimized the octree used for the culling so it will go a bit faster.
                         </p>
                     </div>
                     <div class="span4">
@@ -244,7 +244,7 @@
                 <div class="row">
                     <div class="span12">
                         <p>
-                            After implementing the culling for the vertical slice 3 I went to the AI department and helped them with debugging the AI for a bit. Later the production of the boss started and I was moved there. During the boss development I and Ferran Martin created the base behaviour of the Boss, after the base was created I developed the long range attack and a first iteration of the charge attack where the boss grabbed the player that was later discarded due to the difficulties that created the fact of linking animations. Once that was done I with the help of Ferran Martin created the Boss room entrance and boss introduction.
+                            After implementing the culling for the vertical slice 3 I went to the AI department and helped them with debugging the AI for a bit. Later the production of the boss started and I was moved there. During the boss development Ferran Martín and I created the base behaviour of the Boss, after the base was created I developed the long range attack and a first iteration of the charge attack where the boss grabbed the player that was later discarded due to the difficulties that created the fact of linking animations. Once that was done I with the help of Ferran Martin created the Boss room entrance and boss introduction.
                         </p>
                     </div>
                 </div>
@@ -261,7 +261,7 @@
                 <div class="row">
                     <div class="span12">
                         <p>
-                            After doing the boss the scenes of the game were getting pretty huge and using a .json file to load the scenes made the loading process pretty slow, making it difficult to work with multiple scenes since sometimes took more than a minute to load a scene. To avoid that I was moved to a little team with Elliot Jiménez and Pere Rifà, to implement a serialization system to save and load the scenes. I helped Elliot to create the base of the serialization system and then I went to help with the creation of the save and load of the components, I ended up only doing the component animation since it took more time than expected to save and load all the component data in a binary file.
+                            After doing the boss the scenes of the game were getting pretty huge and using a .json file to load the scenes made the loading process pretty slow, making it difficult to work with multiple scenes since sometimes took more than a minute to load a scene. To avoid that I was moved to a little team with Elliot Jiménez and Pere Rifà, to implement a serialization system to save and load the scenes. I helped Elliot to create the base of the serialization system and then I went to help with the creation of the save and load of the components, I ended up doing the component animation that took more time than expected to save and load all the component data in a binary file.
                         </p>
                     </div>
                 </div>
