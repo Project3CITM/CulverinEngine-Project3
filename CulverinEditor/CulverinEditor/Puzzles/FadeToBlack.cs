@@ -153,14 +153,29 @@ public class FadeToBlack : CulverinBehaviour
                 {
                     SceneManager.LoadNewOclusionMap("Map_Level_1_2_oclusion");
                     SceneManager.LoadNewWalkableMap("Map_Level_1_2");
-                    SceneManager.LoadScene("Alpha2_Level_1_2");
+                    if (DifficultySelector.hard_mode == true)
+                    {
+                        SceneManager.LoadScene("Alpha2_Level_1_2_HARD");
+                    }
+                    else
+                    {
+                        SceneManager.LoadScene("Alpha2_Level_1_2_EASY");
+
+                    }
                     break;
                 }
             case SceneToLoad.ALPHA2_LEVEL_1_3:
                 {
                     SceneManager.LoadNewOclusionMap("Map_Level_1_3_oclusion");
                     SceneManager.LoadNewWalkableMap("Map_Level_1_3");
-                    SceneManager.LoadScene("Alpha2_Level_1_3");
+                    if (DifficultySelector.hard_mode == true)
+                    {
+                        SceneManager.LoadScene("Alpha2_Level_1_3_HARD");
+                    }
+                    else
+                    {
+                        SceneManager.LoadScene("Alpha2_Level_1_3_EASY");
+                    }
                     break;
                 }
             case SceneToLoad.LVL2_ZONE1:
@@ -177,14 +192,28 @@ public class FadeToBlack : CulverinBehaviour
                 {
                     SceneManager.LoadNewOclusionMap("LVL2_Zone2_oclusion");
                     SceneManager.LoadNewWalkableMap("LVL2_Zone2");
-                    SceneManager.LoadScene("LVL2_Zone_2");
+                    if (DifficultySelector.hard_mode == true)
+                    {
+                        SceneManager.LoadScene("LVL2_Zone_2_HARD");
+                    }
+                    else
+                    {
+                        SceneManager.LoadScene("LVL2_Zone_2_EASY");
+                    }
                     break;
                 }
             case SceneToLoad.LVL2_ZONE3:
                 {
                     SceneManager.LoadNewOclusionMap("LVL2_Zone3_oclusion");
                     SceneManager.LoadNewWalkableMap("LVL2_Zone3");
-                    SceneManager.LoadScene("LVL2_Zone_3");
+                    if (DifficultySelector.hard_mode == true)
+                    {
+                        SceneManager.LoadScene("LVL2_Zone_3_HARD");
+                    }
+                    else
+                    {
+                        SceneManager.LoadScene("LVL2_Zone_3_EASY");
+                    }
                     break;
                 }
         }

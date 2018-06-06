@@ -39,7 +39,14 @@ public class Scroll_TutTo1_1 : CulverinBehaviour
             start_load = true;
             SceneManager.LoadNewOclusionMap("Map_Level_1_1_oclusion");
             SceneManager.LoadNewWalkableMap("Map_Level_1_1");
-            SceneManager.LoadMultiSceneNoDestroy("Alpha2_Level_1_1", "PauseMenu");
+            if (DifficultySelector.hard_mode == true)
+            {
+                SceneManager.LoadMultiSceneNoDestroy("Alpha2_Level_1_1_HARD", "PauseMenu");
+            }
+            else
+            {
+                SceneManager.LoadMultiSceneNoDestroy("Alpha2_Level_1_1_EASY", "PauseMenu");
+            }
         }
         if (start_load)
         {
