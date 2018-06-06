@@ -15,17 +15,18 @@ public class ShowScore2 : CulverinBehaviour
     public GameObject grade_mark_C;
     public GameObject grade_mark_D;
 
-    public int max_enemies = 20;
+    public int max_enemies = 10;
     public int fountain_uses = 3;
     public int max_puzzle_hits = 5;
     public int boss_time_sec = 85;
     public float gold_time = 440;
     public float silver_time = 510;
-    public int gold_enemies_killed = 480;
-    public int silver_enemies_killed = 200;
+    public int gold_enemies_killed = 10;
+    public int silver_enemies_killed = 6;
+    public float gold_boss_time = 60;
+    public float silver_boss_time = 120;
 
     int grade_points = 0;
-    int skill_coins = 0;
 
     void Start()
     {
@@ -46,7 +47,6 @@ public class ShowScore2 : CulverinBehaviour
         grade_mark_D.SetActive(false);
 
         grade_points = 0;
-        skill_coins = 0;
 
         CalulateScore();
         DisplayScore();
@@ -183,18 +183,19 @@ public class ShowScore2 : CulverinBehaviour
             grade_points += 25;
         }
 
-        //Skill level
-        if (skill_coins == 3)
+        //Skill level - boss time
+        if (StatsScore.boss_time <= gold_boss_time)
         {
             grade_points += 100;
         }
-        else if (skill_coins == 2)
+        else if (StatsScore.boss_time > gold_boss_time && StatsScore.time < silver_boss_time)
         {
             grade_points += 50;
         }
-        else if (skill_coins == 1)
+        else if (StatsScore.boss_time > silver_boss_time)
         {
             grade_points += 25;
         }
+
     }
 }
