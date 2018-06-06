@@ -45,6 +45,7 @@ static public class StatsScore
         boss_dead = false;
         time = 0.0f;
         enemies_killed = 0;
+        temp_enemies_killed = 0;
         characters_alive = 3;
         Time.StartTimePlay();
     }

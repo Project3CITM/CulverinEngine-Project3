@@ -113,6 +113,10 @@ public class Boss_BT : BT
                 rumble = false;
             }
         }
+        else
+        {
+            boss_fight_timer += Time.deltaTime;
+        }
 
         if (boss_title_on)
         {
@@ -355,6 +359,7 @@ public class Boss_BT : BT
         GetLinkedObject("map_obj").GetComponent<LevelMap>().UpdateMap(23, 7, 1);
         GetLinkedObject("map").GetComponent<Pathfinder>().SetWalkableTile(23, 7, 1);
         rumble = true;
+        boss_fight_timer = 0.0f;
     }
 
     public int GetDistanceXToPlayer()
