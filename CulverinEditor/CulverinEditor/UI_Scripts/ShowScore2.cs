@@ -102,7 +102,7 @@ public class ShowScore2 : CulverinBehaviour
         int minutes = (int)StatsScore.boss_time / 60;
         int seconds = (int)StatsScore.boss_time % 60;
 
-        string boss_time_str = minutes.ToString("2D") + ":" + seconds.ToString("2D");
+        string boss_time_str = minutes.ToString("D2") + ":" + seconds.ToString("D2");
 
         skill_display.GetComponent<CompText>().SetText(boss_time_str);
 
