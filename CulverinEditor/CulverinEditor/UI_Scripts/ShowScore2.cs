@@ -23,8 +23,8 @@ public class ShowScore2 : CulverinBehaviour
     public float silver_time = 510;
     public int gold_enemies_killed = 10;
     public int silver_enemies_killed = 6;
-    public float gold_boss_time = 60;
-    public float silver_boss_time = 120;
+    public float gold_boss_time = 70;
+    public float silver_boss_time = 130;
 
     int grade_points = 0;
 
