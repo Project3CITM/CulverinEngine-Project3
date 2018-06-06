@@ -24,6 +24,7 @@ public class PlayQuit : CulverinBehaviour
     public void RetryLevel()
     {
         GetComponent<CompAudio>().PlayEvent("Push");
+        SceneManager.LoadNewOclusionMap(SceneManager.GetNameActualOclusionMap());
         SceneManager.LoadScene(SceneManager.GetNameActualScene());
     }
 }

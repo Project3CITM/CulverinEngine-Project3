@@ -1599,6 +1599,16 @@ std::string JSONSerialization::GetActualScene()
 	return actual_scene;
 }
 
+void JSONSerialization::SaveActualOclusionMap(std::string scene)
+{
+	actual_oclusionmap = scene;
+}
+
+std::string JSONSerialization::GetActualOclusionMap()
+{
+	return actual_oclusionmap;
+}
+
 void JSONSerialization::ChangeUUIDs(GameObject& gameObject)
 {
 	gameObject.SetUUIDRandom();

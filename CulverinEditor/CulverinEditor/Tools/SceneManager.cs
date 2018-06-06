@@ -103,5 +103,11 @@ namespace CulverinEditor.SceneManagement
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern string GetNameActualScene();
 
+        /// <summary>  
+        ///     Get actual name Oclusion Map.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern string GetNameActualOclusionMap();
+
     }
 }

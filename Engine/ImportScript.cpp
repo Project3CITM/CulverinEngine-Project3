@@ -1128,6 +1128,7 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::PushSaveInfo(single)", (const void*)PushSaveInfo);
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::PopLoadInfo", (const void*)PopLoadInfo);
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::GetNameActualScene", (const void*)GetNameActualScene);
+	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::GetNameActualOclusionMap", (const void*)GetNameActualOclusionMap);
 	//EVENT SYSTEM FUNCTIONS ----------------------------
 	mono_add_internal_call("CulverinEditor.EventSystem.EventSystem::SendInteractiveSelected", (const void*)SendInteractiveSelected);
 	mono_add_internal_call("CulverinEditor.EventSystem.EventSystem::GetInteractiveSelectedActive", (const void*)GetInteractiveSelectedActive);
@@ -1486,6 +1487,7 @@ void ImportScript::LoadNewOclusionMap(MonoString * oclusion_map)
 		const char* map = mono_string_to_utf8(oclusion_map);
 		App->map->imported_map = map;
 		App->map->ImportMap(true, TypeMap::MAP_OCLUSION);
+		App->json_seria->SaveActualOclusionMap(map);
 	}
 }
 
@@ -1531,6 +1533,11 @@ float ImportScript::PopLoadInfo()
 MonoString* ImportScript::GetNameActualScene()
 {
 	return mono_string_new_wrapper(App->json_seria->GetActualScene().c_str());
+}
+
+MonoString * ImportScript::GetNameActualOclusionMap()
+{
+	return mono_string_new_wrapper(App->json_seria->GetActualOclusionMap().c_str());;
 }
 
 void ImportScript::SendInteractiveSelected(MonoObject * interactive)

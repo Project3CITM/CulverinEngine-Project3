@@ -158,6 +158,8 @@ public:
 	// Restry Level (Save actual Scene)
 	void SaveActualScene(std::string scene);
 	std::string GetActualScene();
+	void SaveActualOclusionMap(std::string scene);
+	std::string GetActualOclusionMap();
 
 private:
 	// UUID & Name
@@ -169,6 +171,7 @@ private:
 private:
 	std::vector<const char*> namesScene;
 	std::string actual_scene;
+	std::string actual_oclusionmap;
 };
 
 #endif

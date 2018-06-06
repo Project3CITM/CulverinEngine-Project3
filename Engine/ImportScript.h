@@ -108,6 +108,7 @@ private:
 	static void PushSaveInfo(float hp);
 	static float PopLoadInfo();
 	static MonoString* GetNameActualScene();
+	static MonoString* GetNameActualOclusionMap();
 
 	/* Scene Management */
 	static void SendInteractiveSelected(MonoObject* interactive);
