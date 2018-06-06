@@ -74,6 +74,7 @@ public class ChargeAttack_Action : Action
         phase = Charge_Phase.CP_CHARGE;
 
         GetComponent<CompAudio>().PlayEvent("BossRun");
+        GetComponent<CompAudio>().PlayEvent("AttackPreparation");
 
         return true;
     }
@@ -107,7 +108,6 @@ public class ChargeAttack_Action : Action
                 {
                     PathNode push_tile = GetPushTile();           
                     pushed = true;
-                    GetComponent<CompAudio>().StopEvent("BossRun");
                     if (player.GetComponent<CharactersManager>().Push(damage, push_tile) == true)
                         GetComponent<CompAudio>().PlayEvent("SwordHit");
                 }
@@ -123,6 +123,7 @@ public class ChargeAttack_Action : Action
                     GetComponent<Movement_Action>().ClearPath();
                     GetComponent<CompAnimation>().PlayAnimationNode("ChargeAttack");
                     GetComponent<CompAudio>().StopEvent("BossRun");
+                    GetComponent<CompAudio>().PlayEvent("BossChargeHit");
                     phase = Charge_Phase.CP_ATTACK;
 
                     if (objective.GetTileX() == player_x && objective.GetTileY() == player_y && pushed == false)
