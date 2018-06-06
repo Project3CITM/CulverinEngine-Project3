@@ -5,6 +5,9 @@ using System.Security;
 
 namespace CulverinEditor
 {
+    /// <summary>  
+    /// Base class for GameObject in Culverin scenes.
+    /// </summary> 
     public sealed class GameObject : Object
     {
         public GameObject()
