@@ -127,6 +127,7 @@ public class DamageFeedback : CulverinBehaviour
                         SceneManager.RemoveSecondaryScene();
                     }
                     SceneManager.LoadScene("LoseMenuV2");
+                    StatsScore.SoftReset();
                     characters_manager.dying = false;
                 }
             }

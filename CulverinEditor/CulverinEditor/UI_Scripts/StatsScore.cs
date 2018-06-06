@@ -5,12 +5,16 @@ using CulverinEditor.Debug;
 static public class StatsScore
 {
     static public bool boss_dead = false;
+
     static public uint enemies_killed = 0; // enemies player has killed
     static public uint characters_alive = 3; //counter for tracking how many characters you have used (1,2 or 3)
     static public float time = 0.0f; //counter for tracking how many characters you have used (1,2 or 3)
 
-    static public uint fountain_times = 0;
     static public float boss_time = 0.0f;
+
+
+    //Temp variables - For checkpoints softreset
+    static public uint temp_enemies_killed = 0;
 
     static public void BossDead()
     {
@@ -19,13 +23,16 @@ static public class StatsScore
  
     static public void KillEnemy()
     {
-        enemies_killed++;
+        temp_enemies_killed++;
     }
 
 
     static public void CharacterDead()
     {
-        characters_alive--;
+        if (characters_alive > 0)
+        {
+            characters_alive--;
+        }
     }
 
     static public void GetTime()
@@ -40,12 +47,15 @@ static public class StatsScore
         enemies_killed = 0;
         characters_alive = 3;
         Time.StartTimePlay();
-
-        fountain_times = 0;
     }
 
-    static public void Heal()
+    static public void SetDefinitiveScore()
     {
-        fountain_times++;
+        enemies_killed += temp_enemies_killed;
+    }
+
+    static public void SoftReset()
+    {
+        temp_enemies_killed = 0;
     }
 }

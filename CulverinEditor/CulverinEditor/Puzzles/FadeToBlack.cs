@@ -137,6 +137,7 @@ public class FadeToBlack : CulverinBehaviour
                     SceneManager.LoadNewOclusionMap("Map_Level_Tutorial_oclusion");
                     SceneManager.LoadNewWalkableMap("Map_Level_Tutorial");
                     SceneManager.LoadScene("Tutorial Real Scene");
+                    StatsScore.SoftReset();
                     break;
                 }
             case SceneToLoad.ALPHA2_LEVEL_1_1:
@@ -151,7 +152,8 @@ public class FadeToBlack : CulverinBehaviour
                     {
                         SceneManager.LoadScene("Alpha2_Level_1_1_EASY");
                     }
-
+                    StatsScore.SetDefinitiveScore();
+                    StatsScore.SoftReset();
                     break;
                 }
             case SceneToLoad.ALPHA2_LEVEL_1_2:
@@ -167,6 +169,8 @@ public class FadeToBlack : CulverinBehaviour
                         SceneManager.LoadScene("Alpha2_Level_1_2_EASY");
 
                     }
+                    StatsScore.SetDefinitiveScore();
+                    StatsScore.SoftReset();
                     break;
                 }
             case SceneToLoad.ALPHA2_LEVEL_1_3:
@@ -181,6 +185,8 @@ public class FadeToBlack : CulverinBehaviour
                     {
                         SceneManager.LoadScene("Alpha2_Level_1_3_EASY");
                     }
+                    StatsScore.SetDefinitiveScore();
+                    StatsScore.SoftReset();
                     break;
                 }
             case SceneToLoad.LVL2_ZONE1:
@@ -191,6 +197,8 @@ public class FadeToBlack : CulverinBehaviour
                         SceneManager.RemoveSecondaryScene();
                     }
                     SceneManager.LoadScene("Lvl1_3ToLvl2_1");
+                    StatsScore.SetDefinitiveScore();
+                    StatsScore.SoftReset();
                     break;
                 }
             case SceneToLoad.LVL2_ZONE2:
@@ -205,6 +213,8 @@ public class FadeToBlack : CulverinBehaviour
                     {
                         SceneManager.LoadScene("LVL2_Zone_2_EASY");
                     }
+                    StatsScore.SetDefinitiveScore();
+                    StatsScore.SoftReset();
                     break;
                 }
             case SceneToLoad.LVL2_ZONE3:
@@ -219,6 +229,8 @@ public class FadeToBlack : CulverinBehaviour
                     {
                         SceneManager.LoadScene("LVL2_Zone_3_EASY");
                     }
+                    StatsScore.SetDefinitiveScore();
+                    StatsScore.SoftReset();
                     break;
                 }
         }
