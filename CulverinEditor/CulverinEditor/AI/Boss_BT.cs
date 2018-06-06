@@ -83,6 +83,7 @@ public class Boss_BT : BT
         //Phase1Textures();
         current_action = GetComponent<Idle_Action>();
         GetComponent<CompAnimation>().PlayAnimation("Presentation");
+        GetComponent<CompAnimation>().SetEnabled(false);
 
         current_hp = total_hp;
         boss_active = false;
@@ -348,6 +349,7 @@ public class Boss_BT : BT
 
     public void Activate()
     {
+        GetComponent<CompAnimation>().SetEnabled(true);
         next_action = GetComponent<BossEngage_Action>();
         GetComponent<CompAudio>().PlayEvent("BossGrowl");
         GetLinkedObject("map_obj").GetComponent<LevelMap>().UpdateMap(23, 7, 1);
