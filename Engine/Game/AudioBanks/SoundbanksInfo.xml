@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <SoundBanksInfo Platform="Windows" BasePlatform="Windows" SchemaVersion="11" SoundbankVersion="128">
 	<RootPaths>
-		<ProjectRoot>C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\</ProjectRoot>
-		<SourceFilesRoot>C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\</SourceFilesRoot>
-		<SoundBanksRoot>C:\Users\Kay\Documents\GitHub\TempMotor3D_P3\Engine\Game\AudioBanks\</SoundBanksRoot>
+		<ProjectRoot>F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\</ProjectRoot>
+		<SourceFilesRoot>F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\.cache\Windows\</SourceFilesRoot>
+		<SoundBanksRoot>F:\Escritorio\Proyectos GitHub\CulverinEngine-Project3\Engine\Game\AudioBanks\</SoundBanksRoot>
 		<ExternalSourcesInputFile></ExternalSourcesInputFile>
-		<ExternalSourcesOutputRoot>C:\Users\Kay\Documents\GitHub\AudioWwiseProject\Proyecto3\GeneratedSoundBanks\Windows</ExternalSourcesOutputRoot>
+		<ExternalSourcesOutputRoot>F:\Escritorio\Proyectos GitHub\AudioWwiseProject\Proyecto3\GeneratedSoundBanks\Windows</ExternalSourcesOutputRoot>
 	</RootPaths>
 	<DialogueEvents/>
 	<StreamedFiles/>
@@ -328,6 +328,7 @@
 			<Path>Boss.bnk</Path>
 			<IncludedEvents>
 				<Event Id="1240136664" Name="AttackPreparation" ObjectPath="\Events\Boss\AttackPreparation"/>
+				<Event Id="296996253" Name="BossChargeHit" ObjectPath="\Events\Boss\BossChargeHit"/>
 				<Event Id="1481017468" Name="BossDeath" ObjectPath="\Events\Boss\BossDeath"/>
 				<Event Id="3122217888" Name="BossFalls" ObjectPath="\Events\Boss\BossFalls"/>
 				<Event Id="1891413372" Name="BossFootstep" ObjectPath="\Events\Boss\BossFootstep"/>
@@ -335,6 +336,7 @@
 				<Event Id="3928559768" Name="BossHitGround" ObjectPath="\Events\Boss\BossHitGround"/>
 				<Event Id="1437879705" Name="BossHurt" ObjectPath="\Events\Boss\BossHurt"/>
 				<Event Id="58265312" Name="BossIntro" ObjectPath="\Events\Boss\BossIntro"/>
+				<Event Id="1381574181" Name="BossRun" ObjectPath="\Events\Boss\BossRun"/>
 				<Event Id="385405090" Name="BossSoldierFalls" ObjectPath="\Events\Boss\BossSoldierFalls"/>
 				<Event Id="3748885507" Name="BossSoldierScream" ObjectPath="\Events\Boss\BossSoldierScream"/>
 				<Event Id="843639065" Name="BossSwordSwing" ObjectPath="\Events\Boss\BossSwordSwing"/>
