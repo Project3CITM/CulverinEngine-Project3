@@ -677,21 +677,21 @@ void Skeleton::GenSkinningTexture(const GameObject* mesh_go)
 
 	for (int i = 0; i < bones.size(); i++)
 	{
-		uint pos_in_buffer = i * 4 * 4;
+		uint pos_in_buffer = i * 4 * 3;
 
 		float4x4 skinning_mat = bones[i]->GetComponentBone()->GetSkinningMatrix();
 
 		float4 col1(skinning_mat.Col(0));
-		memcpy(&skinning_mats[pos_in_buffer], &col1.x, sizeof(float) * 4);
+		memcpy(&skinning_mats[pos_in_buffer], &col1.x, sizeof(float) * 3);
 		float4 col2(skinning_mat.Col(1));
-		memcpy(&skinning_mats[pos_in_buffer + 4], &col2.x, sizeof(float) * 4);
+		memcpy(&skinning_mats[pos_in_buffer + 3], &col2.x, sizeof(float) * 3);
 		float4 col3(skinning_mat.Col(2));
-		memcpy(&skinning_mats[pos_in_buffer + 8], &col3.x, sizeof(float) * 4);
+		memcpy(&skinning_mats[pos_in_buffer + 6], &col3.x, sizeof(float) * 3);
 		float4 col4(skinning_mat.Col(3));
-		memcpy(&skinning_mats[pos_in_buffer + 12], &col4.x, sizeof(float) * 4);
+		memcpy(&skinning_mats[pos_in_buffer + 9], &col4.x, sizeof(float) * 3);
 	}
 
-	GLint size = bones.size() * 4 * 4;
+	GLint size = bones.size() * 4 * 3;
 
 	glDeleteBuffers(1, &buffer_id);
 	glGenBuffers(1, &buffer_id);
