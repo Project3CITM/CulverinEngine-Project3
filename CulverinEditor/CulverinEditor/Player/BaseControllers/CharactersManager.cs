@@ -2121,7 +2121,7 @@ public class CharactersManager : CulverinBehaviour
         if (daenerysinfo == 0.0f)
         {
             RightCharacterDie();
-            left_character.GetComponent<DaenerysController>().daenerys_icon_obj_hp.GetComponent<CompImage>().SetRender(false);
+            right_character.GetComponent<DaenerysController>().daenerys_icon_obj_hp.GetComponent<CompImage>().SetRender(false);
         }
 
         Debug.Log("INFO PLAYER", Department.PLAYER, Color.RED);
