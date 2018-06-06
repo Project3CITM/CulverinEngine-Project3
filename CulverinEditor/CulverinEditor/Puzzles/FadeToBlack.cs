@@ -141,12 +141,17 @@ public class FadeToBlack : CulverinBehaviour
                 }
             case SceneToLoad.ALPHA2_LEVEL_1_1:
                 {
-                    //   SceneManager.LoadNewWalkableMap("Map_Level_1_1");
-                    if (SceneManager.CheckMultiSceneReady())
+                    SceneManager.LoadNewOclusionMap("Map_Level_1_1_oclusion");
+                    SceneManager.LoadNewWalkableMap("Map_Level_1_1");
+                    if (DifficultySelector.hard_mode == true)
                     {
-                        SceneManager.RemoveSecondaryScene();
+                        SceneManager.LoadScene("Alpha2_Level_1_1_HARD");
                     }
-                    SceneManager.LoadScene("TutorialToLvl1_1");
+                    else
+                    {
+                        SceneManager.LoadScene("Alpha2_Level_1_1_EASY");
+                    }
+
                     break;
                 }
             case SceneToLoad.ALPHA2_LEVEL_1_2:
