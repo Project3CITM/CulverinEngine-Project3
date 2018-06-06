@@ -2100,6 +2100,10 @@ public class CharactersManager : CulverinBehaviour
         float daenerysinfo = SceneManager.PopLoadInfo();
         float jaimeinfo = SceneManager.PopLoadInfo();
 
+        left_character.GetComponent<TheonController>().curr_hp = theoninfo;
+        current_character.GetComponent<JaimeController>().curr_hp = jaimeinfo;
+        right_character.GetComponent<DaenerysController>().curr_hp = daenerysinfo;
+
         if (theoninfo == 1503.0f)
         {
             left_character.GetComponent<TheonController>().curr_hp = left_character.GetComponent<TheonController>().max_hp;
