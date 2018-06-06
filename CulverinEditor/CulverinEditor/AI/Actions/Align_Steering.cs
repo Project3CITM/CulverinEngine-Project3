@@ -27,8 +27,6 @@ public class Align_Steering : CulverinBehaviour
 
         move.Rotate(Mathf.Rad2deg(acceleration));
 
-        Debug.Log("Democracy kills difference: " + acceleration, Department.IA);
-
         if (Mathf.Abs(delta) <= rot_margin)
         {
             float ideal_velocity = delta / slow_angle;

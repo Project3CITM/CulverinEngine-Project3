@@ -55,7 +55,8 @@ public class BossWideAttack_Action : Action
         if (player.dying == false)
         {
             state = BWA_STATE.PRE_APPLY;
-            GetComponent<CompAnimation>().SetTransition("ToWideAttack");
+            Debug.Log("Wide attack anim play", Department.IA);
+            GetComponent<CompAnimation>().PlayAnimationNode("WideAttack");
             GetComponent<CompAnimation>().SetClipDuration("WideAttack", preparation_time / apply_damage_point);
             GetComponent<CompAudio>().PlayEvent("AttackPreparation");
         }
@@ -122,7 +123,8 @@ public class BossWideAttack_Action : Action
 
     public override bool ActionEnd()
     {
-        Debug.Log("Wide attack end!");
+        Debug.Log("Wide attack end!", Department.IA);
+        GetComponent<CompAnimation>().PlayAnimationNode("IdleAttack");
         interupt = false;
         return false;
     }

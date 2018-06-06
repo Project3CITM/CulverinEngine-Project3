@@ -42,6 +42,7 @@ public class Attack_Action : Action
         {
             anim_comp.SetClipDuration("Attack", attack_duration);
             anim_comp.PlayAnimationNode("Attack");
+            Debug.Log("Back to Attack", Department.IA);
             audio_comp.PlayEvent("Enemy1_Slash");
         }
       
@@ -83,8 +84,11 @@ public class Attack_Action : Action
         }
 
         if (anim_comp.IsAnimationStopped("Attack"))
+        {
+            GetComponent<CompAnimation>().PlayAnimationNode("IdleAttack");
+            Debug.Log("Back to Idle", Department.IA);
             return ACTION_RESULT.AR_SUCCESS;
-        
+        }        
 
         return ACTION_RESULT.AR_IN_PROGRESS;
     }

@@ -184,7 +184,7 @@ public class Boss_BT : BT
                             if (rand > 3)
                             {
                                 //distance attack
-                                Debug.Log("Distance Attack");
+                                Debug.Log("Distance Attack", Department.IA);
                                 current_action = GetComponent<BossAttackSwordDown_Action>();
                                 current_action.ActionStart();
                                 cooldown = distance_attack_cooldown;
@@ -205,7 +205,7 @@ public class Boss_BT : BT
                             if (rand > 3)
                             {
                                 //AOE attack
-                                Debug.Log("AOE Attack");
+                                Debug.Log("Wide Attack", Department.IA);
                                 current_action = GetComponent<BossWideAttack_Action>();
                                 current_action.ActionStart();
                                 cooldown = aoe_attack_cooldown;
@@ -214,7 +214,7 @@ public class Boss_BT : BT
                             else
                             {
                                 //distance attack
-                                Debug.Log("Distance Attack");
+                                Debug.Log("Distance Attack", Department.IA);
                                 current_action = GetComponent<BossAttackSwordDown_Action>();
                                 current_action.ActionStart();
                                 cooldown = distance_attack_cooldown;
@@ -226,7 +226,7 @@ public class Boss_BT : BT
                     {
                         if (phase == BOSS_STATE.BOSS_PHASE2)
                         {
-                            Debug.Log("Charge Attack");
+                            Debug.Log("Charge Attack", Department.IA);
                             current_action = GetComponent<ChargeAttack_Action>();
                             current_action.ActionStart();
                             cooldown = charge_attack_cooldown;
@@ -234,7 +234,7 @@ public class Boss_BT : BT
                         }
                         else
                         {
-                            Debug.Log("Chase");
+                            Debug.Log("Chase", Department.IA);
                             GetComponent<InfiniteChasePlayer_Action>().SetChaseRange(2);
                             current_action = GetComponent<InfiniteChasePlayer_Action>();
                             current_action.ActionStart();
@@ -243,7 +243,7 @@ public class Boss_BT : BT
                     }
                     else
                     {
-                        Debug.Log("Chase");
+                        Debug.Log("Chase", Department.IA);
                         GetComponent<InfiniteChasePlayer_Action>().SetChaseRange(2);
                         current_action = GetComponent<InfiniteChasePlayer_Action>();
                         current_action.ActionStart();
@@ -252,7 +252,7 @@ public class Boss_BT : BT
                 }
                 else
                 {
-                    Debug.Log("Face");
+                    Debug.Log("Face", Department.IA);
                     current_action = GetComponent<FacePlayer_Action>();
                     current_action.ActionStart();
                     return;
