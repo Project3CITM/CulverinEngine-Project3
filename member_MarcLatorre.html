@@ -1,0 +1,314 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Njoy Games Web</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Njoy Games website" />
+    <meta name="author" content="Daniel Triviño Merida" />
+
+    <!-- css -->
+    <link href="https://fonts.googleapis.com/css?family=Handlee|Open+Sans:300,400,600,700,800" rel="stylesheet">
+    <link href="css/bootstrap.css" rel="stylesheet" />
+    <link href="css/bootstrap-responsive.css" rel="stylesheet" />
+    <link href="css/flexslider.css" rel="stylesheet" />
+    <link href="css/prettyPhoto.css" rel="stylesheet" />
+    <link href="css/camera.css" rel="stylesheet" />
+    <link href="css/jquery.bxslider.css" rel="stylesheet" />
+    <link href="css/style.css" rel="stylesheet" />
+
+    <!-- Colors CSS -->
+    <link href="css/default.css" rel="stylesheet" />
+
+</head>
+
+<body>
+
+<div id="wrapper">
+
+    <!-- start header -->
+    <header>
+        <div class="top">
+            <div class="container">
+                <div class="row"></div>
+            </div>
+        </div>
+        <div class="container">
+
+            <div class="row nomargin">
+                <div class="span4">
+                    <div class="logo">
+                        <a href="index.html"><img style="width: 130px; height: 75px;" src="img/logo.png" alt="" /></a>
+                    </div>
+                </div>
+                <div class="span8">
+                    <div class="navbar navbar-static-top">
+                        <div class="navigation">
+                            <nav>
+                                <ul class="nav topnav">
+                                    <li>
+                                        <a href="index.html"><i class="fa fa-home"></i> Home </a>
+                                    </li>
+                                    <li>
+                                        <a href="versions.html"><i class="fa fa-download"></i> Releases </a>
+                                    </li>
+                                    <li class="active">
+                                        <a href="team.html"><i class="fa fa-user"></i> Team </a>
+                                    </li>
+                                    <li>
+                                        <a href="gallery.html"><i class="fa fa-picture-o"></i> Gallery </a>
+                                    </li>
+                                    <li>
+                                        <a href="post_mortem.html"><i class="fa fa-file-text-o"></i> Post Mortem </a>
+                                    </li>
+                                    <li>
+                                        <a href="contact.html"><i class="fa fa-envelope-o"></i> Contact </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                        <!-- end navigation -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- end header -->
+
+
+    <!-- ################################################################################################################ -->
+    <!-- #####################################      PERSONAL PAGE     ################################################### -->
+    <!-- ################################################################################################################ -->
+
+
+    <section id="inner-headline">
+        <div class="container">
+            <div class="row">
+                <div class="span12">
+                    <h2>Marc Latorre</h2>
+                    <img class="thumbnail" style="max-height: 300px;max-width: 300px; margin-right: 20px;" src="img/avatar/LatorreMarc_Profile.jpg" alt="" align="left"/>
+                    </br></br></br></br></br></br></br></br></br>
+                    <h5>Programmer</h5>
+                    <p style="font-size: 20px">
+                        marc.lafrwy@gmail.com
+                    </p>
+                    <a href="https://github.com/marclafr" class="btn btn-social-icon btn-github" target="_blank"><i class="fa fa-github"></i></a>
+                    <a href="https://es.linkedin.com/in/marc-latorre-freixes-70a821144" class="btn btn-social-icon btn-linkedin" target="_blank"><i class="fa fa-linkedin"></i></a>
+                </div>
+    </section>
+
+    <section id="content">
+        <div class="container">
+            <!-- @@@@@@@@@@ MY JOB @@@@@@@@@@ -->
+            <div class="row">
+                <div class="span12">
+                    <h2>My job</h2>
+                    <p style="font-size: 18px">
+                        My job consisted mainly in programming the AI from the game and the UI from the Final Boss.
+                    </p>
+                    </br>
+                </div>
+            </div>
+            <!-- @@@@@@@@@@ END MY JOB @@@@@@@@@@ -->
+
+            <!-- @@@@@@@@@@ SEPARATOR @@@@@@@@@@ -->
+            <div class="row">
+                <div class="span12">
+                    <div class="solidline"></div>
+                </div>
+            </div>
+            <!-- @@@@@@@@@@ END SEPARATOR @@@@@@@@@@ -->
+
+            <!-- @@@@@@@@@@ WHAT HAVE I DONE @@@@@@@@@@ -->
+            <div class="row">
+                <div class="span12">
+                    <h2>What have I done</h2>
+                </div>
+            </div>
+            <!-- @@@@@@@@@@ END WHAT HAVE I DONE @@@@@@@@@@ -->
+
+            <!-- @@@@@@@@@@ FINITE STATE MACHINE @@@@@@@@@@ -->
+            <div class="row">
+                <div class="span12">
+                    <h4>Finite State Machine for designers</h4>
+                    <p style="font-size: 18px">
+                        In the concept discovery, I presented a variety of options in order to create the future AI for this game. We though that a Finite State Machine would work well and decided to implement it, so the first thing I did was creating a Finite State Machine so designers could modify the AI easily without the help of any programmer.
+                        </br>
+                        However, after it was a bit primitive although it was working, we decided that we did not the best decision and we need an AI with a bit of more complexity, so my FSM was removed and a Behaviour Tree was implemented afterwards by our AI team.
+                    </p>
+                </div>
+            </div>
+            <!-- @@@@@@@@@@ END FINITE STATE MACHINE @@@@@@@@@@ -->
+
+            <!-- @@@@@@@@@@ AI SIGHT + CHASE @@@@@@@@@@ -->
+            <div class="row">
+                <div class="span12">
+                    <h4>Enemy's sight and chase player</h4>
+                    <p style="font-size: 18px">
+                        While other team members were implementing the new Behaviour Tree I programmed the AI sight using a tile system. We used this tile system because we had a problem with occlusion back by then and couldn't do it with a frustum, otherwise our enemies would have seen the player through walls.
+                        </br>
+                        Using this sight perception and the Behaviour Tree the other members of the AI team created, I made the enemies chase the player when they saw him and until they were in the previous tile and attacked him or until they lost his sight.
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="span6">
+                    <img class="thumbnail" style="max-height: 400px;max-width: 400px; margin: 0 auto;" src="https://s22.postimg.cc/u2gpf1z8x/enemysight.jpg" alt="" />
+                </div>
+                <div class="span6">
+                    <img class="thumbnail" style="height: 300px;width: 600px; margin: 0 auto;" src="https://media.giphy.com/media/fe0PeB9shGjyHEBUB8/giphy.gif" alt="" />
+                </div>
+            </div>
+            <!-- @@@@@@@@@@ END AI SIGHT + CHASE @@@@@@@@@@ -->
+
+            <!-- @@@@@@@@@@ THEON RIGHT SKILL @@@@@@@@@@ -->
+            <div class="row">
+                <div class="span12">
+                    </br><h4>Theon Push and Stun</h4>
+                    <p style="font-size: 18px">
+                        Once we had a decent AI base implemented and there were some enemies you could fight, I did that the Theon right ability worked, which is basically being able to push an enemy one tile away and, in the case there is a wall behind, it stuns the enemy for a few time.
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="span6">
+                    <img class="thumbnail" style="height: 300px;width: 600px; margin: 0 auto;" src="https://media.giphy.com/media/X6aChkGHWlfNit8UVk/giphy.gif" alt="" />
+                </div>
+                <div class="span6">
+                    <img class="thumbnail" style="height: 300px;width: 600px; margin: 0 auto;" src="https://media.giphy.com/media/5n9lrkuPoJQfRI05y0/giphy.gif" alt="" />
+                </div>
+            </div>
+            <!-- @@@@@@@@@@ END THEON RIGHT SKILL @@@@@@@@@@ -->
+
+            <!-- @@@@@@@@@@ SHIELD ENEMY @@@@@@@@@@ -->
+            <div class="row">
+                <div class="span12">
+                    </br><h4>Shield Enemy base</h4>
+                    <p style="font-size: 18px">
+                        When we were adding different enemies, I was responsible to implement the first Shield Enemy, using the base we had for the simplest enemy, and adding the blocking functionality I created the first iteration for this enemy.
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <p style="text-align: center;">
+                <div class="row">
+                    <img class="thumbnail" style="height: 400px;width: 800px; margin: 0 auto;" src="https://media.giphy.com/media/lYfG5BRPOa7KytDQp2/giphy.gif" alt="" />
+                </div>
+                </p>
+            </div>
+            <!-- @@@@@@@@@@ END SHIELD ENEMY @@@@@@@@@@ -->
+
+            <!-- @@@@@@@@@@ BOSS @@@@@@@@@@ -->
+            <div class="row">
+                <div class="span12">
+                    <h4>Boss</h4>
+                    <p style="font-size: 18px">
+                        Finally, I was put in the Boss development team, where apart from debugging the boss I created its UI, which includes all the UI movement from the boss introduction cinematic and the boss HP bar.
+                        </br>
+                        I also included its audio fx's in the code, so our AI designer, Fran Ruiz, could manage the exact time all our boss audio fx's played.
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <p style="text-align: center;">
+                <div class="row">
+                    <img class="thumbnail" style="height: 400px;width: 800px; margin: 0 auto;" src="https://media.giphy.com/media/FeEx4P9DBflTJkSTkz/giphy.gif" alt="" />
+                </div>
+                </p>
+            </div>
+        </div>
+        <!-- @@@@@@@@@@ END BOSS @@@@@@@@@@ -->
+
+        <div class="blankline30"></div>
+
+        <!-- ################################################################################################################ -->
+        <!-- #####################################      PERSONAL PAGE     ################################################### -->
+        <!-- ################################################################################################################ --><!-- ################################################################################################################ -->
+            <div class="blankline30"></div>
+
+</div>
+        </section>
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="span4">
+                <div class="widget">
+                    <h5 class="widgetheading">Social media</h5>
+                    <a href="https://www.facebook.com/NjoyGames-2060362217554288/" class="btn btn-social-icon btn-facebook" target="_blank"><i class="fa fa-facebook"></i></a>
+                    <a href="https://www.instagram.com/njoygames/" class="btn btn-social-icon btn-instagram" target="_blank"><i class="fa fa-instagram"></i></a>
+                    <a href="https://twitter.com/njoy_games" class="btn btn-social-icon btn-twitter" target="_blank"><i class="fa fa-twitter"></i></a>
+                </div>
+            </div>
+            <div class="span4">
+                <div class="widget">
+                    <h5 class="widgetheading">Get in touch</h5>
+                    <address>
+                        <strong>Njoy Games</strong><br>
+                        C/ de la Igualtat 33<br>
+                        08222 Terrassa, Barcelona
+                    </address>
+                    <p>
+                        <i class="fa fa-envelope-o"></i> <a href="mailto:njoygames0@gmail.com" target="_top">njoygames0@gmail.com</a>
+                    </p>
+                </div>
+            </div>
+            <div class="span4">
+                <div class="widget">
+                    <h5 class="widgetheading">Repository</h5>
+                    <p>
+                        Keep updated for new releases or see the code.
+                    </p>
+                    <a href="https://github.com/Project3CITM/CulverinEngine-Project3" class="btn btn-social-icon btn-github" target="_blank"><i class="fa fa-github"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="sub-footer">
+        <div class="container">
+            <div class="row">
+                <div class="span6">
+                    <div class="copyright">
+                        <p><span>&copy; Njoy Games. All right reserved</span></p>
+                    </div>
+                </div>
+                <div class="span6">
+                    <div class="credits">
+                        Designed by <a href="https://www.linkedin.com/in/danieltriviñomerida/" target="_blank">dibu13</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+</div>
+
+<a href="#" class="scrollup"><i class="icon-square icon-bglight icon-2x active fa fa-angle-up fa-2x"></i></a>
+
+<!-- javascript
+  ================================================== -->
+<script src="js/jquery.js"></script>
+<script src="js/jquery.easing.1.3.js"></script>
+<script src="js/bootstrap.js"></script>
+
+<script src="js/modernizr.custom.js"></script>
+<script src="js/toucheffects.js"></script>
+<script src="js/google-code-prettify/prettify.js"></script>
+<script src="js/jquery.bxslider.min.js"></script>
+
+<script src="js/jquery.prettyPhoto.js"></script>
+<script src="js/portfolio/jquery.quicksand.js"></script>
+<script src="js/portfolio/setting.js"></script>
+
+<script src="js/jquery.flexslider.js"></script>
+<script src="js/animate.js"></script>
+<script src="js/inview.js"></script>
+
+<script src="js/custom.js"></script>
+
+
+</body>
+
+</html>

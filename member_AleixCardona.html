@@ -1,0 +1,2248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Njoy Games Web</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Njoy Games website" />
+    <meta name="author" content="Daniel Triviño Merida" />
+
+    <!-- css -->
+    <link href="https://fonts.googleapis.com/css?family=Handlee|Open+Sans:300,400,600,700,800" rel="stylesheet">
+    <link href="css/bootstrap.css" rel="stylesheet" />
+    <link href="css/bootstrap-responsive.css" rel="stylesheet" />
+    <link href="css/flexslider.css" rel="stylesheet" />
+    <link href="css/prettyPhoto.css" rel="stylesheet" />
+    <link href="css/camera.css" rel="stylesheet" />
+    <link href="css/jquery.bxslider.css" rel="stylesheet" />
+    <link href="css/style.css" rel="stylesheet" />
+
+    <!-- Colors CSS -->
+    <link href="css/default.css" rel="stylesheet" />
+
+</head>
+
+<body>
+
+<div id="wrapper">
+
+    <!-- start header -->
+    <header>
+        <div class="top">
+            <div class="container">
+                <div class="row"></div>
+            </div>
+        </div>
+        <div class="container">
+
+            <div class="row nomargin">
+                <div class="span4">
+                    <div class="logo">
+                        <a href="index.html"><img style="width: 130px; height: 75px;" src="img/logo.png" alt="" /></a>
+                    </div>
+                </div>
+                <div class="span8">
+                    <div class="navbar navbar-static-top">
+                        <div class="navigation">
+                            <nav>
+                                <ul class="nav topnav">
+                                    <li>
+                                        <a href="index.html"><i class="fa fa-home"></i> Home </a>
+                                    </li>
+                                    <li>
+                                        <a href="versions.html"><i class="fa fa-download"></i> Releases </a>
+                                    </li>
+                                    <li class="active">
+                                        <a href="team.html"><i class="fa fa-user"></i> Team </a>
+                                    </li>
+                                    <li>
+                                        <a href="gallery.html"><i class="fa fa-picture-o"></i> Gallery </a>
+                                    </li>
+                                    <li>
+                                        <a href="post_mortem.html"><i class="fa fa-file-text-o"></i> Post Mortem </a>
+                                    </li>
+                                    <li>
+                                        <a href="contact.html"><i class="fa fa-envelope-o"></i> Contact </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                        <!-- end navigation -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- end header -->
+
+
+<!-- ################################################################################################################ -->
+<!-- #####################################       DESDE AQUI       ################################################### -->
+<!-- ################################################################################################################ -->
+   
+       
+        <section id="inner-headline">
+            <div class="container">
+                <div class="row">
+                    <div class="span8">
+                        <div class="inner-heading">
+                            <h2 style="margin-top: 15px; display: inline">
+                                Aleix Cardona Zuecos
+                                <a id="fav-img" href="http://www.capitanliteral.com/" target="_blank">
+                                    <img src="img/member-images/cl-favicon.png" width="40" height="40">
+                                </a>
+                            </h2>
+                            
+                            </br>
+                            <h5><i>Designer</i></h5>
+                            <a href="https://github.com/CapitanLiteral" class="btn btn-social-icon btn-github" target="_blank"><i class="fa fa-github"></i></a>
+                            <a href="https://www.linkedin.com/in/capitanliteral/" class="btn btn-social-icon btn-linkedin" target="_blank"><i class="fa fa-linkedin"></i></a>
+                            
+                        </div>
+                    </div>
+                    <div class="span4">
+                        <img class="thumbnail floatright" style="max-height: 300px;max-width: 300px;" src="img/avatar/capitanliteral.jpg" alt="Aleix Cardona" />
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="content">
+            <div class="container">
+
+                <!-- ###################################################################### -->
+                <!-- TODO4: Utilizando las estructuras que estan a continuacion montar      -->
+                <!--       el contenido de tu pagina personal. Copias el trozo que quieras  -->
+                <!--       lo pegas las veces que quieras y modificas el contenido de los   -->
+                <!--       <H4> los <p> y las src de las imagenes. Las imagenes que querais -->
+                <!--       poner hay que copiarlas dentro de la carpeta "img/member-images".-->
+                <!--       Las imagenes deben pesar entre 500KB y 1MB.                      -->
+                <!--       Usa algun prefijo o algo para que los nombres de tus imagenes no -->
+                <!--       se repitan con las de los demas al subirlas. Por ejemplo:        -->
+                <!--       "tuNombre_nombreImagen.png".                                     -->
+                <!--       Pueden ser .jpg, .png o .gif                                     -->
+                <!--                                                                        -->
+                <!--       Si en alguna de las estructuras quereis añadir otro elemento     -->
+                <!--       como otro parrafo solo hay que copiar la <p></p> y pegarlo       -->
+                <!--       debajo del otro. Si os veis, podeis combinar los elementos.      -->
+                <!--                                                                        -->
+                <!--       Si quereis usar una estructura sin el titulo teneis que borrar   -->
+                <!--       lo siguiente:  <div class="row">                                 -->
+                <!--                          <div class="span12">                          -->
+                <!--                              <h4>Title only text</h4>                  -->
+                <!--                          </div>                                        -->
+                <!--                      </div>                                            -->
+                <!--       Al acabar solo dejad las que usais.                              -->
+                <!-- ###################################################################### -->
+
+                <!-- @@@@@@@@@@ ESTRUCTURA 1: Solo texto @@@@@@@@@@ -->
+            <div class="row">
+                <div class="span12">
+                    <h3><b>Metrics balancing</b></h3>
+                </div>
+            </div>
+	            <div class="row">
+		            <div class="span12">
+			            <p>
+				            Here we can see the evolution of the player and enemy stats through the iterations we made.
+				            We got the players stamilised as soon as we could because where two teams that needed the stats to work with.
+				            And for logistic reasons we could not iterate through them. But we could iterate over enemies and BOSS.
+				            We mostly iterated the damages and attack speed. To get the most interactions of the player every second.
+				            We did the same with enemies but at last we changed it to slow the pacing of the combat and make it less frustrating to the player.
+				            
+			            </p>
+			            <p>
+				            0.5 -> Alpha 1, 12.5 -> Alpha 2 - Hard mode, 19.5 -> Gold - Easy mode.
+			            </p>
+		            </div>
+                <!-- @@@@@@@@@@ Stats @@@@@@@@@@ -->
+                <div class="row">
+                    <div class="span12">
+                        <h4><b>Player characters through iterations</b></h4>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="span4">
+                        <div id="jaimechart" style="height: 370px; width: 100%;"></div>
+                    </div>
+                    <div class="span4">
+                        <div id="daeneryschart" style="height: 370px; width: 100%;"></div>
+                    </div>
+                    <div class="span4">
+                        <div id="theonchart" style="height: 370px; width: 100%;"></div>
+                    </div>
+                </div>
+                <!-- @@@@@@@@@@ Stats @@@@@@@@@@ -->
+                <div class="row">
+                    <div class="span12">
+                        <h4><b>Enemies through iterations</b></h4>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="span4">
+                        <div id="swordmanchart" style="height: 370px; width: 100%;"></div>
+                    </div>
+                    <div class="span4">
+                        <div id="spearmanchart" style="height: 370px; width: 100%;"></div>
+                    </div>
+                    <div class="span4">
+                        <div id="shieldmanchart" style="height: 370px; width: 100%;"></div>
+                    </div>
+                </div>
+	            
+                <!-- @@@@@@@@@@ Characters @@@@@@@@@@ -->
+                <div class="row">
+                    <div class="span12">
+                        <h3><b>Caracter design</b></h3>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="span6">
+                        <img class="thumbnail" style="height: 200px;width: 200px; margin: 0 auto;" src="img/member-images/jonsnow.jpg" alt="" />
+                        <h4>Jon Snow</h4>
+                        <p style="color: red">Discarded before the alpha</p>
+                    </div>
+                    <div class="span6">
+                        <img class="thumbnail" style="height: 200px;width: 200px; margin: 0 auto;" src="img/member-images/theon.jpg" alt="" />
+                        <h4>Theon Greyjoy</h4>
+                        <p style="color: green">Takes the role of a crossbowman.</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="span6">
+                        <img class="thumbnail" style="height: 200px;width: 200px; margin: 0 auto;" src="img/member-images/thoros.jpg" alt="" />
+                        <h4>Thoros of Myr</h4>
+                        <p style="color: red">Discarded before the alpha</p>
+                    </div>
+                    <div class="span6">
+                        <img class="thumbnail" style="height: 200px;width: 200px; margin: 0 auto;" src="img/member-images/aria.jpg" alt="" />
+                        <h4>Arya Stark</h4>
+                        <p style="color: red">Discarded before the alpha</p>
+                    </div>
+                </div>
+	            
+	            <!-- @@@@@@@@@@ Referenceseference @@@@@@@@@@ -->
+	            <div class="row">
+		            <div class="span12">
+			            <h4><b>Making references</b></h4>
+		            </div>
+	            </div>
+	            <div class="row">
+		            <div class="span6">
+			            <img class="thumbnail" style="max-height: 300px;max-width: 300px; margin: 0 auto;" src="img/member-images/blood.png" alt="">
+				            <p>
+				            A basic conept to give feedback about damage recieved.
+			                </p>
+			            <img/>
+		            </div>
+		            <div class="span6">
+			            <img class="thumbnail" style="max-height: 300px;max-width: 300px; margin: 0 auto;" src="img/member-images/ui.png" alt="">
+			            <p>
+				            Here I made a mockUp about how should be the UI if we had inventory, merchant and character sheet.
+			            </p>
+			            <img/>
+		            </div>
+	            </div>
+	            <div class="row">
+		            <div class="span6">
+			            <img class="thumbnail" style="max-height: 300px;max-width: 300px; margin: 0 auto;" src="img/member-images/hudfeedback.png" alt="">
+			            <p>
+				            Cooldown feedback reference and <i>not enough</i> stamina feedback.
+			            </p>
+			            <img/>
+		            </div>
+		            <div class="span6">
+			            <img class="thumbnail" style="max-height: 300px;max-width: 300px; margin: 0 auto;" src="img/member-images/fountain.png" alt="">
+			            <p>
+				            We saw that we where needing a healing source so we made a concept about how a fountain should be and the rules about how player could heal from it.
+			            </p>
+			            <img/>
+		            </div>
+	            </div>
+	            <div class="row">
+		            <div class="span12">
+			            <h5><b>Life UI options</b></h5>
+		            </div>
+	            </div>
+	            <div class="row">
+		            <div class="span6">
+			            <img class="thumbnail" style="max-height: 300px;max-width: 300px; margin: 0 auto;" src="img/member-images/life1.png" alt="">
+			            <p>
+				            This was the first idea and the one that could give more info, but we discarded for two reasons. The first one was that will not be more than one enemy on the sreen at the same time. And the second one was that we didn't liked how it looked when enemies where close.
+			            </p>
+			            <img/>
+		            </div>
+		            <div class="span6">
+			            <img class="thumbnail" style="max-height: 300px;max-width: 300px; margin: 0 auto;" src="img/member-images/life2.png" alt="">
+			            <p>
+				            The second option whas about to have the life of the focused enemy at the left top side of the screen. This layout displays the necessary info and does not disturbs any other HUD.
+			            </p>
+			            <img/>
+		            </div>
+	            </div>
+	            <!-- @@@@@@@@@@ QA @@@@@@@@@@ -->
+	            <div class="row">
+		            <div class="span12">
+                        <h3><b>Player Testing</b></h3>
+		            </div>
+	            </div>
+	            <div class="row">
+		            <div class="span12">
+			            <p>
+				            At the end of the project I was in charge of making the player surveys to prepare a testing session. In addition I had to do a guide for the observers for the important things to observe.
+			            </p>
+			            <p>
+				            When the playtest weas over I had to do an analysis about what players did and felt. To make the last balancing changes and to give feedback to the other departments.
+			            </p>
+		            </div>
+	            </div>
+	            
+                <!-- @@@@@@@@@@ END ESTRUCTURA 7 @@@@@@@@@@ -->
+
+                <!-- ##### END TODO4 ##### -->
+
+                <!-- ###################################################################### -->
+                <!-- TODO5: Una vez terminado y esta como queremos que se vea, renombrais   -->
+                <!--       este archivo con el siguiente nombre:                            -->
+                <!--       "member_NombreApellido.html". Ejemplo: member_DanielTriviño.html -->
+                <!--                                                                        -->
+                <!--       Despues subis los archivos el la carpeta "WEB" del drive de la   -->
+                <!--       siguiente manera:                                                -->
+                <!--           - Este arvhivo .html en la carpeta "MemberPage".             -->
+                <!--           - La imagen de tu cara en la carpeta "Avatar".               -->
+                <!--           - Todas las imagenes utilizadas en el TODO4 en la carpeta    -->
+                <!--             "MemberImages" (Intentad poner nombres a las imagenes que  -->
+                <!--             no se vayan a repetir).                                     -->
+                <!--                                                                        -->
+                <!--       Teneis como maximo hasta el sabado 2 a las 23:59 para subir todos-->
+                <!--       los archivos. Despues tendre que arreglar todas las paginas y    -->
+                <!--       subirlas.                                                        -->
+                <!--                                                                        -->
+                <!--       Si teneis cualquier duda me podeis preguntar.                    -->
+                <!--                                                                        -->
+                <!-- ###################################################################### -->
+                <!-- ##### END TODO5 ##### -->
+
+<!-- ################################################################################################################ -->
+<!-- ########################################        HASTA AQUI        ############################################## -->
+<!-- ################################################################################################################ -->
+
+            <div class="blankline30"></div>
+
+            </div>
+        </section>
+
+
+        <footer>
+            <div class="container">
+                <div class="row">
+                    <div class="span4">
+                        <div class="widget">
+                            <h5 class="widgetheading">Social media</h5>
+                            <a href="https://www.facebook.com/NjoyGames-2060362217554288/" class="btn btn-social-icon btn-facebook" target="_blank"><i class="fa fa-facebook"></i></a>
+                            <a href="https://www.instagram.com/njoygames/" class="btn btn-social-icon btn-instagram" target="_blank"><i class="fa fa-instagram"></i></a>
+                            <a href="https://twitter.com/njoy_games" class="btn btn-social-icon btn-twitter" target="_blank"><i class="fa fa-twitter"></i></a>
+                        </div>
+                    </div>
+                    <div class="span4">
+                        <div class="widget">
+                            <h5 class="widgetheading">Get in touch</h5>
+                            <address>
+                                <strong>Njoy Games</strong><br>
+                                C/ de la Igualtat 33<br>
+                                08222 Terrassa, Barcelona
+                            </address>
+                            <p>
+                                <i class="fa fa-envelope-o"></i> <a href="mailto:njoygames0@gmail.com" target="_top">njoygames0@gmail.com</a>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="span4">
+                        <div class="widget">
+                            <h5 class="widgetheading">Repository</h5>
+                            <p>
+                                Keep updated for new releases or see the code.
+                            </p>
+                            <a href="https://github.com/Project3CITM/CulverinEngine-Project3" class="btn btn-social-icon btn-github" target="_blank"><i class="fa fa-github"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="sub-footer">
+                <div class="container">
+                    <div class="row">
+                        <div class="span6">
+                            <div class="copyright">
+                                <p><span>&copy; Njoy Games. All right reserved</span></p>
+                            </div>
+                        </div>
+                        <div class="span6">
+                            <div class="credits">
+                                Designed by <a href="https://www.linkedin.com/in/danieltriviñomerida/" target="_blank">dibu13</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+  <a href="#" class="scrollup"><i class="icon-square icon-bglight icon-2x active fa fa-angle-up fa-2x"></i></a>
+
+  <!-- javascript
+    ================================================== -->
+  <script src="js/jquery.js"></script>
+  <script src="js/jquery.easing.1.3.js"></script>
+  <script src="js/bootstrap.js"></script>
+
+  <script src="js/modernizr.custom.js"></script>
+  <script src="js/toucheffects.js"></script>
+  <script src="js/google-code-prettify/prettify.js"></script>
+  <script src="js/jquery.bxslider.min.js"></script>
+
+  <script src="js/jquery.prettyPhoto.js"></script>
+  <script src="js/portfolio/jquery.quicksand.js"></script>
+  <script src="js/portfolio/setting.js"></script>
+
+  <script src="js/jquery.flexslider.js"></script>
+  <script src="js/animate.js"></script>
+  <script src="js/inview.js"></script>
+
+  <script src="js/custom.js"></script>
+
+    <script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+    <script src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
+    <script type="text/javascript" >
+        function VisibilityMonitor(element, showfn, hidefn) {
+            var isshown= false;
+            function check() {
+                if (rectsIntersect(getPageRect(), getElementRect(element)) !== isshown)
+                {
+                    isshown= !isshown;
+                    isshown? showfn() : hidefn();
+                }
+            };
+            window.onscroll=window.onresize= check;
+            check();
+        }
+        function getPageRect() {
+            var isquirks= document.compatMode!=='BackCompat';
+            var page= isquirks? document.documentElement : document.body;
+            var x= page.scrollLeft;
+            var y= page.scrollTop;
+            var w= 'innerWidth' in window? window.innerWidth : page.clientWidth;
+            var h= 'innerHeight' in window? window.innerHeight : page.clientHeight;
+            return [x, y, x+w, y+h];
+        }
+        function getElementRect(element) {
+            var x= 0, y= 0;
+            var w= element.offsetWidth, h= element.offsetHeight;
+            while (element.offsetParent!==null) {
+                x+= element.offsetLeft;
+                y+= element.offsetTop;
+                element= element.offsetParent;
+            }
+            return [x, y, x+w, y+h];
+        }
+        function rectsIntersect(a, b) {
+            return a[0]<b[2] && a[2]>b[0] && a[1]<b[3] && a[3]>b[1];
+        }
+        let exampleChart = function ()
+        {
+            var options = {
+                animationEnabled: true,
+                theme: "light2",
+                title:{
+                    text: "Actual vs Projected Sales"
+                },
+                axisX:{
+                    valueFormatString: "DD MMM"
+                },
+                axisY: {
+                    title: "Number of Sales",
+                    suffix: "K",
+                    minimum: 30
+                },
+                toolTip:{
+                    shared:true
+                },
+                legend:{
+                    cursor:"pointer",
+                    verticalAlign: "bottom",
+                    horizontalAlign: "left",
+                    dockInsidePlotArea: true,
+                    itemclick: toogleDataSeries
+                },
+                data: [
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        name: "Projected Sales",
+                        markerType: "square",
+                        xValueFormatString: "DD MMM, YYYY",
+                        color: "#F08080",
+                        yValueFormatString: "#,##0K",
+                        dataPoints:
+                            [
+                                { x: new Date(2017, 0), y: 25060 },
+                                { x: new Date(2017, 1), y: 27980 },
+                                { x: new Date(2017, 2), y: 33800 },
+                                { x: new Date(2017, 3), y: 49400 },
+                                { x: new Date(2017, 4), y: 40260 },
+                                { x: new Date(2017, 5), y: 33900 },
+                                { x: new Date(2017, 6), y: 48000 },
+                                { x: new Date(2017, 7), y: 31500 },
+                                { x: new Date(2017, 8), y: 32300 },
+                                { x: new Date(2017, 9), y: 42000 },
+                                { x: new Date(2017, 10), y: 52160 },
+                                { x: new Date(2017, 11), y: 49400 }
+                            ]
+                    },
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        name: "Projected Sales",
+                        markerType: "square",
+                        xValueFormatString: "DD MMM, YYYY",
+                        color: "#F00080",
+                        yValueFormatString: "#,##0K",
+                        dataPoints:
+                            [
+                                { x: new Date(2017, 0), y: 2560 },
+                                { x: new Date(2017, 1), y: 2780 },
+                                { x: new Date(2017, 2), y: 3300 },
+                                { x: new Date(2017, 3), y: 4900 },
+                                { x: new Date(2017, 4), y: 4060 },
+                                { x: new Date(2017, 5), y: 3900 },
+                                { x: new Date(2017, 6), y: 4000 },
+                                { x: new Date(2017, 7), y: 3500 },
+                                { x: new Date(2017, 8), y: 3300 },
+                                { x: new Date(2017, 9), y: 4200 },
+                                { x: new Date(2017, 10), y: 5160 },
+                                { x: new Date(2017, 11), y: 4900 }
+                            ]
+                    }
+                ]
+            };
+            $("#chartContainer").CanvasJSChart(options);
+            function toogleDataSeries(e){
+                if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                    e.dataSeries.visible = false;
+                } else{
+                    e.dataSeries.visible = true;
+                }
+                e.chart.render();
+            }
+        };
+        let jaime = function ()
+        {
+            var options = {
+                animationEnabled: true,
+                theme: "light2",
+                title:{
+                    text: "Jaime Stats"
+                },
+                axisX:{
+                    valueFormatString: "#.#"
+                },
+                axisY: {
+                    title: "Value",
+                    suffix: "",
+                    minimum: 0
+                },
+                toolTip:{
+                    shared:true
+                },
+                legend:{
+                    cursor:"pointer",
+                    verticalAlign: "bottom",
+                    horizontalAlign: "left",
+                    dockInsidePlotArea: false,
+                    itemclick: toogleDataSeries
+                },
+                data: [
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        name: "Atk 1&2",
+                        markerType: "none",
+                        xValueFormatString: "#.#",
+                        color: "#f0433d",
+                        yValueFormatString: "#.#",
+                        dataPoints:
+                            [
+                                { x: 0.5,   y: 10 },
+                                { x: 1,     y: 7 },
+                                { x: 2,     y: 7 },
+                                { x: 3,     y: 7 },
+                                { x: 4,     y: 7 },
+                                { x: 5,     y: 5 },
+                                { x: 6,     y: 5 },
+                                { x: 7,     y: 5 },
+                                { x: 8,     y: 5 },
+                                { x: 9,     y: 5 },
+                                { x: 10,    y: 5 },
+                                { x: 11,    y: 5 },
+                                { x: 12,    y: 5 },
+                                { x: 12.5,  y: 5 },
+                                { x: 13,    y: 5 },
+                                { x: 14,    y: 5 },
+                                { x: 15,    y: 5 },
+                                { x: 16,    y: 5 },
+                                { x: 17,    y: 5 },
+                                { x: 18,    y: 5 },
+                                { x: 19,    y: 5 },
+                                { x: 19.5,  y: 5 }
+                            ]
+                    },
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        name: "Atk 3",
+                        markerType: "none",
+                        xValueFormatString: "#.#",
+                        color: "#90aa40",
+                        yValueFormatString: "#.#",
+                        dataPoints:
+                            [
+                                { x: 0.5,   y: 15 },
+                                { x: 1,     y: 12 },
+                                { x: 2,     y: 10 },
+                                { x: 3,     y: 10 },
+                                { x: 4,     y: 10 },
+                                { x: 5,     y: 7 },
+                                { x: 6,     y: 7 },
+                                { x: 7,     y: 7 },
+                                { x: 8,     y: 7 },
+                                { x: 9,     y: 7 },
+                                { x: 10,    y: 7 },
+                                { x: 11,    y: 7 },
+                                { x: 12,    y: 7 },
+                                { x: 12.5,  y: 7 },
+                                { x: 13,    y: 7 },
+                                { x: 14,    y: 7 },
+                                { x: 15,    y: 7 },
+                                { x: 16,    y: 7 },
+                                { x: 17,    y: 7 },
+                                { x: 18,    y: 7 },
+                                { x: 19,    y: 7 },
+                                { x: 19.5,  y: 7 }
+                            ]
+                    },
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        name: "Atk 1&2&3 CD",
+                        markerType: "none",
+                        xValueFormatString: "#.#",
+                        color: "#1997bb",
+                        yValueFormatString: "#.#",
+                        dataPoints:
+                            [
+                                { x: 0.5,   y: 2 },
+                                { x: 1,     y: 2 },
+                                { x: 2,     y: 1 },
+                                { x: 3,     y: 1 },
+                                { x: 4,     y: 0.5 },
+                                { x: 5,     y: 0.5 },
+                                { x: 6,     y: 0.5 },
+                                { x: 7,     y: 0.5 },
+                                { x: 8,     y: 0.5 },
+                                { x: 9,     y: 0.5 },
+                                { x: 10,    y: 0.5 },
+                                { x: 11,    y: 0.5 },
+                                { x: 12,    y: 0.5 },
+                                { x: 12.5,  y: 0.5 },
+                                { x: 13,    y: 0.5 },
+                                { x: 14,    y: 0.5 },
+                                { x: 15,    y: 0.5 },
+                                { x: 16,    y: 0.5 },
+                                { x: 17,    y: 0.5 },
+                                { x: 18,    y: 0.5 },
+                                { x: 19,    y: 0.5 },
+                                { x: 19.5,  y: 0.5 }
+                            ]
+                    },
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        name: "Atk 1&2&3 Cost",
+                        xValueFormatString: "#.#",
+                        color: "#f05200",
+                        markerType: "none",
+                        yValueFormatString: "#.#",
+                        dataPoints:
+                            [
+                                { x: 0.5,       y: 5 },
+                                { x: 1,     y: 10 },
+                                { x: 2,     y: 10 },
+                                { x: 3,     y: 10 },
+                                { x: 4,     y: 10 },
+                                { x: 5,     y: 10 },
+                                { x: 6,     y: 10 },
+                                { x: 7,     y: 10 },
+                                { x: 8,     y: 10 },
+                                { x: 9,     y: 10 },
+                                { x: 10,    y: 10 },
+                                { x: 11,    y: 10 },
+                                { x: 12,    y: 10 },
+                                { x: 12.5,  y: 10 },
+                                { x: 13,    y: 10 },
+                                { x: 14,    y: 10 },
+                                { x: 15,    y: 10 },
+                                { x: 16,    y: 10 },
+                                { x: 17,    y: 10 },
+                                { x: 18,    y: 10 },
+                                { x: 19,    y: 10 },
+                                { x: 19.5,  y: 10 }
+                            ]
+                    },
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        name: "Shield CD",
+                        xValueFormatString: "#.#",
+                        color: "#F000280",
+                        markerType: "none",
+                        yValueFormatString: "#.#",
+                        dataPoints:
+                            [
+                                { x: 0.5,     y: 4 },
+                                { x: 1,     y: 4 },
+                                { x: 2,     y: 4 },
+                                { x: 3,     y: 4 },
+                                { x: 4,     y: 4 },
+                                { x: 5,     y: 4 },
+                                { x: 6,     y: 4 },
+                                { x: 7,     y: 2 },
+                                { x: 8,     y: 2 },
+                                { x: 9,     y: 1 },
+                                { x: 10,    y: 1 },
+                                { x: 11,    y: 1 },
+                                { x: 12,    y: 2 },
+                                { x: 12.5,  y: 2 },
+                                { x: 13,    y: 2 },
+                                { x: 14,    y: 2 },
+                                { x: 15,    y: 2 },
+                                { x: 16,    y: 2 },
+                                { x: 17,    y: 2 },
+                                { x: 18,    y: 2 },
+                                { x: 19,    y: 2 },
+                                { x: 19.5,  y: 2 }
+                            ]
+                    },
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        name: "Shield Cost",
+                        xValueFormatString: "#.#",
+                        color: "#f01415",
+                        markerType: "none",
+                        yValueFormatString: "#.#",
+                        dataPoints:
+                            [
+                                { x: 0.5,   y: 10 },
+                                { x: 1,     y: 5 },
+                                { x: 2,     y: 5 },
+                                { x: 3,     y: 5 },
+                                { x: 4,     y: 10 },
+                                { x: 5,     y: 10 },
+                                { x: 6,     y: 10 },
+                                { x: 7,     y: 10 },
+                                { x: 8,     y: 10 },
+                                { x: 9,     y: 20 },
+                                { x: 10,    y: 30 },
+                                { x: 11,    y: 40 },
+                                { x: 12,    y: 10 },
+                                { x: 12.5,  y: 10 },
+                                { x: 13,    y: 10 },
+                                { x: 14,    y: 10 },
+                                { x: 15,    y: 10 },
+                                { x: 16,    y: 10 },
+                                { x: 17,    y: 10 },
+                                { x: 18,    y: 10 },
+                                { x: 19,    y: 10 },
+                                { x: 19.5,  y: 10 }
+                            ]
+                    },
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        name: "Support CD",
+                        xValueFormatString: "#.#",
+                        color: "#b1bb00",
+                        markerType: "none",
+                        yValueFormatString: "#.#",
+                        dataPoints:
+                            [
+                                { x: 0.5,   y: 20 },
+                                { x: 1,     y: 10 },
+                                { x: 2,     y: 10 },
+                                { x: 3,     y: 10 },
+                                { x: 4,     y: 20 },
+                                { x: 5,     y: 20 },
+                                { x: 6,     y: 20 },
+                                { x: 7,     y: 20 },
+                                { x: 8,     y: 20 },
+                                { x: 9,     y: 20 },
+                                { x: 10,    y: 20 },
+                                { x: 11,    y: 20 },
+                                { x: 12,    y: 20 },
+                                { x: 12.5,  y: 20 },
+                                { x: 13,    y: 20 },
+                                { x: 14,    y: 20 },
+                                { x: 15,    y: 20 },
+                                { x: 16,    y: 20 },
+                                { x: 17,    y: 20 },
+                                { x: 18,    y: 20 },
+                                { x: 19,    y: 20 },
+                                { x: 19.5,  y: 20 }
+                            ]
+                    },
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        name: "Support Cost",
+                        xValueFormatString: "#.#",
+                        color: "#bb5ab9",
+                        markerType: "none",
+                        yValueFormatString: "#.#",
+                        dataPoints:
+                            [
+                                { x: 0.5,   y: 30 },
+                                { x: 1,     y: 50 },
+                                { x: 2,     y: 40 },
+                                { x: 3,     y: 30 },
+                                { x: 4,     y: 30 },
+                                { x: 5,     y: 30 },
+                                { x: 6,     y: 30 },
+                                { x: 7,     y: 30 },
+                                { x: 8,     y: 30 },
+                                { x: 9,     y: 30 },
+                                { x: 10,    y: 30 },
+                                { x: 11,    y: 30 },
+                                { x: 12,    y: 30 },
+                                { x: 12.5,  y: 30 },
+                                { x: 13,    y: 30 },
+                                { x: 14,    y: 30 },
+                                { x: 15,    y: 30 },
+                                { x: 16,    y: 30 },
+                                { x: 17,    y: 30 },
+                                { x: 18,    y: 30 },
+                                { x: 19,    y: 30 },
+                                { x: 19.5,  y: 30 }
+                            ]
+                    }
+                ]
+            };
+            $("#jaimechart").CanvasJSChart(options);
+            function toogleDataSeries(e){
+                if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                    e.dataSeries.visible = false;
+                } else{
+                    e.dataSeries.visible = true;
+                }
+                e.chart.render();
+            }
+        };
+        let daenerys = function ()
+        {
+            var options = {
+                animationEnabled: true,
+                theme: "light2",
+                title:{
+                    text: "Daenerys Stats"
+                },
+                axisX:{
+                    valueFormatString: "#.#"
+                },
+                axisY: {
+                    title: "Value",
+                    suffix: "",
+                    minimum: 0
+                },
+                toolTip:{
+                    shared:true
+                },
+                legend:{
+                    cursor:"pointer",
+                    verticalAlign: "bottom",
+                    horizontalAlign: "left",
+                    dockInsidePlotArea: false,
+                    itemclick: toogleDataSeries
+                },
+                data: [
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        markerType: "none",
+                        name: "Fireball dmg",
+                        xValueFormatString: "#.#",
+                        color: "#f0433d",
+                        yValueFormatString: "#.#",
+                        dataPoints:
+                            [
+                                { x: 0.5,   y: 20 },
+                                { x: 1,     y: 20 },
+                                { x: 2,     y: 15 },
+                                { x: 3,     y: 15 },
+                                { x: 4,     y: 10 },
+                                { x: 5,     y: 10 },
+                                { x: 6,     y: 5 },
+                                { x: 7,     y: 5 },
+                                { x: 8,     y: 5 },
+                                { x: 9,     y: 4 },
+                                { x: 10,    y: 4 },
+                                { x: 11,    y: 4 },
+                                { x: 12,    y: 4 },
+                                { x: 12.5,  y: 4 },
+                                { x: 13,    y: 4 },
+                                { x: 14,    y: 4 },
+                                { x: 15,    y: 4 },
+                                { x: 16,    y: 4 },
+                                { x: 17,    y: 4 },
+                                { x: 18,    y: 4 },
+                                { x: 19,    y: 4 },
+                                { x: 19.5,  y: 4 }
+                            ]
+                    },
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        name: "Fireball CD",
+                        markerType: "none",
+                        xValueFormatString: "#.#",
+                        color: "#8e61bb",
+                        yValueFormatString: "#.#",
+                        dataPoints:
+                            [
+                                { x: 0.5,   y: 5 },
+                                { x: 1,     y: 5 },
+                                { x: 2,     y: 5 },
+                                { x: 3,     y: 5 },
+                                { x: 4,     y: 5 },
+                                { x: 5,     y: 1 },
+                                { x: 6,     y: 3 },
+                                { x: 7,     y: 2 },
+                                { x: 8,     y: 1 },
+                                { x: 9,     y: 1 },
+                                { x: 10,    y: 1 },
+                                { x: 11,    y: 1 },
+                                { x: 12,    y: 1 },
+                                { x: 12.5,  y: 1 },
+                                { x: 13,    y: 1 },
+                                { x: 14,    y: 1 },
+                                { x: 15,    y: 1 },
+                                { x: 16,    y: 1 },
+                                { x: 17,    y: 1 },
+                                { x: 18,    y: 1 },
+                                { x: 19,    y: 1 },
+                                { x: 19.5,  y: 1 }
+                            ]
+                    },
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        markerType: "none",
+                        name: "Fireball cost",
+                        xValueFormatString: "#.#",
+                        color: "#90aa40",
+                        yValueFormatString: "#.#",
+                        dataPoints:
+                            [
+                                { x: 0.5,   y: 20 },
+                                { x: 1,     y: 20 },
+                                { x: 2,     y: 20 },
+                                { x: 3,     y: 20 },
+                                { x: 4,     y: 20 },
+                                { x: 5,     y: 10 },
+                                { x: 6,     y: 10 },
+                                { x: 7,     y: 5 },
+                                { x: 8,     y: 5 },
+                                { x: 9,     y: 5 },
+                                { x: 10,    y: 10 },
+                                { x: 11,    y: 10 },
+                                { x: 12,    y: 10 },
+                                { x: 12.5,  y: 10 },
+                                { x: 13,    y: 10 },
+                                { x: 14,    y: 10 },
+                                { x: 15,    y: 10 },
+                                { x: 16,    y: 10 },
+                                { x: 17,    y: 10 },
+                                { x: 18,    y: 10 },
+                                { x: 19,    y: 10 },
+                                { x: 19.5,  y: 10 }
+                            ]
+                    },
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        markerType: "none",
+                        name: "Firewall dmg/min",
+                        xValueFormatString: "#.#",
+                        color: "#1997bb",
+                        yValueFormatString: "#.#",
+                        dataPoints:
+                            [
+                                { x: 0.5,   y: 7 },
+                                { x: 1,     y: 7 },
+                                { x: 2,     y: 7 },
+                                { x: 3,     y: 3},
+                                { x: 4,     y: 4 },
+                                { x: 5,     y: 7 },
+                                { x: 6,     y: 7 },
+                                { x: 7,     y: 7 },
+                                { x: 8,     y: 7 },
+                                { x: 9,     y: 7 },
+                                { x: 10,    y: 7 },
+                                { x: 11,    y: 7 },
+                                { x: 12,    y: 7 },
+                                { x: 12.5,  y: 7 },
+                                { x: 13,    y: 7 },
+                                { x: 14,    y: 7 },
+                                { x: 15,    y: 7 },
+                                { x: 16,    y: 7 },
+                                { x: 17,    y: 7 },
+                                { x: 18,    y: 7 },
+                                { x: 19,    y: 7 },
+                                { x: 19.5,  y: 7 }
+                            ]
+                    },
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        markerType: "none",
+                        name: "Firewall CD",
+                        xValueFormatString: "#.#",
+                        color: "#f00028",
+                        yValueFormatString: "#.#",
+                        dataPoints:
+                            [
+                                { x: 0.5,   y: 15 },
+                                { x: 1,     y: 15 },
+                                { x: 2,     y: 15 },
+                                { x: 3,     y: 15 },
+                                { x: 4,     y: 15 },
+                                { x: 5,     y: 15 },
+                                { x: 6,     y: 15 },
+                                { x: 7,     y: 15 },
+                                { x: 8,     y: 15 },
+                                { x: 9,     y: 15 },
+                                { x: 10,    y: 15 },
+                                { x: 11,    y: 15 },
+                                { x: 12,    y: 15 },
+                                { x: 12.5,  y: 15 },
+                                { x: 13,    y: 15 },
+                                { x: 14,    y: 15 },
+                                { x: 15,    y: 15 },
+                                { x: 16,    y: 15 },
+                                { x: 17,    y: 15 },
+                                { x: 18,    y: 15 },
+                                { x: 19,    y: 15 },
+                                { x: 19.5,  y: 15 }
+                            ]
+                    },
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        markerType: "none",
+                        name: "Firewall cost",
+                        xValueFormatString: "#.#",
+                        color: "#F000280",
+                        yValueFormatString: "#.#",
+                        dataPoints:
+                            [
+                                { x: 0.5,   y: 5 },
+                                { x: 1,     y: 5 },
+                                { x: 2,     y: 10 },
+                                { x: 3,     y: 10 },
+                                { x: 4,     y: 10 },
+                                { x: 5,     y: 5 },
+                                { x: 6,     y: 5 },
+                                { x: 7,     y: 5 },
+                                { x: 8,     y: 5 },
+                                { x: 9,     y: 5 },
+                                { x: 10,    y: 5 },
+                                { x: 11,    y: 5 },
+                                { x: 12,    y: 5 },
+                                { x: 12.5,  y: 5 },
+                                { x: 13,    y: 5 },
+                                { x: 14,    y: 5 },
+                                { x: 15,    y: 5 },
+                                { x: 16,    y: 5 },
+                                { x: 17,    y: 5 },
+                                { x: 18,    y: 5 },
+                                { x: 19,    y: 5 },
+                                { x: 19.5,  y: 5 }
+                            ]
+                    },
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        markerType: "none",
+                        name: "Firebreath dmg",
+                        xValueFormatString: "#.#",
+                        color: "#f05200",
+                        yValueFormatString: "#.#",
+                        dataPoints:
+                            [
+                                { x: 0.5,   y: 20 },
+                                { x: 1,     y: 40 },
+                                { x: 2,     y: 40 },
+                                { x: 3,     y: 40 },
+                                { x: 4,     y: 30 },
+                                { x: 5,     y: 30 },
+                                { x: 6,     y: 10 },
+                                { x: 7,     y: 10 },
+                                { x: 8,     y: 10 },
+                                { x: 9,     y: 10 },
+                                { x: 10,    y: 10 },
+                                { x: 11,    y: 10 },
+                                { x: 12,    y: 10 },
+                                { x: 12.5,  y: 10 },
+                                { x: 13,    y: 10 },
+                                { x: 14,    y: 10 },
+                                { x: 15,    y: 10 },
+                                { x: 16,    y: 10 },
+                                { x: 17,    y: 10 },
+                                { x: 18,    y: 10 },
+                                { x: 19,    y: 10 },
+                                { x: 19.5,  y: 10 }
+                            ]
+                    },
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        markerType: "none",
+                        name: "Firebreath CD",
+                        xValueFormatString: "#.#",
+                        color: "#b1bb00",
+                        yValueFormatString: "#.#",
+                        dataPoints:
+                            [
+                                { x: 0.5,   y: 15 },
+                                { x: 1,     y: 30 },
+                                { x: 2,     y: 40 },
+                                { x: 3,     y: 30 },
+                                { x: 4,     y: 15 },
+                                { x: 5,     y: 20 },
+                                { x: 6,     y: 20 },
+                                { x: 7,     y: 20 },
+                                { x: 8,     y: 20 },
+                                { x: 9,     y: 15 },
+                                { x: 10,    y: 15 },
+                                { x: 11,    y: 20 },
+                                { x: 12,    y: 20 },
+                                { x: 12.5,  y: 20 },
+                                { x: 13,    y: 20 },
+                                { x: 14,    y: 20 },
+                                { x: 15,    y: 20 },
+                                { x: 16,    y: 20 },
+                                { x: 17,    y: 20 },
+                                { x: 18,    y: 20 },
+                                { x: 19,    y: 20 },
+                                { x: 19.5,  y: 20 }
+                            ]
+                    },
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        markerType: "none",
+                        name: "Firebreath Cost",
+                        xValueFormatString: "#.#",
+                        color: "#bb5ab9",
+                        yValueFormatString: "#.#",
+                        dataPoints:
+                            [
+                                { x: 0.5,   y: 30 },
+                                { x: 1,     y: 30 },
+                                { x: 2,     y: 30 },
+                                { x: 3,     y: 50 },
+                                { x: 4,     y: 30 },
+                                { x: 5,     y: 30 },
+                                { x: 6,     y: 30 },
+                                { x: 7,     y: 30 },
+                                { x: 8,     y: 30 },
+                                { x: 9,     y: 20 },
+                                { x: 10,    y: 30 },
+                                { x: 11,    y: 30 },
+                                { x: 12,    y: 30 },
+                                { x: 12.5,  y: 30 },
+                                { x: 13,    y: 30 },
+                                { x: 14,    y: 30 },
+                                { x: 15,    y: 30 },
+                                { x: 16,    y: 30 },
+                                { x: 17,    y: 30 },
+                                { x: 18,    y: 30 },
+                                { x: 19,    y: 30 },
+                                { x: 19.5,  y: 30 }
+                            ]
+                    }
+                ]
+            };
+            $("#daeneryschart").CanvasJSChart(options);
+            function toogleDataSeries(e){
+                if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                    e.dataSeries.visible = false;
+                } else{
+                    e.dataSeries.visible = true;
+                }
+                e.chart.render();
+            }
+        };
+        let theon = function ()
+        {
+            var options = {
+                animationEnabled: true,
+                theme: "light2",
+                title:{
+                    text: "Theon Stats"
+                },
+                axisX:{
+                    valueFormatString: "#.#"
+                },
+                axisY: {
+                    title: "Value",
+                    suffix: "",
+                    minimum: 0
+                },
+                toolTip:{
+                    shared:true
+                },
+                legend:{
+                    cursor:"pointer",
+                    verticalAlign: "bottom",
+                    horizontalAlign: "left",
+                    dockInsidePlotArea: false,
+                    itemclick: toogleDataSeries
+                },
+                data: [
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        name: "Arrow dmg",
+                        markerType: "none",
+                        xValueFormatString: "#.#",
+                        color: "#f0433d",
+                        yValueFormatString: "#.#",
+                        dataPoints:
+                            [
+                                { x: 0.5,   y: 10},
+                                { x: 1,     y: 10 },
+                                { x: 2,     y: 10},
+                                { x: 3,     y: 10},
+                                { x: 4,     y: 7 },
+                                { x: 5,     y: 7 },
+                                { x: 6,     y: 7},
+                                { x: 7,     y: 5 },
+                                { x: 8,     y: 5 },
+                                { x: 9,     y: 5 },
+                                { x: 10,    y: 4 },
+                                { x: 11,    y: 4 },
+                                { x: 12,    y: 4 },
+                                { x: 12.5,  y: 4 },
+                                { x: 13,    y: 4 },
+                                { x: 14,    y: 4 },
+                                { x: 15,    y: 4 },
+                                { x: 16,    y: 4 },
+                                { x: 17,    y: 4 },
+                                { x: 18,    y: 4 },
+                                { x: 19,    y: 4 },
+                                { x: 19.5,  y: 4 }
+                            ]
+                    },
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        name: "Arrow CD",
+                        markerType: "none",
+                        xValueFormatString: "#.#",
+                        color: "#8e61bb",
+                        yValueFormatString: "#.#",
+                        dataPoints:
+                            [
+                                { x: 0.5,   y: 4 },
+                                { x: 1,     y: 5 },
+                                { x: 2,     y: 5 },
+                                { x: 3,     y: 5 },
+                                { x: 4,     y: 4 },
+                                { x: 5,     y: 4 },
+                                { x: 6,     y: 4 },
+                                { x: 7,     y: 3 },
+                                { x: 8,     y: 3 },
+                                { x: 9,     y: 3 },
+                                { x: 10,    y: 2 },
+                                { x: 11,    y: 2 },
+                                { x: 12,    y: 3 },
+                                { x: 12.5,  y: 3 },
+                                { x: 13,    y: 3 },
+                                { x: 14,    y: 3 },
+                                { x: 15,    y: 3 },
+                                { x: 16,    y: 3 },
+                                { x: 17,    y: 3 },
+                                { x: 18,    y: 3 },
+                                { x: 19,    y: 3 },
+                                { x: 19.5,  y: 3 }
+                            ]
+                    },
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        name: "Arrow Cost",
+                        markerType: "none",
+                        xValueFormatString: "#.#",
+                        color: "#f05200",
+                        yValueFormatString: "#.#",
+                        dataPoints:
+                            [
+                                { x: 0.5,   y: 10 },
+                                { x: 1,     y: 10 },
+                                { x: 2,     y: 20 },
+                                { x: 3,     y: 20 },
+                                { x: 4,     y: 10 },
+                                { x: 5,     y: 7 },
+                                { x: 6,     y: 10 },
+                                { x: 7,     y: 10 },
+                                { x: 8,     y: 10 },
+                                { x: 9,     y: 10 },
+                                { x: 10,    y: 10 },
+                                { x: 11,    y: 10 },
+                                { x: 12,    y: 10 },
+                                { x: 12.5,  y: 10 },
+                                { x: 13,    y: 10 },
+                                { x: 14,    y: 10 },
+                                { x: 15,    y: 10 },
+                                { x: 16,    y: 10 },
+                                { x: 17,    y: 10 },
+                                { x: 18,    y: 10 },
+                                { x: 19,    y: 10 },
+                                { x: 19.5,  y: 10 }
+                            ]
+                    },
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        name: "Push CD",
+                        markerType: "none",
+                        xValueFormatString: "#.#",
+                        color: "#f01415",
+                        yValueFormatString: "#.#",
+                        dataPoints:
+                            [
+                                { x: 0.5,   y: 4 },
+                                { x: 1,     y: 4 },
+                                { x: 2,     y: 4 },
+                                { x: 3,     y: 4 },
+                                { x: 4,     y: 4 },
+                                { x: 5,     y: 4 },
+                                { x: 6,     y: 3 },
+                                { x: 7,     y: 3 },
+                                { x: 8,     y: 3 },
+                                { x: 9,     y: 2 },
+                                { x: 10,    y: 2 },
+                                { x: 11,    y: 2 },
+                                { x: 12,    y: 2 },
+                                { x: 12.5,  y: 2 },
+                                { x: 13,    y: 2 },
+                                { x: 14,    y: 2 },
+                                { x: 15,    y: 2 },
+                                { x: 16,    y: 2 },
+                                { x: 17,    y: 2 },
+                                { x: 18,    y: 2 },
+                                { x: 19,    y: 2 },
+                                { x: 19.5,  y: 2 }
+                            ]
+                    },
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        name: "Push cost",
+                        markerType: "none",
+                        xValueFormatString: "#.#",
+                        color: "#b1bb00",
+                        yValueFormatString: "#.#",
+                        dataPoints:
+                            [
+                                { x: 0.5,   y: 10 },
+                                { x: 1,     y: 10 },
+                                { x: 2,     y: 10 },
+                                { x: 3,     y: 10 },
+                                { x: 4,     y: 10 },
+                                { x: 5,     y: 10 },
+                                { x: 6,     y: 10 },
+                                { x: 7,     y: 10 },
+                                { x: 8,     y: 10 },
+                                { x: 9,     y: 10 },
+                                { x: 10,    y: 10 },
+                                { x: 11,    y: 10 },
+                                { x: 12,    y: 10 },
+                                { x: 12.5,  y: 10 },
+                                { x: 13,    y: 10 },
+                                { x: 14,    y: 10 },
+                                { x: 15,    y: 10 },
+                                { x: 16,    y: 10 },
+                                { x: 17,    y: 10 },
+                                { x: 18,    y: 10 },
+                                { x: 19,    y: 10 },
+                                { x: 19.5,  y: 10 }
+                            ]
+                    },
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        name: "Triple shot dmg",
+                        markerType: "none",
+                        xValueFormatString: "#.#",
+                        color: "#bb5ab9",
+                        yValueFormatString: "#.#",
+                        dataPoints:
+                            [
+                                { x: 0.5,   y: 30 },
+                                { x: 1,     y: 30 },
+                                { x: 2,     y: 30 },
+                                { x: 3,     y: 30 },
+                                { x: 4,     y: 21 },
+                                { x: 5,     y: 21 },
+                                { x: 6,     y: 21 },
+                                { x: 7,     y: 15 },
+                                { x: 8,     y: 15 },
+                                { x: 9,     y: 15 },
+                                { x: 10,    y: 12 },
+                                { x: 11,    y: 12 },
+                                { x: 12,    y: 12 },
+                                { x: 12.5,  y: 12 },
+                                { x: 13,    y: 12 },
+                                { x: 14,    y: 12 },
+                                { x: 15,    y: 12 },
+                                { x: 16,    y: 12 },
+                                { x: 17,    y: 12 },
+                                { x: 18,    y: 12 },
+                                { x: 19,    y: 12 },
+                                { x: 19.5,  y: 12 }
+                            ]
+                    },
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        name: "Triple shot CD",
+                        markerType: "none",
+                        xValueFormatString: "#.#",
+                        color: "#f00028",
+                        yValueFormatString: "#.#",
+                        dataPoints:
+                            [
+                                { x: 0.5,   y: 20 },
+                                { x: 1,     y: 20 },
+                                { x: 2,     y: 20 },
+                                { x: 3,     y: 20 },
+                                { x: 4,     y: 20 },
+                                { x: 5,     y: 20 },
+                                { x: 6,     y: 20 },
+                                { x: 7,     y: 20 },
+                                { x: 8,     y: 20 },
+                                { x: 9,     y: 20 },
+                                { x: 10,    y: 20 },
+                                { x: 11,    y: 20 },
+                                { x: 12,    y: 20 },
+                                { x: 12.5,  y: 20 },
+                                { x: 13,    y: 20 },
+                                { x: 14,    y: 20 },
+                                { x: 15,    y: 20 },
+                                { x: 16,    y: 20 },
+                                { x: 17,    y: 20 },
+                                { x: 18,    y: 20 },
+                                { x: 19,    y: 20 },
+                                { x: 19.5,  y: 20 }
+                            ]
+                    },
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        name: "Triple shot cost",
+                        markerType: "none",
+                        xValueFormatString: "#.#",
+                        color: "#63f0b4",
+                        yValueFormatString: "#.#",
+                        dataPoints:
+                            [
+                                { x: 0.5,   y: 30 },
+                                { x: 1,     y: 30 },
+                                { x: 2,     y: 30 },
+                                { x: 3,     y: 30 },
+                                { x: 4,     y: 30 },
+                                { x: 5,     y: 30 },
+                                { x: 6,     y: 30 },
+                                { x: 7,     y: 30 },
+                                { x: 8,     y: 30 },
+                                { x: 9,     y: 30 },
+                                { x: 10,    y: 30 },
+                                { x: 11,    y: 30 },
+                                { x: 12,    y: 30 },
+                                { x: 12.5,  y: 30 },
+                                { x: 13,    y: 30 },
+                                { x: 14,    y: 30 },
+                                { x: 15,    y: 30 },
+                                { x: 16,    y: 30 },
+                                { x: 17,    y: 30 },
+                                { x: 18,    y: 30 },
+                                { x: 19,    y: 30 },
+                                { x: 19.5,  y: 30 }
+                            ]
+                    }
+
+                ]
+            };
+            $("#theonchart").CanvasJSChart(options);
+            function toogleDataSeries(e){
+                if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                    e.dataSeries.visible = false;
+                } else{
+                    e.dataSeries.visible = true;
+                }
+                e.chart.render();
+            }
+        };
+        let swordman = function ()
+        {
+            var options = {
+                animationEnabled: true,
+                theme: "light2",
+                title:{
+                    text: "Swordman Stats"
+                },
+                axisX:{
+                    valueFormatString: "#.#"
+                },
+                axisY: {
+                    title: "Value",
+                    suffix: "",
+                    minimum: 0
+                },
+                toolTip:{
+                    shared:true
+                },
+                legend:{
+                    cursor:"pointer",
+                    verticalAlign: "bottom",
+                    horizontalAlign: "left",
+                    dockInsidePlotArea: false,
+                    itemclick: toogleDataSeries
+                },
+                data: [
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        name: "Golden HP/10",
+                        xValueFormatString: "#.#",
+                        color: "#f0433d",
+                        yValueFormatString: "#.#",
+                        markerType: "none",
+                        dataPoints:
+                            [
+                                { x: 0.5,   y: 8},
+                                { x: 1,     y: 8},
+                                { x: 2,     y: 8},
+                                { x: 3,     y: 8},
+                                { x: 4,     y: 8},
+                                { x: 5,     y: 8},
+                                { x: 6,     y: 8},
+                                { x: 7,     y: 8},
+                                { x: 8,     y: 8},
+                                { x: 9,     y: 8},
+                                { x: 10,    y: 8},
+                                { x: 11,    y: 8},
+                                { x: 12,    y: 8},
+                                { x: 12.5,  y: 8},
+                                { x: 13,    y: 6.4},
+                                { x: 14,    y: 6.64},
+                                { x: 15,    y: 6.8},
+                                { x: 16,    y: 7.12},
+                                { x: 17,    y: 7.44},
+                                { x: 18,    y: 7.6},
+                                { x: 19,    y: 5.6},
+                                { x: 19.5,  y: 6 }
+                            ]
+                    },
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        name: "Golden Dmg",
+                        xValueFormatString: "#.#",
+                        color: "#1997bb",
+                        yValueFormatString: "#.#",
+                        markerType: "none",
+                        dataPoints:
+                            [
+                                { x: 0.5,   y: 10},
+                                { x: 1,     y: 10},
+                                { x: 2,     y: 10},
+                                { x: 3,     y: 7},
+                                { x: 4,     y: 7 },
+                                { x: 5,     y: 7 },
+                                { x: 6,     y: 5},
+                                { x: 7,     y: 5 },
+                                { x: 8,     y: 5 },
+                                { x: 9,     y: 5 },
+                                { x: 10,    y: 5 },
+                                { x: 11,    y: 5 },
+                                { x: 12,    y: 5 },
+                                { x: 12.5,  y: 5 },
+                                { x: 13,    y: 4 },
+                                { x: 14,    y: 4.15 },
+                                { x: 15,    y: 4.25 },
+                                { x: 16,    y: 4.45 },
+                                { x: 17,    y: 4.65 },
+                                { x: 18,    y: 4.75 },
+                                { x: 19,    y: 3.5 },
+                                { x: 19.5,  y: 4 }
+                            ]
+                    },
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        name: "Golden Atk Speed",
+                        xValueFormatString: "#.#",
+                        color: "#f01415",
+                        yValueFormatString: "#.#",
+                        markerType: "none",
+                        dataPoints:
+                            [
+                                { x: 0.5,   y: 1 },
+                                { x: 1,     y: 3 },
+                                { x: 2,     y: 3 },
+                                { x: 3,     y: 3 },
+                                { x: 4,     y: 3 },
+                                { x: 5,     y: 1 },
+                                { x: 6,     y: 1 },
+                                { x: 7,     y: 1 },
+                                { x: 8,     y: 1 },
+                                { x: 9,     y: 3 },
+                                { x: 10,    y: 3 },
+                                { x: 11,    y: 3 },
+                                { x: 12,    y: 3 },
+                                { x: 12.5,  y: 3 },
+                                { x: 13,    y: 2.4 },
+                                { x: 14,    y: 2.5 },
+                                { x: 15,    y: 2.55 },
+                                { x: 16,    y: 2.67 },
+                                { x: 17,    y: 2.79 },
+                                { x: 18,    y: 2.85 },
+                                { x: 19,    y: 2.1 },
+                                { x: 19.5,  y: 2 }
+                            ]
+                    },
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        name: "Black HP/10",
+                        xValueFormatString: "#.#",
+                        color: "#b1bb00",
+                        yValueFormatString: "#.#",
+                        markerType: "none",
+                        dataPoints:
+                            [
+                                { x: 0.5,   y: 8},
+                                { x: 1,     y: 8},
+                                { x: 2,     y: 9},
+                                { x: 3,     y: 9},
+                                { x: 4,     y: 9},
+                                { x: 5,     y: 10},
+                                { x: 6,     y: 10},
+                                { x: 7,     y: 11},
+                                { x: 8,     y: 11},
+                                { x: 9,     y: 13},
+                                { x: 10,    y: 13},
+                                { x: 11,    y: 13},
+                                { x: 12,    y: 13},
+                                { x: 12.5,  y: 13},
+                                { x: 13,    y: 10.4},
+                                { x: 14,    y: 10.7},
+                                { x: 15,    y: 11},
+                                { x: 16,    y: 11.5},
+                                { x: 17,    y: 12},
+                                { x: 18,    y: 12.3},
+                                { x: 19,    y: 9.1},
+                                { x: 19.5,  y: 9.7}
+                            ]
+                    },
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        name: "Black dmg",
+                        xValueFormatString: "#.#",
+                        color: "#8e61bb",
+                        yValueFormatString: "#.#",
+                        markerType: "none",
+                        dataPoints:
+                            [
+                                { x: 0.5,   y: 15 },
+                                { x: 1,     y: 15 },
+                                { x: 2,     y: 15 },
+                                { x: 3,     y: 10 },
+                                { x: 4,     y: 10 },
+                                { x: 5,     y: 10 },
+                                { x: 6,     y: 10 },
+                                { x: 7,     y: 10 },
+                                { x: 8,     y: 10 },
+                                { x: 9,     y: 10 },
+                                { x: 10,    y: 10 },
+                                { x: 11,    y: 16 },
+                                { x: 12,    y: 16 },
+                                { x: 12.5,  y: 16 },
+                                { x: 13,    y: 12.8 },
+                                { x: 14,    y: 13.2 },
+                                { x: 15,    y: 13.6 },
+                                { x: 16,    y: 14.24 },
+                                { x: 17,    y: 14.89 },
+                                { x: 18,    y: 15.2 },
+                                { x: 19,    y: 11.2 },
+                                { x: 19.5,  y: 12 }
+                            ]
+                    },
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        name: "Black atk speed",
+                        xValueFormatString: "#.#",
+                        color: "#90aa40",
+                        yValueFormatString: "#.#",
+                        markerType: "none",
+                        dataPoints:
+                            [
+                                { x: 0.5,   y: 1 },
+                                { x: 1,     y: 3 },
+                                { x: 2,     y: 3 },
+                                { x: 3,     y: 3 },
+                                { x: 4,     y: 3 },
+                                { x: 5,     y: 1 },
+                                { x: 6,     y: 1 },
+                                { x: 7,     y: 1 },
+                                { x: 8,     y: 1 },
+                                { x: 9,     y: 3 },
+                                { x: 10,    y: 3 },
+                                { x: 11,    y: 3 },
+                                { x: 12,    y: 3 },
+                                { x: 12.5,  y: 3 },
+                                { x: 13,    y: 2.4 },
+                                { x: 14,    y: 2.49 },
+                                { x: 15,    y: 2.55 },
+                                { x: 16,    y: 2.67 },
+                                { x: 17,    y: 2.79 },
+                                { x: 18,    y: 2.85 },
+                                { x: 19,    y: 2.1 },
+                                { x: 19.5,  y: 2 }
+                            ]
+                    }
+                ]
+            };
+            $("#swordmanchart").CanvasJSChart(options);
+            function toogleDataSeries(e){
+                if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                    e.dataSeries.visible = false;
+                } else{
+                    e.dataSeries.visible = true;
+                }
+                e.chart.render();
+            }
+        };
+        let spearman = function ()
+        {
+            var options = {
+                animationEnabled: true,
+                theme: "light2",
+                title:{
+                    text: "Spearman Stats"
+                },
+                axisX:{
+                    valueFormatString: "#.#"
+                },
+                axisY: {
+                    title: "Value",
+                    suffix: "",
+                    minimum: 0
+                },
+                toolTip:{
+                    shared:true
+                },
+                legend:{
+                    cursor:"pointer",
+                    verticalAlign: "bottom",
+                    horizontalAlign: "left",
+                    dockInsidePlotArea: false,
+                    itemclick: toogleDataSeries
+                },
+                data: [
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        name: "Golden HP/10",
+                        xValueFormatString: "#.#",
+                        color: "#f0433d",
+                        yValueFormatString: "#.#",
+                        markerType: "none",
+                        dataPoints:
+                            [
+                                { x: 0.5,   y: 4},
+                                { x: 1,     y: 4},
+                                { x: 2,     y: 8},
+                                { x: 3,     y: 8},
+                                { x: 4,     y: 8},
+                                { x: 5,     y: 9},
+                                { x: 6,     y: 9},
+                                { x: 7,     y: 9},
+                                { x: 8,     y: 10},
+                                { x: 9,     y: 10},
+                                { x: 10,    y: 9},
+                                { x: 11,    y: 9},
+                                { x: 12,    y: 9},
+                                { x: 12.5,  y: 9},
+                                { x: 13,    y: 7.2},
+                                { x: 14,    y: 7.4},
+                                { x: 15,    y: 7.6},
+                                { x: 16,    y: 8},
+                                { x: 17,    y: 8.3},
+                                { x: 18,    y: 8.5},
+                                { x: 19,    y: 6.3},
+                                { x: 19.5,  y: 6.7 }
+                            ]
+                    },
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        name: "Golden Dmg",
+                        xValueFormatString: "#.#",
+                        color: "#1997bb",
+                        yValueFormatString: "#.#",
+                        markerType: "none",
+                        dataPoints:
+                            [
+                                { x: 0.5,   y: 10},
+                                { x: 1,     y: 10},
+                                { x: 2,     y: 3},
+                                { x: 3,     y: 3},
+                                { x: 4,     y: 3},
+                                { x: 5,     y: 3},
+                                { x: 6,     y: 3},
+                                { x: 7,     y: 3},
+                                { x: 8,     y: 3},
+                                { x: 9,     y: 6},
+                                { x: 10,    y: 6 },
+                                { x: 11,    y: 8 },
+                                { x: 12,    y: 8 },
+                                { x: 12.5,  y: 8 },
+                                { x: 13,    y: 6.4 },
+                                { x: 14,    y: 6.6 },
+                                { x: 15,    y: 6.8 },
+                                { x: 16,    y: 7.1 },
+                                { x: 17,    y: 7.4 },
+                                { x: 18,    y: 7.6 },
+                                { x: 19,    y: 5.6 },
+                                { x: 19.5,  y: 6 }
+                            ]
+                    },
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        name: "Golden Atk Speed",
+                        xValueFormatString: "#.#",
+                        color: "#b1bb00",
+                        yValueFormatString: "#.#",
+                        markerType: "none",
+                        dataPoints:
+                            [
+                                { x: 0.5,   y: 1 },
+                                { x: 1,     y: 3 },
+                                { x: 2,     y: 3 },
+                                { x: 3,     y: 3 },
+                                { x: 4,     y: 3 },
+                                { x: 5,     y: 1 },
+                                { x: 6,     y: 1 },
+                                { x: 7,     y: 1 },
+                                { x: 8,     y: 1 },
+                                { x: 9,     y: 3 },
+                                { x: 10,    y: 3 },
+                                { x: 11,    y: 3 },
+                                { x: 12,    y: 3 },
+                                { x: 12.5,  y: 3 },
+                                { x: 13,    y: 2.4 },
+                                { x: 14,    y: 2.5 },
+                                { x: 15,    y: 2.55 },
+                                { x: 16,    y: 2.67 },
+                                { x: 17,    y: 2.79 },
+                                { x: 18,    y: 2.85 },
+                                { x: 19,    y: 2.1 },
+                                { x: 19.5,  y: 2 }
+                            ]
+                    },
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        name: "Black HP/10",
+                        xValueFormatString: "#.#",
+                        color: "#8e61bb",
+                        yValueFormatString: "#.#",
+                        markerType: "none",
+                        dataPoints:
+                            [
+                                { x: 0.5,   y: 7},
+                                { x: 1,     y: 7},
+                                { x: 2,     y: 7},
+                                { x: 3,     y: 11},
+                                { x: 4,     y: 11},
+                                { x: 5,     y: 11},
+                                { x: 6,     y: 13},
+                                { x: 7,     y: 13},
+                                { x: 8,     y: 13},
+                                { x: 9,     y: 13},
+                                { x: 10,    y: 11},
+                                { x: 11,    y: 11},
+                                { x: 12,    y: 11},
+                                { x: 12.5,  y: 11},
+                                { x: 13,    y: 8.8},
+                                { x: 14,    y: 9.1},
+                                { x: 15,    y: 9.3},
+                                { x: 16,    y: 9.7},
+                                { x: 17,    y: 10.2},
+                                { x: 18,    y: 10.4},
+                                { x: 19,    y: 7.7},
+                                { x: 19.5,  y: 8.3}
+                            ]
+                    },
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        name: "Black dmg",
+                        xValueFormatString: "#.#",
+                        color: "#90aa40",
+                        yValueFormatString: "#.#",
+                        markerType: "none",
+                        dataPoints:
+                            [
+                                { x: 0.5,   y: 15 },
+                                { x: 1,     y: 15 },
+                                { x: 2,     y: 15 },
+                                { x: 3,     y: 5 },
+                                { x: 4,     y: 7 },
+                                { x: 5,     y: 5 },
+                                { x: 6,     y: 5 },
+                                { x: 7,     y: 10 },
+                                { x: 8,     y: 10 },
+                                { x: 9,     y: 15 },
+                                { x: 10,    y: 15 },
+                                { x: 11,    y: 13 },
+                                { x: 12,    y: 12 },
+                                { x: 12.5,  y: 12 },
+                                { x: 13,    y: 9.6 },
+                                { x: 14,    y: 9.9 },
+                                { x: 15,    y: 10.2 },
+                                { x: 16,    y: 10.6 },
+                                { x: 17,    y: 11 },
+                                { x: 18,    y: 11.4},
+                                { x: 19,    y: 8.4 },
+                                { x: 19.5,  y: 9 }
+                            ]
+                    },
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        name: "Black atk speed",
+                        xValueFormatString: "#.#",
+                        color: "#bb5ab9",
+                        yValueFormatString: "#.#",
+                        markerType: "none",
+                        dataPoints:
+                            [
+                                { x: 0.5,   y: 1 },
+                                { x: 1,     y: 3 },
+                                { x: 2,     y: 3 },
+                                { x: 3,     y: 3 },
+                                { x: 4,     y: 3 },
+                                { x: 5,     y: 1 },
+                                { x: 6,     y: 1 },
+                                { x: 7,     y: 1 },
+                                { x: 8,     y: 1 },
+                                { x: 9,     y: 3 },
+                                { x: 10,    y: 3 },
+                                { x: 11,    y: 3 },
+                                { x: 12,    y: 3 },
+                                { x: 12.5,  y: 3 },
+                                { x: 13,    y: 2.4 },
+                                { x: 14,    y: 2.49 },
+                                { x: 15,    y: 2.55 },
+                                { x: 16,    y: 2.67 },
+                                { x: 17,    y: 2.79 },
+                                { x: 18,    y: 2.85 },
+                                { x: 19,    y: 2.1 },
+                                { x: 19.5,  y: 2 }
+                            ]
+                    }
+                ]
+            };
+            $("#spearmanchart").CanvasJSChart(options);
+            function toogleDataSeries(e){
+                if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                    e.dataSeries.visible = false;
+                } else{
+                    e.dataSeries.visible = true;
+                }
+                e.chart.render();
+            }
+        };
+        let shieldman = function ()
+        {
+            var options = {
+                animationEnabled: true,
+                theme: "light2",
+                title:{
+                    text: "Shieldman Stats"
+                },
+                axisX:{
+                    valueFormatString: "#.#"
+                },
+                axisY: {
+                    title: "Value",
+                    suffix: "",
+                    minimum: 0
+                },
+                toolTip:{
+                    shared:true
+                },
+                legend:{
+                    cursor:"pointer",
+                    verticalAlign: "bottom",
+                    horizontalAlign: "left",
+                    dockInsidePlotArea: false,
+                    itemclick: toogleDataSeries
+                },
+                data: [
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        name: "Golden HP/10",
+                        xValueFormatString: "#.#",
+                        color: "#f0433d",
+                        yValueFormatString: "#.#",
+                        markerType: "none",
+                        dataPoints:
+                            [
+                                { x: 0.5,   y: 7},
+                                { x: 1,     y: 6},
+                                { x: 2,     y: 6},
+                                { x: 3,     y: 6},
+                                { x: 4,     y: 8},
+                                { x: 5,     y: 8},
+                                { x: 6,     y: 9},
+                                { x: 7,     y: 9},
+                                { x: 8,     y: 10},
+                                { x: 9,     y: 10},
+                                { x: 10,    y: 9},
+                                { x: 11,    y: 9},
+                                { x: 12,    y: 8},
+                                { x: 12.5,  y: 8},
+                                { x: 13,    y: 6.4},
+                                { x: 14,    y: 6.64},
+                                { x: 15,    y: 6.8},
+                                { x: 16,    y: 7.12},
+                                { x: 17,    y: 7.44},
+                                { x: 18,    y: 7.6},
+                                { x: 19,    y: 5.6},
+                                { x: 19.5,  y: 6 }
+                            ]
+                    },
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        name: "Golden dmg",
+                        xValueFormatString: "#.#",
+                        color: "#1997bb",
+                        yValueFormatString: "#.#",
+                        markerType: "none",
+                        dataPoints:
+                            [
+                                { x: 0.5,   y: 3 },
+                                { x: 1,     y: 5 },
+                                { x: 2,     y: 3 },
+                                { x: 3,     y: 3 },
+                                { x: 4,     y: 3 },
+                                { x: 5,     y: 3 },
+                                { x: 6,     y: 3 },
+                                { x: 7,     y: 3  },
+                                { x: 8,     y: 3  },
+                                { x: 9,     y: 6 },
+                                { x: 10,    y: 6 },
+                                { x: 11,    y: 8 },
+                                { x: 12,    y: 8 },
+                                { x: 12.5,  y: 12 },
+                                { x: 13,    y: 9.6 },
+                                { x: 14,    y: 9.9 },
+                                { x: 15,    y: 10.2 },
+                                { x: 16,    y: 10.6 },
+                                { x: 17,    y: 11 },
+                                { x: 18,    y: 11.4},
+                                { x: 19,    y: 8.4 },
+                                { x: 19.5,  y: 9 }
+                            ]
+                    },
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        name: "Golden Atk Speed",
+                        xValueFormatString: "#.#",
+                        color: "#f01415",
+                        yValueFormatString: "#.#",
+                        markerType: "none",
+                        dataPoints:
+                            [
+                                { x: 0.5,   y: 1 },
+                                { x: 1,     y: 3 },
+                                { x: 2,     y: 3 },
+                                { x: 3,     y: 3 },
+                                { x: 4,     y: 3 },
+                                { x: 5,     y: 1 },
+                                { x: 6,     y: 1 },
+                                { x: 7,     y: 1 },
+                                { x: 8,     y: 1 },
+                                { x: 9,     y: 3 },
+                                { x: 10,    y: 3 },
+                                { x: 11,    y: 3 },
+                                { x: 12,    y: 3 },
+                                { x: 12.5,  y: 3 },
+                                { x: 13,    y: 2.4 },
+                                { x: 14,    y: 2.5 },
+                                { x: 15,    y: 2.55 },
+                                { x: 16,    y: 2.67 },
+                                { x: 17,    y: 2.79 },
+                                { x: 18,    y: 2.85 },
+                                { x: 19,    y: 2.1 },
+                                { x: 19.5,  y: 2 }
+                            ]
+                    },
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        name: "Black HP/10",
+                        xValueFormatString: "#.#",
+                        color: "#b1bb00",
+                        yValueFormatString: "#.#",
+                        markerType: "none",
+                        dataPoints:
+                            [
+                                { x: 0.5,   y: 7},
+                                { x: 1,     y: 6},
+                                { x: 2,     y: 6},
+                                { x: 3,     y: 6},
+                                { x: 4,     y: 8},
+                                { x: 5,     y: 8},
+                                { x: 6,     y: 9},
+                                { x: 7,     y: 10},
+                                { x: 8,     y: 11},
+                                { x: 9,     y: 11},
+                                { x: 10,    y: 12},
+                                { x: 11,    y: 12},
+                                { x: 12,    y: 12},
+                                { x: 12.5,  y: 12},
+                                { x: 13,    y: 9.6},
+                                { x: 14,    y: 9.9},
+                                { x: 15,    y: 10.2},
+                                { x: 16,    y: 10.6},
+                                { x: 17,    y: 11.6},
+                                { x: 18,    y: 11.4},
+                                { x: 19,    y: 8.4},
+                                { x: 19.5,  y: 9}
+                            ]
+                    },
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        name: "Black dmg",
+                        xValueFormatString: "#.#",
+                        color: "#8e61bb",
+                        yValueFormatString: "#.#",
+                        markerType: "none",
+                        dataPoints:
+                            [
+                                { x: 0.5,   y: 4 },
+                                { x: 1,     y: 7 },
+                                { x: 2,     y: 5 },
+                                { x: 3,     y: 5 },
+                                { x: 4,     y: 6 },
+                                { x: 5,     y: 6 },
+                                { x: 6,     y: 4 },
+                                { x: 7,     y: 4 },
+                                { x: 8,     y: 4 },
+                                { x: 9,     y: 6 },
+                                { x: 10,    y: 9 },
+                                { x: 11,    y: 9 },
+                                { x: 12,    y: 10 },
+                                { x: 12.5,  y: 12 },
+                                { x: 13,    y: 9.6 },
+                                { x: 14,    y: 9.9 },
+                                { x: 15,    y: 10.2 },
+                                { x: 16,    y: 10.6 },
+                                { x: 17,    y: 11 },
+                                { x: 18,    y: 11.4},
+                                { x: 19,    y: 8.4 },
+                                { x: 19.5,  y: 9 }
+                            ]
+                    },
+                    {
+                        type: "spline",
+                        showInLegend: true,
+                        name: "Black atk speed",
+                        xValueFormatString: "#.#",
+                        color: "#f05200",
+                        yValueFormatString: "#.#",
+                        markerType: "none",
+                        dataPoints:
+                            [
+                                { x: 0.5,   y: 1 },
+                                { x: 1,     y: 3 },
+                                { x: 2,     y: 3 },
+                                { x: 3,     y: 3 },
+                                { x: 4,     y: 3 },
+                                { x: 5,     y: 1 },
+                                { x: 6,     y: 1 },
+                                { x: 7,     y: 1 },
+                                { x: 8,     y: 1 },
+                                { x: 9,     y: 3 },
+                                { x: 10,    y: 3 },
+                                { x: 11,    y: 3 },
+                                { x: 12,    y: 3 },
+                                { x: 12.5,  y: 3 },
+                                { x: 13,    y: 2.4 },
+                                { x: 14,    y: 2.49 },
+                                { x: 15,    y: 2.55 },
+                                { x: 16,    y: 2.67 },
+                                { x: 17,    y: 2.79 },
+                                { x: 18,    y: 2.85 },
+                                { x: 19,    y: 2.1 },
+                                { x: 19.5,  y: 2 }
+                            ]
+                    }
+                ]
+            };
+            $("#shieldmanchart").CanvasJSChart(options);
+            function toogleDataSeries(e){
+                if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                    e.dataSeries.visible = false;
+                } else{
+                    e.dataSeries.visible = true;
+                }
+                e.chart.render();
+            }
+        };
+        window.onload = function()
+        {
+            jaime();
+            daenerys();
+            theon();
+            swordman();
+            spearman();
+            shieldman();
+        }
+    </script>
+
+</body>
+
+</html>
