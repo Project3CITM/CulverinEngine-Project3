@@ -83,18 +83,15 @@ public class Attack_Action : Action
             }
         }
 
-        if (anim_comp.IsAnimationStopped("Attack"))
-        {
-            GetComponent<CompAnimation>().PlayAnimationNode("IdleAttack");
-            Debug.Log("Back to Idle", Department.IA);
-            return ACTION_RESULT.AR_SUCCESS;
-        }        
+        if (anim_comp.IsAnimationStopped("Attack")) 
+            return ACTION_RESULT.AR_SUCCESS;       
 
         return ACTION_RESULT.AR_IN_PROGRESS;
     }
 
     public override bool ActionEnd()
     {
+        GetComponent<CompAnimation>().PlayAnimationNode("IdleAttack");
         interupt = false;
         return true;
     }
