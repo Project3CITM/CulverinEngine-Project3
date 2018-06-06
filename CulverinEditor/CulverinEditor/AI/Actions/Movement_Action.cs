@@ -125,6 +125,8 @@ public class Movement_Action : Action
         anim_comp.SetClipDuration("WalkFront", sideways_anim_speed);
 
         blocking = false;
+
+        path.Clear();
     }
 
     public override bool ActionStart()

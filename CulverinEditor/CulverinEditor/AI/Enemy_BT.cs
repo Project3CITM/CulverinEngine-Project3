@@ -86,7 +86,7 @@ public class Enemy_BT : BT
         {
             Debug.Log("ENEMIES MANAGER NULL!!", Department.IA, Color.RED);
         }
-        GetComponent<CompAnimation>().PlayAnimation("Idle");
+        GetComponent<CompAnimation>().PlayAnimationNode("Idle");
         dmg_alpha = 0.0f;
         //ChangeTexturesToAlive();
         enemy_hp_bar = GetLinkedObject("enemy_hp_bar");
