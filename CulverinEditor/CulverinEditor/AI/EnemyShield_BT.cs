@@ -122,6 +122,7 @@ public class EnemyShield_BT : Enemy_BT
         }
         else if (player_detected == true && Disable_Movement_Gameplay_Debbuger == false)
         {
+          
             if (player.GetComponent<CharactersManager>().GetCurrentCharacterName() == "Jaime")
             {
                 GetComponent<ChasePlayer_Action>().SetBlocking(false);
@@ -165,6 +166,7 @@ public class EnemyShield_BT : Enemy_BT
         {
             GetComponent<Movement_Action>().GoTo(origin_path_x, origin_path_y);
             GetComponent<Movement_Action>().ActionStart();
+            current_action.action_type = Action.ACTION_TYPE.MOVE_ACTION;
             current_action = GetComponent<Movement_Action>();
             return;
         }
@@ -172,6 +174,7 @@ public class EnemyShield_BT : Enemy_BT
         {
             GetComponent<Movement_Action>().GoTo(end_path_x, end_path_y);
             GetComponent<Movement_Action>().ActionStart();
+            current_action.action_type = Action.ACTION_TYPE.MOVE_ACTION;
             current_action = GetComponent<Movement_Action>();
             return;
         }
@@ -194,22 +197,25 @@ public class EnemyShield_BT : Enemy_BT
                     else if(damage_type == ENEMY_GET_DAMAGE_TYPE.FIREBALL)
                     {
                         Debug.Log("FIREBALL BLOCKED!", Department.PLAYER, Color.RED);
+                        audio_comp.PlayEvent("Enemy3_Hurt");
                         return base.ApplyDamage(damage * fireball_pen, damage_type);
                     }
                     else if(damage_type == ENEMY_GET_DAMAGE_TYPE.ARROW)
                     {
                         Debug.Log("ARROW BLOCKED!", Department.PLAYER, Color.RED);
+                        audio_comp.PlayEvent("Enemy3_Hurt");
                         return base.ApplyDamage(damage * arrow_pen, damage_type);
                     }
                     else if(damage_type == ENEMY_GET_DAMAGE_TYPE.FIREBREATH)
                     {
                         Debug.Log("FIREBREATH BLOCKED!", Department.PLAYER, Color.RED);
+                        audio_comp.PlayEvent("Enemy3_Hurt");
                         return base.ApplyDamage(damage * firebreath_pen, damage_type);
                     }
                     else
                     {
                         GetComponent<ShieldBlock_Action>().DecreaseBlockTime();
-                        GetComponent<CompAudio>().PlayEvent("Enemy3_ShieldBlock");
+                        audio_comp.PlayEvent("Enemy3_ShieldBlock");
                         base.UpdateHUD();
                         return false;
                     }
@@ -231,23 +237,26 @@ public class EnemyShield_BT : Enemy_BT
                     else if (damage_type == ENEMY_GET_DAMAGE_TYPE.FIREBALL)
                     {
                         Debug.Log("FIREBALL BLOCKED!", Department.PLAYER, Color.RED);
+                        audio_comp.PlayEvent("Enemy3_Hurt");
                         return base.ApplyDamage(damage * fireball_pen, damage_type);
                     }
                     else if (damage_type == ENEMY_GET_DAMAGE_TYPE.ARROW)
                     {
                         Debug.Log("ARROW BLOCKED!", Department.PLAYER, Color.RED);
+                        audio_comp.PlayEvent("Enemy3_Hurt");
                         return base.ApplyDamage(damage * arrow_pen, damage_type);
                     }
                     else if (damage_type == ENEMY_GET_DAMAGE_TYPE.FIREBREATH)
                     {
                         Debug.Log("FIREBREATH BLOCKED!", Department.PLAYER, Color.RED);
+                        audio_comp.PlayEvent("Enemy3_Hurt");
                         return base.ApplyDamage(damage * firebreath_pen, damage_type);
                     }
                     else
                     {
                         GetComponent<ShieldBlock_Action>().DecreaseBlockTime();
                         GetComponent<CompAnimation>().PlayAnimationNode("Block");
-                        GetComponent<CompAudio>().PlayEvent("Enemy3_ShieldBlock");
+                        audio_comp.PlayEvent("Enemy3_ShieldBlock");
                         base.UpdateHUD();
                         return false;
                     }

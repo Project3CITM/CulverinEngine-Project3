@@ -1294,12 +1294,13 @@ void GameObject::FreezeTransforms(bool freeze, bool change_childs)
 	}
 	if (static_obj)
 	{
-		App->scene->octree.Insert(this);
+		//App->scene->octree.Insert(this);
+		App->scene->oclusion_culling->InsertCandidate(this);
 		App->scene->RemoveDynamicObject(this);
 	}
 	else
 	{
-		App->scene->octree.Remove(this);
+		//App->scene->octree.Remove(this);
 		App->scene->dynamic_objects.push_back(this);
 	}
 }
@@ -2566,9 +2567,10 @@ void GameObject::SetParent(GameObject* new_parent)
 
 void GameObject::AddBoundingBox(const ResourceMesh* mesh)
 {
-
-	box_fixed.Enclose(mesh->aabb_box);
-
+	if (mesh)
+	{
+		box_fixed = mesh->aabb_box;
+	}
 }
 
 void GameObject::DrawBoundingBox()

@@ -1,4 +1,4 @@
-﻿# nJoy Game's Unthroned 
+﻿# nJoy Game's Unthrone
 ## CONTENTS
 
 	0) WHAT IS OUR GAME?
@@ -102,10 +102,6 @@ https://github.com/Project3CITM/CulverinEngine-Project3/issues
 Web Site: https://github.com/Project3CITM/CulverinEngine-Project3
 
 ## 8) CHANGELOG
-### Pre Alpha 2 V 0.51
-	* Bug Fixes 
-	* Balancing Boss
-
 ### Pre Alpha 2 V 0.5
  	* the maps have been changed to 7 different maps
 	* New Assets at the stages

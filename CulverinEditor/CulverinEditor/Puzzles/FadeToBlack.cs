@@ -69,6 +69,7 @@ public class FadeToBlack : CulverinBehaviour
                 case StateFade.GO_NORMAL:
                     {
                         actual_alpha -= speed_fade * Time.deltaTimespecial;
+                        Time.timeScale += speed_fade * Time.deltaTimespecial;
                         break;
                     }
             }
@@ -133,30 +134,59 @@ public class FadeToBlack : CulverinBehaviour
         {
             case SceneToLoad.TUTORIAL:
                 {
+                    SceneManager.LoadNewOclusionMap("Map_Level_Tutorial_oclusion");
                     SceneManager.LoadNewWalkableMap("Map_Level_Tutorial");
                     SceneManager.LoadScene("Tutorial Real Scene");
+                    StatsScore.SoftReset();
                     break;
                 }
             case SceneToLoad.ALPHA2_LEVEL_1_1:
                 {
-                    //   SceneManager.LoadNewWalkableMap("Map_Level_1_1");
-                    if (SceneManager.CheckMultiSceneReady())
+                    SceneManager.LoadNewOclusionMap("Map_Level_1_1_oclusion");
+                    SceneManager.LoadNewWalkableMap("Map_Level_1_1");
+                    if (DifficultySelector.hard_mode == true)
                     {
-                        SceneManager.RemoveSecondaryScene();
+                        SceneManager.LoadScene("Alpha2_Level_1_1_HARD");
                     }
-                    SceneManager.LoadScene("TutorialToLvl1_1");
+                    else
+                    {
+                        SceneManager.LoadScene("Alpha2_Level_1_1_EASY");
+                    }
+                    StatsScore.SetDefinitiveScore();
+                    StatsScore.SoftReset();
                     break;
                 }
             case SceneToLoad.ALPHA2_LEVEL_1_2:
                 {
+                    SceneManager.LoadNewOclusionMap("Map_Level_1_2_oclusion");
                     SceneManager.LoadNewWalkableMap("Map_Level_1_2");
-                    SceneManager.LoadScene("Alpha2_Level_1_2");
+                    if (DifficultySelector.hard_mode == true)
+                    {
+                        SceneManager.LoadScene("Alpha2_Level_1_2_HARD");
+                    }
+                    else
+                    {
+                        SceneManager.LoadScene("Alpha2_Level_1_2_EASY");
+
+                    }
+                    StatsScore.SetDefinitiveScore();
+                    StatsScore.SoftReset();
                     break;
                 }
             case SceneToLoad.ALPHA2_LEVEL_1_3:
                 {
+                    SceneManager.LoadNewOclusionMap("Map_Level_1_3_oclusion");
                     SceneManager.LoadNewWalkableMap("Map_Level_1_3");
-                    SceneManager.LoadScene("Alpha2_Level_1_3");
+                    if (DifficultySelector.hard_mode == true)
+                    {
+                        SceneManager.LoadScene("Alpha2_Level_1_3_HARD");
+                    }
+                    else
+                    {
+                        SceneManager.LoadScene("Alpha2_Level_1_3_EASY");
+                    }
+                    StatsScore.SetDefinitiveScore();
+                    StatsScore.SoftReset();
                     break;
                 }
             case SceneToLoad.LVL2_ZONE1:
@@ -167,18 +197,40 @@ public class FadeToBlack : CulverinBehaviour
                         SceneManager.RemoveSecondaryScene();
                     }
                     SceneManager.LoadScene("Lvl1_3ToLvl2_1");
+                    StatsScore.SetDefinitiveScore();
+                    StatsScore.SoftReset();
                     break;
                 }
             case SceneToLoad.LVL2_ZONE2:
                 {
+                    SceneManager.LoadNewOclusionMap("LVL2_Zone2_oclusion");
                     SceneManager.LoadNewWalkableMap("LVL2_Zone2");
-                    SceneManager.LoadScene("LVL2_Zone_2");
+                    if (DifficultySelector.hard_mode == true)
+                    {
+                        SceneManager.LoadScene("LVL2_Zone_2_HARD");
+                    }
+                    else
+                    {
+                        SceneManager.LoadScene("LVL2_Zone_2_EASY");
+                    }
+                    StatsScore.SetDefinitiveScore();
+                    StatsScore.SoftReset();
                     break;
                 }
             case SceneToLoad.LVL2_ZONE3:
                 {
+                    SceneManager.LoadNewOclusionMap("LVL2_Zone3_oclusion");
                     SceneManager.LoadNewWalkableMap("LVL2_Zone3");
-                    SceneManager.LoadScene("LVL2_Zone_3");
+                    if (DifficultySelector.hard_mode == true)
+                    {
+                        SceneManager.LoadScene("LVL2_Zone_3_HARD");
+                    }
+                    else
+                    {
+                        SceneManager.LoadScene("LVL2_Zone_3_EASY");
+                    }
+                    StatsScore.SetDefinitiveScore();
+                    StatsScore.SoftReset();
                     break;
                 }
         }

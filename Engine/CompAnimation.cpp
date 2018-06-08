@@ -1525,11 +1525,14 @@ void CompAnimation::CheckNodesConditions(AnimationNode * node)
 	}
 }
 
-void CompAnimation::SetClipsSpeed(float speed_value)
+void CompAnimation::SetClipSpeed(std::string name,float speed_value)
 {
 	for (std::vector<AnimationClip*>::iterator it = animation_clips.begin(); it != animation_clips.end(); it++)
 	{
-		(*it)->speed_factor = speed_value;
+		if ((*it)->name == name)
+		{
+			(*it)->speed_factor = speed_value;
+		}
 	}
 }
 

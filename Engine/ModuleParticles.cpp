@@ -57,7 +57,7 @@ update_status ModuleParticles::PreUpdate(float dt)
 
 		float3 emitter_pos;
 		((ParticleEmitter*)(*item)->GetEmitter())->GetPosition(emitter_pos);
-		(*item)->distance_to_camera = (emitter_pos-frustum_center).LengthSq();
+		(*item)->distance_to_camera = (emitter_pos-frustum_center).Length();
 		(*item)->discard_distance = frustum_distance;
 
 		if (App->engine_state == EngineState::STOP)
@@ -76,13 +76,13 @@ update_status ModuleParticles::Update(float dt)
 	BROFILER_CATEGORY("Update: ModuleParticles", Profiler::Color::Blue);
 	for (std::vector<ParticleSystem*>::iterator item = particle_systems.begin(); item != particle_systems.cend(); item++)
 	{
+		(*item)->DrawImGuiEditorWindow();
 		if ((*item)->distance_to_camera < (*item)->discard_distance)
 		{
 			if (App->engine_state == EngineState::STOP)
 				(*item)->Update(0.02, (*item)->preview);
 			else (*item)->Update(dt);
 
-			(*item)->DrawImGuiEditorWindow();
 
 			if (App->engine_state == EngineState::STOP)
 				(*item)->PostUpdate(0.02);

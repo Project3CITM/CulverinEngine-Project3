@@ -16,11 +16,14 @@ public class DoorLever : CulverinBehaviour
     private CompAnimation anim_controller = null;
     private CompAudio audio = null;
     private bool on_lever_range = false;
-    private bool on_lever_animation = false;
-    private string lever_animation_name = "Lever_Down"; 
-   
+    public bool on_lever_animation = false;
+    private string lever_animation_name = "Lever_Down";
 
-    
+    public GameObject close_door_collider = null;
+    public bool do_collider_close_door = false;
+
+    public GameObject lvl_player;
+    MovementController movement_player;
 
     void Start()
     {
@@ -35,6 +38,8 @@ public class DoorLever : CulverinBehaviour
         {
             door_to_open2 = GetLinkedObject("door_to_open2");
         }
+
+        close_door_collider = GetLinkedObject("close_door_collider");
 
         audio = GetComponent<CompAudio>();
         if (audio == null)
@@ -56,6 +61,12 @@ public class DoorLever : CulverinBehaviour
             lever_interact.SetActive(false);
             Debug.Log("[green] Deactivated Interact");
         }
+
+        lvl_player = GetLinkedObject("lvl_player");
+        if(lvl_player != null)
+        {
+            movement_player = lvl_player.GetComponent<MovementController>();
+        }
        
         // -------------------------------------------------------
     }
@@ -73,10 +84,20 @@ public class DoorLever : CulverinBehaviour
         if(on_lever_range && !active_lever && !on_lever_animation)
         {            
             if (Input.GetInput_KeyDown("Interact", "Player"))
-            {               
-                OnLeverActivated();
-                GetComponent<CompAudio>().PlayEvent("Lever");
-                lever_interact.SetActive(false);
+            {
+                if (movement_player == null)
+                {
+                    OnLeverActivated();
+                    GetComponent<CompAudio>().PlayEvent("Lever");
+                    lever_interact.SetActive(false);
+                }
+                //Auxiliary case to detect in the final boss lever if player is moving (to avoid reproducing the cutscene at the wrong tile)
+                else if(movement_player != null && movement_player.IsMoving() == false)
+                {
+                    OnLeverActivated();
+                    GetComponent<CompAudio>().PlayEvent("Lever");
+                    lever_interact.SetActive(false);
+                }
             }
         }
 
@@ -175,8 +196,14 @@ public class DoorLever : CulverinBehaviour
 
         if (door_to_open2 != null)
         {
-            DoorLevel2 to_open = door_to_open1.GetComponent<DoorLevel2>();
+            DoorLevel2 to_open = door_to_open2.GetComponent<DoorLevel2>();
             to_open.OpenDoor();
+        }
+
+        if (do_collider_close_door)
+        {
+            DoorLevel2 to_open = close_door_collider.GetComponent<DoorLevel2>();
+            to_open.CloseDoorByCollider();
         }
     }
 

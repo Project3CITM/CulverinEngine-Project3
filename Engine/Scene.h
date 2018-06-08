@@ -6,6 +6,7 @@
 #include "ModuleFramebuffers.h"
 #include "CompMesh.h"
 #include "Octree.h"
+#include "OclusionCulling.h"
 #include <vector>
 
 class GameObject;
@@ -134,6 +135,7 @@ public:
 	// Quadtree ----------------
 	//Quadtree quadtree;
 	Octree octree;
+	OclusionCulling* oclusion_culling;
 	bool octree_draw = false;
 	// -------------------------
 

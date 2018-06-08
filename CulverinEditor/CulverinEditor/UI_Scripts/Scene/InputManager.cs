@@ -22,5 +22,13 @@ public class InputManager : CulverinBehaviour
             EventSystem.SendInteractiveSelected(selected_interactive);
         }
     }
+    void Update()
+    {
+        if (selected_interactive != null)
+        {
+            if(Input.GetActualDeviceCombo()==1 && !EventSystem.GetInteractiveSelectedActive())
+              EventSystem.SendInteractiveSelected(selected_interactive);
+        }
+    }
 
 }

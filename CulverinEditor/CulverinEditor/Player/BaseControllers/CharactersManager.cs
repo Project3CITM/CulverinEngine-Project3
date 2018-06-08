@@ -2,6 +2,387 @@
 using CulverinEditor.Debug;
 using CulverinEditor.SceneManagement;
 using CulverinEditor.Pathfinding;
+using System.Collections.Generic;
+
+//CUTSCENE MANAGER -------------------------------------
+public class Step
+{
+    public enum State
+    {
+        WAIT = 0,
+        IN_PROGRESS,
+        FINISHED
+    }
+
+    public State state = State.WAIT;
+    public Step next_step = null;
+    public string name = "Step";
+    public float wait_time = 0.0f;
+
+    public Step(string step_name, float wait)
+    {
+        name = step_name;
+        wait_time = wait;
+    }
+
+    //Link to the next step
+    public virtual void SetNextStep(Step step)
+    {
+        next_step = step;
+    }
+
+    public virtual void StartStep()
+    {
+        state = Step.State.IN_PROGRESS;
+
+        Debug.Log("STEP START", Department.PLAYER, Color.BLUE);
+    }
+
+    public virtual void FinishStep()
+    {
+        if (WaitFinished())
+        {
+            state = Step.State.FINISHED;
+            Debug.Log("STEP FINISH", Department.PLAYER, Color.RED);
+        }
+        else
+        {
+            Debug.Log("STEP WAITING FINISH", Department.PLAYER, Color.ORANGE);
+        }
+    }
+
+    //Virtual method to override functions of the child steps
+    public virtual void StepUpdate()
+    {
+    }
+
+    public bool WaitFinished()
+    {
+        //Wait X sec until pass to the next step
+        if (wait_time <= 0.0f)
+        {
+            return true;
+        }
+        else
+        {
+            wait_time -= Time.deltaTime;
+            return false;
+        }
+    }
+
+    public bool isFinished()
+    {
+        if (state == Step.State.FINISHED)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+}
+
+//Wait X secs until the next step is reproduced
+public class WaitStep : Step
+{
+    public WaitStep(string step_name, float wait) : base(step_name, wait)
+    {
+    }
+
+    public override void StepUpdate()
+    {
+        wait_time -= Time.deltaTime;
+
+        Debug.Log(wait_time, Department.PLAYER, Color.YELLOW);
+
+        if (wait_time <= 0.0f)
+        {
+            FinishStep();
+        }
+    }
+}
+
+//Move the player to the desired direction
+public class MoveStep : Step
+{
+    public enum MoveDirection
+    {
+        NONE = -1,
+        FORWARD,
+        BACKWARD,
+        LEFT,
+        RIGHT,
+    }
+
+    private MoveDirection direction = MoveDirection.NONE;
+    private MovementController movement = null;
+
+    //CONSTRUCTOR
+    public MoveStep(MoveDirection dir, MovementController mov_player, string step_name, float wait = 0.0f) : base(step_name, wait)
+    {
+        direction = dir;
+        movement = mov_player;
+    }
+
+    public override void StartStep()
+    {
+        base.StartStep();
+
+        switch (direction)
+        {
+            case MoveDirection.FORWARD:
+                {
+                    //Tell the player to rotate left
+                    movement.MoveForward();
+                    Debug.Log("MOVE FORWARD", Department.PLAYER, Color.YELLOW);
+                    break;
+                }
+            case MoveDirection.BACKWARD:
+                {
+                    //Tell the player to rotate left
+                    movement.MoveBackward();
+                    Debug.Log("MOVE BACKWARD", Department.PLAYER, Color.YELLOW);
+                    break;
+                }
+            case MoveDirection.LEFT:
+                {
+                    //Tell the player to rotate left
+                    movement.MoveLeft();
+                    Debug.Log("MOVE LEFT", Department.PLAYER, Color.YELLOW);
+                    break;
+                }
+            case MoveDirection.RIGHT:
+                {
+                    //Tell the player to rotate left
+                    movement.MoveRight();
+                    Debug.Log("MOVE RIGHT", Department.PLAYER, Color.YELLOW);
+                    break;
+                }
+            default:
+                {
+                    break;
+                }
+        }
+    }
+
+    public override void StepUpdate()
+    {
+        //Check if player finished the movement
+        if (movement.IsMoving() == false)
+        {
+            FinishStep();
+        }
+    }
+}
+
+//Rotate the player to the desired direction
+public class RotateStep : Step
+{
+    public enum RotateDirection
+    {
+        NONE = -1,
+        LEFT,
+        RIGHT,
+    }
+
+    private RotateDirection direction = RotateDirection.NONE;
+    private MovementController movement = null;
+
+    //CONSTRUCTOR
+    public RotateStep(RotateDirection dir, MovementController mov_player, string step_name, float wait = 0.0f) : base(step_name, wait)
+    {
+        direction = dir;
+        movement = mov_player;
+
+    }
+
+    public override void StartStep()
+    {
+        base.StartStep();
+
+        switch (direction)
+        {
+            case RotateDirection.LEFT:
+                {
+                    //Tell the player to rotate left
+                    movement.RotateLeft();
+                    Debug.Log("ROTATE LEFT", Department.PLAYER, Color.YELLOW);
+                    break;
+                }
+            case RotateDirection.RIGHT:
+                {
+                    //Tell the player to rotate left
+                    movement.RotateRight();
+                    Debug.Log("ROTATE RIGHT", Department.PLAYER, Color.YELLOW);
+                    break;
+                }
+            default:
+                {
+                    break;
+                }
+        }
+    }
+
+    public override void StepUpdate()
+    {
+        //Check if player finished the rotation
+        if (movement.IsMoving() == false)
+        {
+            FinishStep();
+        }
+    }
+}
+
+
+public class Cutscene : CulverinBehaviour
+{
+    private Step curr_step;
+
+    //Steps in this cutscene ----
+    WaitStep wait_step;
+    RotateStep rotate_left_step;
+    RotateStep rotate_left_step2;
+    MoveStep move_step1;
+    RotateStep rotate_right_step;
+    RotateStep rotate_right_step2;
+    MoveStep move_step2;
+    MoveStep move_step3;
+    MoveStep move_step4;
+    MoveStep move_step5;
+    MoveStep move_step6;
+
+    //Player position
+    MovementController player_position;
+    // --------------------------
+
+    public bool start_cutscene = false;
+    public bool cutscene_finished = false;
+
+    //Boss presentation animation
+    public void CutsceneInit(MovementController mov)
+    {
+
+        player_position = GetComponent<MovementController>();
+
+        //Create all the steps
+        wait_step = new WaitStep("wait_1", 2.0f);
+        rotate_left_step = new RotateStep(RotateStep.RotateDirection.LEFT, mov, "rotate_left_1", 0.5f);
+        move_step1 = new MoveStep(MoveStep.MoveDirection.FORWARD, mov, "move_forward_1", 0.5f);
+        rotate_right_step = new RotateStep(RotateStep.RotateDirection.RIGHT, mov, "rotate_right_1", 1.5f);
+        move_step2 = new MoveStep(MoveStep.MoveDirection.FORWARD, mov, "move_forward_2", 0.5f);
+        move_step3 = new MoveStep(MoveStep.MoveDirection.FORWARD, mov, "move_forward_3", 0.5f);
+        move_step4 = new MoveStep(MoveStep.MoveDirection.FORWARD, mov, "move_forward_4", 0.5f);
+        move_step5 = new MoveStep(MoveStep.MoveDirection.FORWARD, mov, "move_forward_5", 0.5f);
+        move_step6 = new MoveStep(MoveStep.MoveDirection.FORWARD, mov, "move_forward_6");
+        //move_step2 = new MoveStep(MoveStep.MoveDirection.BACKWARD, mov, "move_backward_2");
+
+        //If player triggers lever looking in other directions
+        rotate_left_step2 = new RotateStep(RotateStep.RotateDirection.LEFT, mov, "rotate_left_2", 0.5f);
+        rotate_right_step2 = new RotateStep(RotateStep.RotateDirection.RIGHT, mov, "rotate_right_1", 0.5f);
+
+        //Link the steps
+        wait_step.SetNextStep(rotate_left_step);
+        rotate_left_step.SetNextStep(move_step1);
+        move_step1.SetNextStep(rotate_right_step);
+        rotate_right_step.SetNextStep(move_step2);
+        move_step2.SetNextStep(move_step3);
+        move_step3.SetNextStep(move_step4);
+        move_step4.SetNextStep(move_step5);
+        move_step5.SetNextStep(move_step6);
+
+        //Start the first step
+        curr_step = wait_step;
+        curr_step.StartStep();
+    }
+
+    public void StartCutscene()
+    {
+        switch (player_position.curr_dir)
+        {
+            case MovementController.Direction.NORTH:
+                {
+                    wait_step.SetNextStep(move_step1);
+                    break;
+                }
+            case MovementController.Direction.SOUTH:
+                {
+                    wait_step.SetNextStep(rotate_left_step2);
+                    rotate_left_step2.SetNextStep(rotate_left_step);
+                    break;
+                }
+            case MovementController.Direction.WEST:
+                {
+                    wait_step.SetNextStep(rotate_right_step2);
+                    rotate_right_step2.SetNextStep(move_step1);
+                    break;
+                }
+            default:
+                {
+                    break;
+                }
+
+        }
+
+
+        start_cutscene = true;
+        cutscene_finished = false;
+
+        Debug.Log("Cutscene STARTED", Department.PLAYER);
+    }
+
+    public void CutsceneUpdate()
+    {
+        // CUTSCENE IN PROGRESS ----------------------
+        if (curr_step != null)
+        {
+            if (curr_step.state == Step.State.IN_PROGRESS)
+            {
+                //Update the current step while it's in progress
+                curr_step.StepUpdate();
+            }
+
+            //If the step is finished, init the next one
+            if (curr_step.isFinished())
+            {
+                if (curr_step.next_step != null)
+                {
+                    //Set next step the current one
+                    curr_step = curr_step.next_step;
+                    curr_step.StartStep();
+
+                    Debug.Log("NEXT STEP", Department.PLAYER, Color.PINK);
+                }
+
+                //Finish the cutscene by setting the current step to null
+                else
+                {
+                    curr_step = null;
+                }
+            }
+        }
+
+        // CUTSCENE FINISHED ------------------------
+        else
+        {
+            FinishCutscene();
+        }
+    }
+
+    public void FinishCutscene()
+    {
+        start_cutscene = false;
+        cutscene_finished = true;
+
+        Debug.Log("Cutscene FINISHED", Department.PLAYER, Color.GREEN);
+    }
+
+    public bool isFinished()
+    {
+        return cutscene_finished;
+    }
+}
+// -----------------------------------------------------
 
 public class CharactersManager : CulverinBehaviour
 {
@@ -11,7 +392,8 @@ public class CharactersManager : CulverinBehaviour
         CHANGING_LEFT,
         CHANGING_RIGHT,
         DROWNING,
-        DYING
+        DYING,
+        CUTSCENE
     }
 
     public enum Side
@@ -114,6 +496,33 @@ public class CharactersManager : CulverinBehaviour
     public float theon_tired_time = 0.0f;
     // ------------------------------
 
+
+    //CUTSCENE CONTROLLER -----
+    public Cutscene cutscene;
+    public GameObject hud_obj = null;
+    private MovementController movement_controller = null;
+    public GameObject black_bars = null;
+    // ------------------------
+
+    //Call this function to start the player cutscene to enter the boss room
+    public void StartPlayerCutscene()
+    {
+        if (hud_obj != null)
+        {
+            //Disable In-Game HUD
+            hud_obj.SetActive(false);
+
+            // Black Bars
+            black_bars.GetComponent<BlackBarsCutscene>().ActivateBlackBar(true);
+        }
+
+        //Start 
+        cutscene.StartCutscene();
+
+        //Change player state to block all inputs
+        state = State.CUTSCENE;
+    }
+
     void Start()
     {
         // LINK GAMEOBJECTS OF THE SCENE WITH VARIABLES
@@ -145,6 +554,8 @@ public class CharactersManager : CulverinBehaviour
         theon_s_script = theon_s_button_obj.GetComponent<TheonCD_Secondary>();
 
         camera = GetLinkedObject("camera");
+
+        hud_obj = GetLinkedObject("hud_obj");
 
         //GOD MODE VARIABLES ----------------------------------------
         god_mode_sprite = GetLinkedObject("god_mode_sprite");
@@ -182,23 +593,58 @@ public class CharactersManager : CulverinBehaviour
         daenerys_tired_time = 0.0f;
         theon_tired = false;
         theon_tired_time = 0.0f;
+
+
+        //CUTSCENE MANAGER ----------
+        movement_controller = GetComponent<MovementController>();
+
+        //Init cutscene only in the final level, at the boss floor
+        if (hud_obj != null)
+        {
+            cutscene = new Cutscene();
+            cutscene.CutsceneInit(movement_controller);
+
+            // Black Bars
+            black_bars = GetLinkedObject("black_bars");
+        }
+        // --------------------------
     }
 
     void Update()
     {
-        //if (dying == false) 
-        //{
-        //    Debug.Log("ALIVE", Department.PLAYER, Color.BLUE);
-        //}
-        //else
-        //{
-        //    Debug.Log("DEAD", Department.PLAYER, Color.RED);
-        //}
+        // CUTSCENE MANAGER ------------------------------------------------------
+        if (cutscene != null)
+        {
+            if (cutscene.start_cutscene == true && cutscene.cutscene_finished == false)
+            {
+                //Update cutscene while any of its states is in progress
+                cutscene.CutsceneUpdate();
+
+                //Check if cutscene is finished
+                if (cutscene.isFinished())
+                {
+                    if (hud_obj != null)
+                    {
+                        //Enable In-Game HUD
+                        hud_obj.SetActive(true);
+
+                        // Black Bars
+                        black_bars.GetComponent<BlackBarsCutscene>().ActivateBlackBar(false);
+                    }
+
+                    //Return the control to the player
+                    state = State.IDLE;
+                }
+            }
+        }
+        // ----------------------------------------------------------------
+
+
         //MANAGE AUDIO CONTROLLER VARIABLES --
-        if (jaime_tired) 
+        if (jaime_tired)
         {
             jaime_tired_time += Time.deltaTime;
-            if (jaime_tired_time >= 3.0f) 
+            if (jaime_tired_time >= 3.0f)
             {
                 jaime_tired = false;
                 jaime_tired_time = 0.0f;
@@ -538,7 +984,7 @@ public class CharactersManager : CulverinBehaviour
             right_character.GetComponent<JaimeController>().ToggleMesh(true);
             right_character.GetComponent<JaimeController>().jaime_sword_obj.GetComponent<CompCollider>().CollisionActive(true);
             right_character.GetComponent<JaimeController>().force_audio = true;
-            GetLinkedObject("this_obj_lasthp").GetComponent<CompImage>().FillAmount(right_character.GetComponent<JaimeController>().curr_hp/100.0f);
+            GetLinkedObject("this_obj_lasthp").GetComponent<CompImage>().FillAmount(right_character.GetComponent<JaimeController>().curr_hp / 100.0f);
         }
         else if (right_character.GetName() == "Daenerys")
         {
@@ -699,30 +1145,30 @@ public class CharactersManager : CulverinBehaviour
     {
         if (side == Side.LEFT)
         {
-            if (left_character.GetName() == "Jaime")
+            if (left_character.GetName() == "Jaime" && state != State.CUTSCENE)
             {
                 jaime_s_button.Clicked();
             }
-            else if (left_character.GetName() == "Daenerys")
+            else if (left_character.GetName() == "Daenerys" && state != State.CUTSCENE)
             {
                 daenerys_s_button.Clicked();
             }
-            else if (left_character.GetName() == "Theon")
+            else if (left_character.GetName() == "Theon" && state != State.CUTSCENE)
             {
                 theon_s_button.Clicked();
             }
         }
         else if (side == Side.RIGHT)
         {
-            if (right_character.GetName() == "Jaime")
+            if (right_character.GetName() == "Jaime" && state != State.CUTSCENE)
             {
                 jaime_s_button.Clicked();
             }
-            else if (right_character.GetName() == "Daenerys")
+            else if (right_character.GetName() == "Daenerys" && state != State.CUTSCENE)
             {
                 daenerys_s_button.Clicked();
             }
-            else if (right_character.GetName() == "Theon")
+            else if (right_character.GetName() == "Theon" && state != State.CUTSCENE)
             {
                 theon_s_button.Clicked();
             }
@@ -733,11 +1179,13 @@ public class CharactersManager : CulverinBehaviour
     public bool GetDamage(float dmg)
     {
         //Rumble Gamepad
-        if(dmg != 0.0f)
+        if (dmg != 0.0f)
             Input.RumblePlay(0.5f, 200);
 
+        bool drowning = GetComponent<MovementController>().drowning;
+
         // Shield Ability Consumable
-        if (player_obj.GetComponent<Shield>().IsActive())
+        if (drowning == false && player_obj.GetComponent<Shield>().IsActive())
         {
             player_obj.GetComponent<Shield>().Break();
             return false;
@@ -755,7 +1203,31 @@ public class CharactersManager : CulverinBehaviour
             {
                 if (current_character.GetName() == "Jaime")
                 {
-                    if (current_character.GetComponent<JaimeController>().GetDamage(dmg))
+                    if (drowning == true)
+                    {
+                        current_character.GetComponent<JaimeController>().GetFullDamage(dmg);
+
+                        if (health.GetCurrentHealth() <= 0)
+                        {
+                            StatsScore.CharacterDead();
+
+                            JaimeController jaime_controller = current_character.GetComponent<JaimeController>();
+                            jaime_controller.SetState(CharacterController.State.DEAD);
+                            jaime_controller.jaime_icon_obj.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+                            jaime_controller.jaime_icon_obj_stamina.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+                            jaime_controller.jaime_icon_obj_stamina.GetComponent<CompImage>().SetRender(false);
+
+                            //Deactivate Secondary ability button
+                            jaime_s_button.Deactivate();
+                            jaime_s_script.Die();
+
+                            if (dmg != 0.0f)
+                                jaime_controller.PlayFx("JaimeDead");
+                        }
+                        return true;
+
+                    }
+                    else if (current_character.GetComponent<JaimeController>().GetDamage(dmg))
                     {
                         if (health.GetCurrentHealth() <= 0)
                         {
@@ -771,7 +1243,7 @@ public class CharactersManager : CulverinBehaviour
                             jaime_s_button.Deactivate();
                             jaime_s_script.Die();
 
-                            if(dmg != 0.0f)
+                            if (dmg != 0.0f)
                                 jaime_controller.PlayFx("JaimeDead");
                         }
                         return true;
@@ -1046,12 +1518,17 @@ public class CharactersManager : CulverinBehaviour
 
     public void Drown()
     {
-        GetDamage(drown_dmg);
-        //state = State.DROWNING;
+        state = State.DROWNING;
     }
 
     public bool IsIdle()
     {
+        //False if a cutscene is being reproduced
+        if (state == State.CUTSCENE)
+        {
+            return false;
+        }
+
         // CURRENT CHARACTER -------------------------------
         if (current_character.GetName() == "Jaime")
         {
@@ -1096,7 +1573,7 @@ public class CharactersManager : CulverinBehaviour
     {
         if (character.GetName() == "Jaime")
         {
-          character.GetComponent<JaimeController>().SetState(CharacterController.State.DEAD);  
+            character.GetComponent<JaimeController>().SetState(CharacterController.State.DEAD);
         }
         else if (character.GetName() == "Daenerys")
         {
@@ -1386,71 +1863,142 @@ public class CharactersManager : CulverinBehaviour
         current_character.GetComponent<CharacterController>().SetState(state);
     }
 
-    public void HealCharacters(float percentage)
+    public bool HealCharacters(float percentage)
     {
-        is_healing = true;
+        if(is_healing == true)
+        {
+            return false;
+        }
+
+        is_healing = false;
 
         if (current_character.GetName() == "Jaime")
         {
             float max_hp = current_character.GetComponent<JaimeController>().max_hp;
-            heal_destination = max_hp * percentage + health.GetCurrentHealth();
-
-            if (heal_destination > max_hp)
+            if (health.GetCurrentHealth() < max_hp)
             {
-                heal_destination = max_hp;
+                heal_destination = max_hp * percentage + health.GetCurrentHealth();
+
+                if (heal_destination > max_hp)
+                {
+                    heal_destination = max_hp;
+                }
+
+                is_healing = true;
             }
+
             if (left_character.GetName() == "Daenerys")
             {
-                left_character.GetComponent<DaenerysController>().Heal(percentage);
-                right_character.GetComponent<TheonController>().Heal(percentage);
+                DaenerysController temp_daenerys = left_character.GetComponent<DaenerysController>();
+                TheonController temp_theon = right_character.GetComponent<TheonController>();
+
+                if (temp_daenerys.curr_hp < temp_daenerys.max_hp || temp_theon.curr_hp < temp_theon.max_hp)
+                {
+                    temp_daenerys.Heal(percentage);
+                    temp_theon.Heal(percentage);
+                    is_healing = true;
+                }
             }
             else if (left_character.GetName() == "Theon")
             {
-                right_character.GetComponent<DaenerysController>().Heal(percentage);
-                left_character.GetComponent<TheonController>().Heal(percentage);
+                DaenerysController temp_daenerys = right_character.GetComponent<DaenerysController>();
+                TheonController temp_theon = left_character.GetComponent<TheonController>();
+
+                if (temp_daenerys.curr_hp < temp_daenerys.max_hp || temp_theon.curr_hp < temp_theon.max_hp)
+                {
+                    temp_daenerys.Heal(percentage);
+                    temp_theon.Heal(percentage);
+                    is_healing = true;
+                }
             }
         }
 
         else if (current_character.GetName() == "Daenerys")
         {
             float max_hp = current_character.GetComponent<DaenerysController>().max_hp;
-            heal_destination = max_hp * percentage + health.GetCurrentHealth();
-            if (heal_destination > max_hp)
+
+            if (health.GetCurrentHealth() < max_hp)
             {
-                heal_destination = max_hp;
+                heal_destination = max_hp * percentage + health.GetCurrentHealth();
+
+                if (heal_destination > max_hp)
+                {
+                    heal_destination = max_hp;
+                }
+
+                is_healing = true;
             }
+
             if (left_character.GetName() == "Jaime")
             {
-                left_character.GetComponent<JaimeController>().Heal(percentage);
-                right_character.GetComponent<TheonController>().Heal(percentage);
+                JaimeController temp_jaime = left_character.GetComponent<JaimeController>();
+                TheonController temp_theon = right_character.GetComponent<TheonController>();
+
+                if (temp_jaime.curr_hp < temp_jaime.max_hp || temp_theon.curr_hp < temp_theon.max_hp)
+                {
+                    temp_jaime.Heal(percentage);
+                    temp_theon.Heal(percentage);
+                    is_healing = true;
+                }
             }
+
             else if (left_character.GetName() == "Theon")
             {
-                right_character.GetComponent<JaimeController>().Heal(percentage);
-                left_character.GetComponent<TheonController>().Heal(percentage);
+                JaimeController temp_jaime = right_character.GetComponent<JaimeController>();
+                TheonController temp_theon = left_character.GetComponent<TheonController>();
+
+                if (temp_jaime.curr_hp < temp_jaime.max_hp || temp_theon.curr_hp < temp_theon.max_hp)
+                {
+                    temp_jaime.Heal(percentage);
+                    temp_theon.Heal(percentage);
+                    is_healing = true;
+                }
             }
         }
 
         else if (current_character.GetName() == "Theon")
         {
             float max_hp = current_character.GetComponent<TheonController>().max_hp;
-            heal_destination = max_hp * percentage + health.GetCurrentHealth();
-            if (heal_destination > max_hp)
+
+            if (health.GetCurrentHealth() < max_hp)
             {
-                heal_destination = max_hp;
+                heal_destination = max_hp * percentage + health.GetCurrentHealth();
+
+                if (heal_destination > max_hp)
+                {
+                    heal_destination = max_hp;
+                }
+
+                is_healing = true;
             }
 
             if (left_character.GetName() == "Daenerys")
             {
-                left_character.GetComponent<DaenerysController>().Heal(percentage);
-                right_character.GetComponent<JaimeController>().Heal(percentage);
+                DaenerysController temp_daenerys = left_character.GetComponent<DaenerysController>();
+                JaimeController temp_jaime = right_character.GetComponent<JaimeController>();
+
+                if (temp_jaime.curr_hp < temp_jaime.max_hp || temp_daenerys.curr_hp < temp_daenerys.max_hp)
+                {
+                    temp_jaime.Heal(percentage);
+                    temp_daenerys.Heal(percentage);
+                    is_healing = true;
+                }
             }
             else if (left_character.GetName() == "Jaime")
             {
-                right_character.GetComponent<DaenerysController>().Heal(percentage);
-                left_character.GetComponent<JaimeController>().Heal(percentage);
+                DaenerysController temp_daenerys = right_character.GetComponent<DaenerysController>();
+                JaimeController temp_jaime = left_character.GetComponent<JaimeController>();
+
+                if (temp_jaime.curr_hp < temp_jaime.max_hp || temp_daenerys.curr_hp < temp_daenerys.max_hp)
+                {
+                    temp_jaime.Heal(percentage);
+                    temp_daenerys.Heal(percentage);
+                    is_healing = true;
+                }
             }
         }
+
+        return is_healing;
     }
 
     public void CheckGodMode()
@@ -1552,7 +2100,11 @@ public class CharactersManager : CulverinBehaviour
         float daenerysinfo = SceneManager.PopLoadInfo();
         float jaimeinfo = SceneManager.PopLoadInfo();
 
-        if(theoninfo == 1503.0f)
+        left_character.GetComponent<TheonController>().curr_hp = theoninfo;
+        current_character.GetComponent<JaimeController>().curr_hp = jaimeinfo;
+        right_character.GetComponent<DaenerysController>().curr_hp = daenerysinfo;
+
+        if (theoninfo == 1503.0f)
         {
             left_character.GetComponent<TheonController>().curr_hp = left_character.GetComponent<TheonController>().max_hp;
         }
@@ -1568,23 +2120,34 @@ public class CharactersManager : CulverinBehaviour
         if (theoninfo == 0.0f)
         {
             LeftCharacterDie();
+            left_character.GetComponent<TheonController>().theon_icon_obj_hp.GetComponent<CompImage>().SetRender(false);
         }
         if (daenerysinfo == 0.0f)
         {
             RightCharacterDie();
+            right_character.GetComponent<DaenerysController>().daenerys_icon_obj_hp.GetComponent<CompImage>().SetRender(false);
         }
 
         Debug.Log("INFO PLAYER", Department.PLAYER, Color.RED);
         GetLinkedObject("health_obj").GetComponent<Hp>().SetHP(current_character.GetComponent<JaimeController>().curr_hp, current_character.GetComponent<JaimeController>().max_hp);
-        GetLinkedObject("this_obj_lasthp").GetComponent<CompImage>().FillAmount(current_character.GetComponent<JaimeController>().curr_hp / 100.0f);
-        GetLinkedObject("daenerys_icon_obj_hp").GetComponent<CompImage>().FillAmount(right_character.GetComponent<DaenerysController>().curr_hp / 100.0f);
-        GetLinkedObject("theon_icon_obj_hp").GetComponent<CompImage>().FillAmount(left_character.GetComponent<TheonController>().curr_hp / 100.0f);
+        GetLinkedObject("this_obj_lasthp").GetComponent<CompImage>().FillAmount(current_character.GetComponent<JaimeController>().curr_hp / current_character.GetComponent<JaimeController>().max_hp);
+
+        GetLinkedObject("daenerys_icon_obj_hp").GetComponent<CompImage>().FillAmount(right_character.GetComponent<DaenerysController>().curr_hp / right_character.GetComponent<DaenerysController>().max_hp);
+        GetLinkedObject("theon_icon_obj_hp").GetComponent<CompImage>().FillAmount(left_character.GetComponent<TheonController>().curr_hp / left_character.GetComponent<TheonController>().max_hp);
 
 
         if (jaimeinfo <= 0.0f)
         {
             GetDamage(0.0f);
             current_character.GetComponent<JaimeController>().SetState(CharacterController.State.DEAD);
+            current_character.GetComponent<JaimeController>().jaime_icon_obj.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+            current_character.GetComponent<JaimeController>().jaime_icon_obj_stamina.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+            current_character.GetComponent<JaimeController>().jaime_icon_obj_stamina.GetComponent<CompImage>().SetRender(false);
+            current_character.GetComponent<JaimeController>().jaime_icon_obj_hp.GetComponent<CompImage>().SetRender(false);
+
+            jaime_s_button.Deactivate();
+            jaime_s_script.Die();
+
             if (theoninfo > 0.0f)
             {
                 ChangeLeft();
@@ -1615,17 +2178,17 @@ public class CharactersManager : CulverinBehaviour
 
     public void RightCharacterDie()
     {
-            StatsScore.CharacterDead();
+        StatsScore.CharacterDead();
 
-            DaenerysController daenerys_controller = right_character.GetComponent<DaenerysController>();
-            daenerys_controller.SetState(CharacterController.State.DEAD);
-            daenerys_controller.daenerys_icon_obj.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
-            daenerys_controller.daenerys_icon_obj_mana.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
-            daenerys_controller.daenerys_icon_obj_mana.GetComponent<CompImage>().SetRender(false);
+        DaenerysController daenerys_controller = right_character.GetComponent<DaenerysController>();
+        daenerys_controller.SetState(CharacterController.State.DEAD);
+        daenerys_controller.daenerys_icon_obj.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+        daenerys_controller.daenerys_icon_obj_mana.GetComponent<CompImage>().SetColor(new Vector3(0.3f, 0.3f, 0.3f), 1.0f);
+        daenerys_controller.daenerys_icon_obj_mana.GetComponent<CompImage>().SetRender(false);
 
-            //Deactivate Secondary ability button
-            daenerys_s_button.Deactivate();
-            daenerys_s_script.Die();
+        //Deactivate Secondary ability button
+        daenerys_s_button.Deactivate();
+        daenerys_s_script.Die();
     }
     public void LeftCharacterDie()
     {

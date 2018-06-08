@@ -50,7 +50,8 @@ public class BossAttackSwordDown_Action : Action
         if (player.dying == false)
         {
             state = BASD_STATE.PRE_APPLY;
-            GetComponent<CompAnimation>().SetTransition("ToSwordDownAttack");
+            Debug.Log("Play Sword down", Department.IA);
+            GetComponent<CompAnimation>().PlayAnimationNode("SwordDownAttack");
             GetComponent<CompAnimation>().SetClipDuration("SwordDownAttack", preparation_time / apply_damage_point);
             audio = GetComponent<CompAudio>();
             GetComponent<CompAudio>().PlayEvent("AttackPreparation");
@@ -130,7 +131,8 @@ public class BossAttackSwordDown_Action : Action
 
     public override bool ActionEnd()
     {
-        Debug.Log("SwordDown attack end!");
+        Debug.Log("SwordDown attack end!", Department.IA);
+        GetComponent<CompAnimation>().PlayAnimationNode("IdleAttack");
         interupt = false;
         return false;
     }

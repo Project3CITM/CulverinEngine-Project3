@@ -61,6 +61,8 @@
     <Compile Include="AI\AIManager.cs" />
     <Compile Include="AI\Actions\Align_Steering.cs" />
     <Compile Include="AI\Actions\Arrive_Steering.cs" />
+    <Compile Include="AI\AnimationTrigger.cs" />
+    <Compile Include="AI\BlackBarsCutscene.cs" />
     <Compile Include="AI\BossHPBar.cs" />
     <Compile Include="AI\BossSight.cs" />
     <Compile Include="AI\Boss_BT.cs" />
@@ -97,6 +99,7 @@
     <Compile Include="Miscellanea\FloorBlood.cs" />
     <Compile Include="Miscellanea\MusicController.cs" />
     <Compile Include="Puzzles\Level 2\BarrelPuzzle\ChainMove.cs" />
+    <Compile Include="Puzzles\Level 2\CloseDoor_EnemyDead.cs" />
     <Compile Include="UI_Scripts\Component\CompSlider.cs" />
     <Compile Include="UI_Scripts\Component\CompCheckBox.cs" />
     <Compile Include="Player\Fountain.cs" />
@@ -126,6 +129,7 @@
     <Compile Include="Tests\TestParticlesV2.cs" />
     <Compile Include="UI_Scripts\Input\InputShow.cs" />
     <Compile Include="UI_Scripts\Scene\AudioMenu.cs" />
+    <Compile Include="UI_Scripts\Scene\DifficultySelector.cs" />
     <Compile Include="UI_Scripts\Scene\Screen.cs" />
     <Compile Include="UI_Scripts\Scene\ScreenOptions.cs" />
     <Compile Include="UI_Scripts\Scene\DisplayMenu.cs" />

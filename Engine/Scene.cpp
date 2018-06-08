@@ -80,6 +80,7 @@ Scene::~Scene()
 	RELEASE(search_name);
 	RELEASE(dontdestroyonload);
 
+	//RELEASE(oclusion_culling);
 	RELEASE(scene_buff);
 	RELEASE(skybox);
 }
@@ -88,7 +89,10 @@ bool Scene::Init(JSON_Object* node)
 {
 	perf_timer.Start();
 	/* Init Octree */
-	octree.Boundaries(AABB(float3(-1.0f, -1.0f, -1.0f), float3(1.0f, 1.0f, 1.0f)));
+	//octree.Boundaries(AABB(float3(-1.0f, -1.0f, -1.0f), float3(1.0f, 1.0f, 1.0f)));
+
+	oclusion_culling = new OclusionCulling();
+
 	skybox_index = json_object_get_number(node, "Skybox Index");
 	Awake_t = perf_timer.ReadMs();
 	return true;
@@ -108,7 +112,7 @@ bool Scene::Start()
 	/* Init Quadtree */
 	size_quadtree = 5000.0f;
 //	quadtree.Init(size_quadtree);
-	octree.limits.octreeMinSize = 50;
+	//octree.limits.octreeMinSize = 50;
 	octree.Boundaries(AABB(float3(-size_quadtree, -size_quadtree, -size_quadtree), float3(size_quadtree, size_quadtree, size_quadtree)));
 
 
@@ -336,7 +340,7 @@ bool Scene::CleanUp()
 {
 	skybox->DeleteSkyboxTex();
 	
-	octree.Clear();
+	//octree.Clear();
 	static_objects.clear();
 	dynamic_objects.clear();
 
@@ -344,6 +348,8 @@ bool Scene::CleanUp()
 	secondary_root->CleanUp();
 	temporary_scene->CleanUp();
 	dontdestroyonload->CleanUp();
+
+	RELEASE(oclusion_culling);
 
 	RELEASE(scene_buff);
 	RELEASE(glow_buff);
@@ -470,7 +476,8 @@ void Scene::EditorQuadtree()
 			for (std::vector<GameObject*>::const_iterator item = game_objects_scene.cbegin(); item != game_objects_scene.cend(); ++item)
 				if ((*item)->IsStatic())
 				{
-					octree.Insert(*item);
+					//octree.Insert(*item);
+					oclusion_culling->InsertCandidate(*item);
 				}
 				else
 				{
@@ -1101,8 +1108,8 @@ void Scene::DrawCube(float size)
 
 void Scene::RecalculateStaticObjects()
 {
-	//static_objects.clear();
-	//octree.CollectAllObjects(static_objects);
+	static_objects.clear();
+	octree.CollectAllObjects(static_objects);
 }
 
 const std::vector<GameObject*>* Scene::GetAllSceneObjects()
@@ -1576,7 +1583,8 @@ GameObject * Scene::CreateCanvas(GameObject * parent)
 	CompRectTransform* transform = (CompRectTransform*)obj->AddComponent(Comp_Type::C_RECT_TRANSFORM);
 	transform->Init(float3(0, 0, 0), float3(0, 0, 0), float3(1, 1, 1));
 	transform->Enable();
-
+	transform->SetWidth(1920);
+	transform->SetHeight(1080);
 	// CANVAS COMPONENT -----------------
 	CompCanvas* canvas = (CompCanvas*)obj->AddComponent(Comp_Type::C_CANVAS);
 	canvas->Enable();

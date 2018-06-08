@@ -42,29 +42,29 @@ bool test = false;
         if(bone_id == -1)
             break;
 
-        int start_buffer_pos = bone_id * 4 * 4;
+        int start_buffer_pos = bone_id * 4 * 3;
 
         mat4 skinning_mat = mat4(
         //Column 0
         texelFetch(_skinning_text, start_buffer_pos).r,
         texelFetch(_skinning_text, start_buffer_pos + 1).r,
         texelFetch(_skinning_text, start_buffer_pos + 2).r,
-        texelFetch(_skinning_text, start_buffer_pos + 3).r,
+        0.0,
         //Column 1
+        texelFetch(_skinning_text, start_buffer_pos + 3).r,
         texelFetch(_skinning_text, start_buffer_pos + 4).r,
         texelFetch(_skinning_text, start_buffer_pos + 5).r,
+        0.0,
+        //Column 2
         texelFetch(_skinning_text, start_buffer_pos + 6).r,
         texelFetch(_skinning_text, start_buffer_pos + 7).r,
-        //Column 2
         texelFetch(_skinning_text, start_buffer_pos + 8).r,
+        0.0,
+        //Column 3
         texelFetch(_skinning_text, start_buffer_pos + 9).r,
         texelFetch(_skinning_text, start_buffer_pos + 10).r,
         texelFetch(_skinning_text, start_buffer_pos + 11).r,
-        //Column 3
-        texelFetch(_skinning_text, start_buffer_pos + 12).r,
-        texelFetch(_skinning_text, start_buffer_pos + 13).r,
-        texelFetch(_skinning_text, start_buffer_pos + 14).r,
-        texelFetch(_skinning_text, start_buffer_pos + 15).r
+        1.0
         );
 
         vec4 moved_pos = skinning_mat * vec4(position, 1.0f);
@@ -73,8 +73,6 @@ bool test = false;
 
         vec4 moved_normals = skinning_mat * vec4(normal, 0.0f);
         skinned_normal = moved_normals.xyz * influences[i] + skinned_normal;
-
-
 
         total_weight += influences[i];
         

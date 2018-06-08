@@ -168,7 +168,7 @@ mono_bool CSharpScript::IsAnimOverXTime(MonoObject * object, float number_betwee
 	return false;
 }
 
-void CSharpScript::SetClipsSpeed(MonoObject * object, float speed_value)
+void CSharpScript::SetClipSpeed(MonoObject * object, MonoString* string, float speed_value)
 {
 	Component* comp = App->importer->iScript->GetComponentMono(object);
 	if (comp != nullptr)
@@ -176,7 +176,7 @@ void CSharpScript::SetClipsSpeed(MonoObject * object, float speed_value)
 		CompAnimation* animation = (CompAnimation*)comp->GetParent()->FindComponentByType(Comp_Type::C_ANIMATION);
 		if (animation != nullptr)
 		{
-			animation->SetClipsSpeed(speed_value);
+			animation->SetClipSpeed(mono_string_to_utf8(string),speed_value);
 		}
 	}
 }

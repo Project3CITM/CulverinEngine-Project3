@@ -13,6 +13,8 @@ public class PlayExit : CulverinBehaviour
     public GameObject options_button;
     public GameObject options_menu;
     public GameObject display_button;
+    public GameObject difficulty_menu;
+    public GameObject easy_dif_button;
 
 
     void Start()
@@ -25,9 +27,11 @@ public class PlayExit : CulverinBehaviour
         options_menu = GetLinkedObject("options_menu");
         display_button = GetLinkedObject("display_button");
         main_menu = GetLinkedObject("main_menu");
+        difficulty_menu = GetLinkedObject("difficulty_menu");
 
         options_menu.SetActive(false);
         pop_up_menu.SetActive(false);
+        difficulty_menu.SetActive(false);
     }
 
     public void PlayButton()
@@ -71,5 +75,21 @@ public class PlayExit : CulverinBehaviour
         main_menu.SetActive(true);
         EventSystem.SendInteractiveSelected(quit_button);
 
+    }
+
+    public void DifficultyButton()
+    {
+        GetComponent<CompAudio>().PlayEvent("Push");
+        difficulty_menu.SetActive(true);
+        main_menu.SetActive(false);
+        EventSystem.SendInteractiveSelected(easy_dif_button);
+    }
+
+    public void ReturnFromDifficulty()
+    {
+        GetComponent<CompAudio>().PlayEvent("Push");
+        difficulty_menu.SetActive(false);
+        main_menu.SetActive(true);
+        EventSystem.SendInteractiveSelected(play_button);
     }
 }

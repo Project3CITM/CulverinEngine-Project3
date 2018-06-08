@@ -106,7 +106,7 @@ public class MovementController : CulverinBehaviour
             char_manager.SetCurrentPosition();
         }
 
-        if(Input.GetKeyDown(KeyCode.Num9))
+        if(Input.GetKeyRepeat(KeyCode.Num9) && Input.GetKeyRepeat(KeyCode.Num8) && Input.GetKeyRepeat(KeyCode.Q) && Input.GetKeyRepeat(KeyCode.E) && Input.GetKeyRepeat(KeyCode.Space))
         {
             Audio.prank = true;
         }
@@ -115,8 +115,6 @@ public class MovementController : CulverinBehaviour
 
         if (GetComponent<Transform>().local_position == endPosition && rotating == false && face_rotating == false && char_manager.GetManagerState() != CharactersManager.State.DROWNING && push == false)
         {
-            tile_mov_x = 0;
-            tile_mov_y = 0;
             moving = false;
 
             // CHECK ROTATION --------------------------
@@ -125,12 +123,15 @@ public class MovementController : CulverinBehaviour
                 // CHECK MOVEMENT --------------------------
                 CheckMovement();
             }
+
             // CHECK FACING --------------------------
             //CheckFacingRotation();
 
             //Calculate endPosition
             if ((tile_mov_x != 0 || tile_mov_y != 0))
             {
+                Debug.Log("GOING TO MOVE", Department.PLAYER, Color.RED);
+
                 if (level_map[curr_x + tile_mov_x, curr_y + tile_mov_y] == 0)
                 {
                     audio = GetComponent<CompAudio>();
@@ -143,7 +144,6 @@ public class MovementController : CulverinBehaviour
                 }
                 else if (level_map[curr_x + tile_mov_x, curr_y + tile_mov_y] == 3) //Valryian Fire!
                 {
-                    StatsScore.PuzzleTry();
                     audio = GetComponent<CompAudio>();
                     audio.PlayEvent("Footsteps");
                     endPosition = new Vector3(GetComponent<Transform>().local_position.x + distanceToMove * (float)tile_mov_x, GetComponent<Transform>().local_position.y, GetComponent<Transform>().local_position.z + distanceToMove * (float)tile_mov_y);
@@ -161,6 +161,9 @@ public class MovementController : CulverinBehaviour
                     }
                 }
             }
+
+            tile_mov_x = 0;
+            tile_mov_y = 0;
         }
         else if (push == true)
         {
@@ -260,30 +263,40 @@ public class MovementController : CulverinBehaviour
 
     }
 
+    public void RotateLeft()
+    {
+        actual_angle = 0;
+        angle = 10;
+        rotating = true;
+        ModificateCurrentDirection(true);
+    }
+
+    public void RotateRight()
+    {
+        actual_angle = 0;
+        angle = -10;
+        rotating = true;
+        ModificateCurrentDirection(false);
+    }
+
     private bool CheckRotation()
     {
         if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().IsIdle() && drowning == false)
         {
             float variation = Input.GetInput_ControllerAxis("Rotate", "Player");
+
+            //Rotate Left
             if (variation < -0.8)
             {
-                actual_angle = 0;
-                angle = 10;
-                rotating = true;
-                ModificateCurrentDirection(true);
-
+                RotateLeft();
                 return true;
-
             }
+
+            //Rotate Right
             else if (variation > 0.8)
             {
-                actual_angle = 0;
-                angle = -10;
-                rotating = true;
-                ModificateCurrentDirection(false);
-
+                RotateRight();
                 return true;
-
             }
         }
         return false;
@@ -307,8 +320,7 @@ public class MovementController : CulverinBehaviour
             {
                 if (!EnemyInRight())
                 {
-                    MoveRight(out tile_mov_x, out tile_mov_y);
-                    GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, time_in_memory, footstep_radius, curr_x, curr_y);
+                    MoveRight();
                     return true;
                 }
             }
@@ -316,8 +328,7 @@ public class MovementController : CulverinBehaviour
             {
                 if (!EnemyInLeft())
                 {
-                    MoveLeft(out tile_mov_x, out tile_mov_y);
-                    GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, time_in_memory, footstep_radius, curr_x, curr_y);
+                    MoveLeft();
                     return true;
                 }
             }
@@ -327,8 +338,7 @@ public class MovementController : CulverinBehaviour
             {
                 if (!EnemyBehind())
                 {
-                    MoveBackward(out tile_mov_x, out tile_mov_y);
-                    GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, time_in_memory, footstep_radius, curr_x, curr_y);
+                    MoveBackward();
                     return true;
                 }
 
@@ -337,8 +347,7 @@ public class MovementController : CulverinBehaviour
             {
                 if (!EnemyInFront())
                 {
-                    MoveForward(out tile_mov_x, out tile_mov_y);
-                    GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, time_in_memory, footstep_radius, curr_x, curr_y);
+                    MoveForward();
                     return true;
                 }
             }
@@ -447,8 +456,9 @@ public class MovementController : CulverinBehaviour
         }
     }
 
-    public void MoveForward(out int tile_mov_x, out int tile_mov_y)
+    public void MoveForward()
     {
+        GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, time_in_memory, footstep_radius, curr_x, curr_y);
         characters_camera.GetComponent<CompAnimation>().PlayAnimationNode("Walk");
         tile_mov_x = 0;
         tile_mov_y = 0;
@@ -468,6 +478,7 @@ public class MovementController : CulverinBehaviour
         {
             tile_mov_x = -1;
         }
+        Debug.Log("MOVE x: " + tile_mov_x + " y: " + tile_mov_y, Department.PLAYER);
     }
 
     public void MovePush(PathNode obj)
@@ -480,8 +491,9 @@ public class MovementController : CulverinBehaviour
         push = true;
     }
 
-    public void MoveRight(out int tile_mov_x, out int tile_mov_y)
+    public void MoveRight()
     {
+        GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, time_in_memory, footstep_radius, curr_x, curr_y);
         characters_camera.GetComponent<CompAnimation>().PlayAnimationNode("Walk");
         tile_mov_x = 0;
         tile_mov_y = 0;
@@ -503,8 +515,9 @@ public class MovementController : CulverinBehaviour
         }
     }
 
-    public void MoveBackward(out int tile_mov_x, out int tile_mov_y)
+    public void MoveBackward()
     {
+        GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, time_in_memory, footstep_radius, curr_x, curr_y);
         characters_camera.GetComponent<CompAnimation>().PlayAnimationNode("Walk");
         tile_mov_x = 0;
         tile_mov_y = 0;
@@ -526,8 +539,9 @@ public class MovementController : CulverinBehaviour
         }
     }
 
-    public void MoveLeft(out int tile_mov_x, out int tile_mov_y)
+    public void MoveLeft()
     {
+        GetComponent<PerceptionEmitter>().TriggerHearEvent(PERCEPTION_EVENT_TYPE.HEAR_WALKING_PLAYER, time_in_memory, footstep_radius, curr_x, curr_y);
         characters_camera.GetComponent<CompAnimation>().PlayAnimationNode("Walk");
         tile_mov_x = 0;
         tile_mov_y = 0;
@@ -591,12 +605,23 @@ public class MovementController : CulverinBehaviour
         return true;
     }
 
+    public bool CheckIsValyrianFire(int x, int y)
+    {
+        if (level_map[x, y] == 3)
+        {
+            return true;
+        }
+        return false;
+    }
+
     public bool IsMoving()
     {
         if (moving || rotating)
         {
             if (push == true)
+            {
                 return false;
+            }
             return true;
         }
         else
@@ -938,7 +963,6 @@ public class MovementController : CulverinBehaviour
     {
         if (level_map[curr_x, curr_y] == 3) //Valryian Fire!
         {
-            StatsScore.PuzzleTry();
 
             if (GetLinkedObject("player_obj").GetComponent<CharactersManager>().god_mode == false)
             {

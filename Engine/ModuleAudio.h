@@ -48,6 +48,7 @@ public:
 	float GetVolume() const;
 	void ChangeVolume(float volume);
 	void Mute(bool m);
+	bool IsMuted();
 
 
 private:

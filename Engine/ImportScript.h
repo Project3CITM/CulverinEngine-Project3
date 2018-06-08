@@ -103,9 +103,12 @@ private:
 	static void BlockGUIinput();
 	static void QuitScene();
 	static void LoadNewWalkableMap(MonoString* walkable_map);
+	static void LoadNewOclusionMap(MonoString* oclusion_map);
 	static void PushSaveInfoV2(MonoObject* info);
 	static void PushSaveInfo(float hp);
 	static float PopLoadInfo();
+	static MonoString* GetNameActualScene();
+	static MonoString* GetNameActualOclusionMap();
 
 	/* Scene Management */
 	static void SendInteractiveSelected(MonoObject* interactive);
@@ -234,6 +237,7 @@ private:
 	static float GetVolume();
 	static void ChangeVolume(float volume);
 	static void Mute(bool m);
+	static bool IsMuted();
 
 	/*Component Particle*/
 	static void ActivateEmission(MonoObject* obj, bool active);
@@ -332,7 +336,7 @@ private:
 	static mono_bool IsAnimationStopped(MonoObject* object, MonoString* string);
 	static mono_bool IsAnimationRunning(MonoObject* object, MonoString* string);
 	static mono_bool IsAnimOverXTime(MonoObject* object, float num_between_0_1);
-	static void SetClipsSpeed(MonoObject* object, float speed_value);
+	static void SetClipSpeed(MonoObject* object, MonoString* string, float speed_value);
 	static float GetClipDuration(MonoObject* object, MonoString* string);
 	static void SetClipDuration(MonoObject* object, MonoString* string, float duration);
 	static void SetFirstActiveBlendingClip(MonoObject* object, MonoString* string);

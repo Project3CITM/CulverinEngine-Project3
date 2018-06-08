@@ -262,6 +262,7 @@ update_status ModuleInput::PreUpdate(float dt)
 			break;
 
 		case SDL_MOUSEMOTION:
+			UpdateDeviceType(DeviceCombinationType::KEYBOARD_AND_MOUSE_COMB_DEVICE);
 
 			mouse_x = e.motion.x / SCREEN_SIZE;
 			mouse_y = e.motion.y / SCREEN_SIZE;

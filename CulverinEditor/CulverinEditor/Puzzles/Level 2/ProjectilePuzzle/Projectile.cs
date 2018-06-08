@@ -50,7 +50,6 @@ public class Projectile : CulverinBehaviour
                 if (cm != null)
                 {
                     cm.GetDamageProjectile(damage);
-                    StatsScore.PuzzleDamage();
                 }
             }
 

@@ -95,6 +95,10 @@ public:
 
 	void SaveMapNavigation(std::vector<std::string>& map, int height_map, int width_map, float separation, const char* name);
 	void LoadMapNavigation(std::vector<std::string>& map, int& height_map, int& width_map, float& separation, const char* name, std::string& file);
+	
+	void SaveMapOclusion(std::vector<std::string>& map, int height_map, int width_map, float separation, const char* name);
+	bool LoadMapOclusion(std::vector<std::string>& map, int& height_map, int& width_map, float& separation, const char* file, std::string& name_map);
+
 	// --------------------------------------
 
 	// SAVE & LOAD MATERIAL --------------------------
@@ -151,6 +155,12 @@ public:
 	void Create_Json_Doc(JSON_Value **root_value_scene, JSON_Object **root_object_scene, const char* namefile);
 	//----------------------------------------------------------------
 
+	// Restry Level (Save actual Scene)
+	void SaveActualScene(std::string scene);
+	std::string GetActualScene();
+	void SaveActualOclusionMap(std::string scene);
+	std::string GetActualOclusionMap();
+
 private:
 	// UUID & Name
 	void ChangeUUIDs(GameObject& gameObject);
@@ -160,6 +170,8 @@ private:
 
 private:
 	std::vector<const char*> namesScene;
+	std::string actual_scene;
+	std::string actual_oclusionmap;
 };
 
 #endif

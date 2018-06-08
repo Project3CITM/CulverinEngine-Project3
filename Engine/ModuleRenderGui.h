@@ -27,6 +27,7 @@ public:
 	void ChangeSelected(Event& this_event);
 	void WorldSpaceDraw();
 	void ScreenSpaceDraw(bool debug=false);
+	void ClearInteractive();
 	void ClearInteractiveVector();
 	bool CleanUp();
 	std::vector<CompCanvas*> screen_space_canvas;

@@ -8,9 +8,9 @@
 
 void ModuleGUI::ShowWindowBuild(bool* active)
 {
-	if (!ImGui::Begin("Build Settings", &window_about_us, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize))
+	if (!ImGui::Begin("Build Settings", active, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize))
 	{
-		active = false;
+		window_about_us = false;
 		ImGui::End();
 		return;
 	}

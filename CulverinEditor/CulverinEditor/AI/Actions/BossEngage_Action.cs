@@ -35,7 +35,7 @@ class BossEngage_Action : Action
 
     public override bool ActionEnd()
     {
-        Debug.Log("Combat starts");
+        Debug.Log("Combat starts", Department.IA);
         GetLinkedObject("player_obj").GetComponent<CharactersManager>().SetCurrentCharacterState(CharacterController.State.IDLE);
         interupt = false;
         play_audio = false;

@@ -44,6 +44,8 @@ public class Lever : CulverinBehaviour
     public float floor_height = 0.0f;
     public float time_sinking = 1.0f;
 
+    public bool easy_mode = false;
+
     //time to wait, move second mode
     public float delay_second_mode = 6.0f;
     private float time = 0.0f;
@@ -670,7 +672,7 @@ public class Lever : CulverinBehaviour
     void GeneratePath()
     {
         int index = Random.Range(0, possible_paths - 1);
-        current_path.CreateWalkability(index);
+        current_path.CreateWalkability(index,easy_mode);
 
         TileToWorld(puzzle_start_tile_x, puzzle_start_tile_z, out puzzle_start_pos_x, out puzzle_start_pos_z);
         SetOrientationVectors();

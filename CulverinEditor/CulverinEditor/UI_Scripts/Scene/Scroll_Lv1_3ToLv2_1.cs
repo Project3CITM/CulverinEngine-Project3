@@ -37,8 +37,16 @@ public class Scroll_Lv1_3ToLv2_1 : CulverinBehaviour
             loading_text.SetActive(true);
             end_scroll = true;
             start_load = true;
+            SceneManager.LoadNewOclusionMap("LVL2_Zone1_oclusion");
             SceneManager.LoadNewWalkableMap("LVL2_Zone1");
-            SceneManager.LoadMultiSceneNoDestroy("LVL2_zone_1", "PauseMenu");
+            if (DifficultySelector.hard_mode == true)
+            {
+                SceneManager.LoadMultiSceneNoDestroy("LVL2_zone_1_HARD", "PauseMenu");
+            }
+            else
+            {
+                SceneManager.LoadMultiSceneNoDestroy("LVL2_zone_1_EASY", "PauseMenu");
+            }
         }
         if (start_load)
         {

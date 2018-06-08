@@ -385,22 +385,30 @@ float ModuleAudio::GetVolume()const
 void ModuleAudio::ChangeVolume(float new_volume)
 {
 	volume = new_volume;
+	
 	Wwished::Utility::SetRTPCValue("General_Volume", volume);
+
 }
 
 void ModuleAudio::Mute(bool m)
 {
-	if (!muted && m == true)
+
+	muted = m;
+	if (muted == true)
 	{
+		LOG("MUTING");
 		last_volume = volume;
 		ChangeVolume(0);
-		muted = true;
 	}
-	else if (muted && m == false)
+	else if (muted == false)
 	{
 		ChangeVolume(last_volume);
-		muted = false;
 	}
+}
+
+bool ModuleAudio::IsMuted()
+{
+	return muted;
 }
 
 void ModuleAudio::StopSounds()

@@ -96,7 +96,7 @@ public:
 	virtual void OnMove(Event event_data);
 	virtual void OnSubmit(Event event_data);
 	virtual void OnCancel(Event event_data);
-
+	bool OnList();
 	bool PointerInside(float2 position);
 	void SetTargetGraphic(CompGraphic* target_graphic);
 	//Setters Color tint parameters

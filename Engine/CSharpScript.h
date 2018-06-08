@@ -269,7 +269,7 @@ public:
 	mono_bool	IsAnimationStopped(MonoObject* object, MonoString* name);
 	mono_bool	IsAnimationRunning(MonoObject* object, MonoString* name);
 	mono_bool	IsAnimOverXTime(MonoObject* object, float number_between_0_1);
-	void		SetClipsSpeed(MonoObject* object, float speed_value);
+	void		SetClipSpeed(MonoObject* object, MonoString* string, float speed_value);
 	float		GetClipDuration(MonoObject* object, MonoString* name);
 	void		SetClipDuration(MonoObject* object, MonoString* name, float duration);
 	void		SetFirstActiveBlendingClip(MonoObject* object, MonoString* name);

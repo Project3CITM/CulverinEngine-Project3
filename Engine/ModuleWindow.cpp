@@ -127,7 +127,7 @@ bool ModuleWindow::Init(JSON_Object* node)
 			SDL_SetWindowBordered(window, SDL_TRUE);
 		}
 		SDL_Surface*image;
-		image = SDL_LoadBMP("Images/UI/icon_Culverin.bmp");
+		image = SDL_LoadBMP("Images/UI/icon_Unthrone.bmp");
 		// The icon is attached to the window pointer
 		SDL_SetWindowIcon(window, image);
 		// ...and the surface containing the icon pixel data is no longer required.

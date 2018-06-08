@@ -15,17 +15,18 @@ public class ShowScore2 : CulverinBehaviour
     public GameObject grade_mark_C;
     public GameObject grade_mark_D;
 
-    public int max_combat_points = 500;
+    public int max_enemies = 10;
     public int fountain_uses = 3;
     public int max_puzzle_hits = 5;
     public int boss_time_sec = 85;
     public float gold_time = 440;
     public float silver_time = 510;
-    public int gold_combat_points = 480;
-    public int silver_combat_points = 200;
+    public int gold_enemies_killed = 10;
+    public int silver_enemies_killed = 6;
+    public float gold_boss_time = 70;
+    public float silver_boss_time = 130;
 
     int grade_points = 0;
-    int skill_coins = 0;
 
     void Start()
     {
@@ -46,7 +47,6 @@ public class ShowScore2 : CulverinBehaviour
         grade_mark_D.SetActive(false);
 
         grade_points = 0;
-        skill_coins = 0;
 
         CalulateScore();
         DisplayScore();
@@ -57,7 +57,7 @@ public class ShowScore2 : CulverinBehaviour
         DisplayTime();
         DisplaySurvivors();
         DisplayCombatPoints();
-        DisplaySkillLevel();
+        DisplayBossTime();
         DisplayGrade();
     }
 
@@ -90,22 +90,22 @@ public class ShowScore2 : CulverinBehaviour
 
     void DisplayCombatPoints()
     {
-        combat_point.GetComponent<CompText>().SetText(StatsScore.combat_points.ToString() + "/" + max_combat_points);
-        if(StatsScore.combat_points > gold_combat_points)
+        combat_point.GetComponent<CompText>().SetText(StatsScore.enemies_killed.ToString() + "/" + max_enemies);
+        if(StatsScore.enemies_killed > gold_enemies_killed)
         {
             combat_point.GetComponent<CompText>().SetColor(new Vector3(1.0f, 1.0f, 0.0f), 1.0f);
         }
     }
 
-    void DisplaySkillLevel()
+    void DisplayBossTime()
     {
-    
-        skill_display.GetComponent<CompText>().SetText(skill_coins.ToString() + "/3");
-      
-        if (skill_coins == 3)
-        {
-            skill_display.GetComponent<CompText>().SetColor(new Vector3(1.0f, 1.0f, 0.0f), 1.0f);
-        }
+        int minutes = (int)StatsScore.boss_time / 60;
+        int seconds = (int)StatsScore.boss_time % 60;
+
+        string boss_time_str = minutes.ToString("D2") + ":" + seconds.ToString("D2");
+
+        skill_display.GetComponent<CompText>().SetText(boss_time_str);
+
     }
 
     void DisplayGrade()
@@ -139,20 +139,6 @@ public class ShowScore2 : CulverinBehaviour
 
     void CalulateScore()
     {
-        if(StatsScore.fountain_times <= fountain_uses)
-        {
-            skill_coins++;
-        }
-        if(StatsScore.puzzle_hits <= max_puzzle_hits)
-        {
-            skill_coins++;
-        }
-        if(StatsScore.boss_time <= boss_time_sec)
-        {
-            skill_coins++;
-        }
-
-
         //Grade--------------
         //Time
         if(StatsScore.time <= gold_time)
@@ -184,31 +170,32 @@ public class ShowScore2 : CulverinBehaviour
 
 
         //Combat points
-        if (StatsScore.combat_points > 480)
+        if (StatsScore.enemies_killed > gold_enemies_killed)
         {
             grade_points += 100;
         }
-        else if (StatsScore.combat_points < 480 && StatsScore.combat_points > 200)
+        else if (StatsScore.enemies_killed < gold_enemies_killed && StatsScore.enemies_killed > silver_enemies_killed)
         {
             grade_points += 50;
         }
-        else if (StatsScore.combat_points < 200)
+        else if (StatsScore.enemies_killed < silver_enemies_killed)
         {
             grade_points += 25;
         }
 
-        //Skill level
-        if (skill_coins == 3)
+        //Skill level - boss time
+        if (StatsScore.boss_time <= gold_boss_time)
         {
             grade_points += 100;
         }
-        else if (skill_coins == 2)
+        else if (StatsScore.boss_time > gold_boss_time && StatsScore.time < silver_boss_time)
         {
             grade_points += 50;
         }
-        else if (skill_coins == 1)
+        else if (StatsScore.boss_time > silver_boss_time)
         {
             grade_points += 25;
         }
+
     }
 }

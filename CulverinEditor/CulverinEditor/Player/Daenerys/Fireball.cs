@@ -99,7 +99,7 @@ public class Fireball : CulverinBehaviour
             Vector3 normal = col.GetContactNormal();
 
             fireball_particles.GetComponent<Transform>().SetUpVector(normal);
-            point = point + normal * 2;
+            point = point + normal * 4;
             fireball_particles.GetComponent<Transform>().SetPosition(point);
 
             CompParticleSystem fireball_particles_script = fireball_particles.GetComponent<CompParticleSystem>();

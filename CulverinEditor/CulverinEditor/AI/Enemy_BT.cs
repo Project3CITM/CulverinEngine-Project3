@@ -86,7 +86,7 @@ public class Enemy_BT : BT
         {
             Debug.Log("ENEMIES MANAGER NULL!!", Department.IA, Color.RED);
         }
-        GetComponent<CompAnimation>().PlayAnimation("Idle");
+        GetComponent<CompAnimation>().PlayAnimationNode("Idle");
         dmg_alpha = 0.0f;
         //ChangeTexturesToAlive();
         enemy_hp_bar = GetLinkedObject("enemy_hp_bar");
@@ -112,7 +112,6 @@ public class Enemy_BT : BT
     {
         //Update attack cooldown
         attack_timer += Time.deltaTime;
-        Debug.Log(state, Department.PHYSICS);
 
         if (GetCurrentHP() <= 0 && state != AI_STATE.AI_DEAD)
         {
@@ -147,13 +146,17 @@ public class Enemy_BT : BT
 
             current_action = next_action;
             next_action = null_action;
+
+            Debug.Log("errrorr " + in_combat, Department.PHYSICS, Color.GREEN);
+
             current_action.ActionStart();
             return;
         }
 
         if (in_combat)
-        {            
-            if (next_action.action_type == Action.ACTION_TYPE.DISENGAGE_ACTION)
+        {
+
+            if (next_action.action_type == Action.ACTION_TYPE.DISENGAGE_ACTION || next_action.action_type == Action.ACTION_TYPE.MOVE_ACTION)
             {
                 in_combat = false;
                 current_action = GetComponent<Disengage_Action>();
@@ -167,6 +170,7 @@ public class Enemy_BT : BT
         {
             if (next_action.action_type == Action.ACTION_TYPE.ENGAGE_ACTION)
             {
+                Debug.Log("ENGAGE PAPUUUUUU", Department.PHYSICS);
                 in_combat = true;
                 current_action = next_action;
                 next_action = null_action;
@@ -208,7 +212,19 @@ public class Enemy_BT : BT
         }
         else
         {
-            Debug.Log("Not push hit", Department.PHYSICS, Color.PINK);
+            Debug.Log("Not push hit", Department.STAGE, Color.PINK);
+        }
+
+        if(current_action.action_type == Action.ACTION_TYPE.MOVE_ACTION || current_action.action_type == Action.ACTION_TYPE.INVESTIGATE_ACTION)
+        {
+            Debug.Log("TIME TO FIGHT",Department.PHYSICS,Color.PINK);
+
+            current_action.Interupt();
+            next_action = GetComponent<Engage_Action>();
+            MovementController temp_move = player.GetComponent<MovementController>();
+            GetComponent<PerceptionEmitter>().TriggerPlayerSeenEvent(10.0f, temp_move.curr_x, temp_move.curr_y, this.gameObject, 
+            GetComponent<Movement_Action>().GetCurrentTileX(), GetComponent<Movement_Action>().GetCurrentTileY());
+            
         }
 
         current_hp -= damage;

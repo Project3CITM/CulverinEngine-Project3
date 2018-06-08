@@ -111,8 +111,11 @@ vec3 blinnPhongDir(Light light, float Kd, float Ks, float shininess, vec3 N, flo
         float cosAlpha = clamp( dot( v,r ), 0,1 );
 
         float d = length((lightpos - FragPos));
-        float attenuation =1/(light.properties[1] + light.properties[2]* d + light.properties[3] * d*d);
-        attenuation *= lightInt;
+        //=lightInt/pow(((d/light.radius)+1),2);//1/(light.properties[1] + light.properties[2]* d + light.properties[3] * d*d);
+int power = 2;
+ float attenuation = 1 - (pow(d*2,power)/pow(light.radius,power));
+
+attenuation = lightInt * max(0, attenuation);
         float diffuse = attenuation * Kd  * cosTheta;
         float spec = attenuation * Ks * pow(cosAlpha,shininess);
 

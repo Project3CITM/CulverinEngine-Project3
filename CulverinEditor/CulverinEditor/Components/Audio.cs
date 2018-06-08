@@ -30,6 +30,8 @@ namespace CulverinEditor
         public static extern float GetVolume();
         [MethodImpl(MethodImplOptions.InternalCall)]
         public static extern void Mute(bool m);
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern bool IsMuted();
 
         public static bool prank = false;
     }

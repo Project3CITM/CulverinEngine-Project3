@@ -93,7 +93,7 @@ public class Movement_Action : Action
 
         player_t = GetLinkedObject("player_obj");
 
-       BT bt = GetComponent<EnemySword_BT>();
+        BT bt = GetComponent<EnemySword_BT>();
         if (bt == null)
             bt = GetComponent<EnemyShield_BT>();
         if (bt == null)
@@ -125,6 +125,8 @@ public class Movement_Action : Action
         anim_comp.SetClipDuration("WalkFront", sideways_anim_speed);
 
         blocking = false;
+
+        path.Clear();
     }
 
     public override bool ActionStart()
@@ -164,7 +166,7 @@ public class Movement_Action : Action
                 GetComponent<CompAudio>().PlayEvent("BossFootstep");
                 fx_played = true;
             }
-            if(GetComponent<CompAnimation>().IsAnimOverXTime(0.95f))
+            if (GetComponent<CompAnimation>().IsAnimOverXTime(0.95f))
             {
                 fx_played = false;
             }
@@ -374,10 +376,11 @@ public class Movement_Action : Action
 
             arrive.SetEnabled(true);
             seek.SetEnabled(true);
-
             translation_finished = false;
 
             path = map.GetComponent<Pathfinder>().CalculatePath(new PathNode(current_x, current_y), new PathNode(obj_x, obj_y));
+
+            
 
             if (arrive.ReachedTile())
             {
@@ -395,6 +398,10 @@ public class Movement_Action : Action
                     rotation_finished = true;
                     moving_sideways = true;
                 }
+            }
+            else
+            {
+                LookAtNextTile();
             }
         }
     }
@@ -599,6 +606,7 @@ public class Movement_Action : Action
             delta = delta + 2 * Mathf.PI;
 
         delta = Mathf.Rad2deg(delta);
+        Debug.Log("delta looking at player: " + delta, Department.PHYSICS, Color.BLUE);
 
         if (delta >= -50.0f && delta <= 50.0f)
             return true;

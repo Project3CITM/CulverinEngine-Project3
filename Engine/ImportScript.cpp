@@ -1123,9 +1123,12 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::BlockGUIinput", (const void*)BlockGUIinput);
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::QuitScene", (const void*)QuitScene);
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::LoadNewWalkableMap", (const void*)LoadNewWalkableMap);
+	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::LoadNewOclusionMap", (const void*)LoadNewOclusionMap);
 	//mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::PushSaveInfo(object)", (const void*)PushSaveInfoV2);
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::PushSaveInfo(single)", (const void*)PushSaveInfo);
 	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::PopLoadInfo", (const void*)PopLoadInfo);
+	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::GetNameActualScene", (const void*)GetNameActualScene);
+	mono_add_internal_call("CulverinEditor.SceneManagement.SceneManager::GetNameActualOclusionMap", (const void*)GetNameActualOclusionMap);
 	//EVENT SYSTEM FUNCTIONS ----------------------------
 	mono_add_internal_call("CulverinEditor.EventSystem.EventSystem::SendInteractiveSelected", (const void*)SendInteractiveSelected);
 	mono_add_internal_call("CulverinEditor.EventSystem.EventSystem::GetInteractiveSelectedActive", (const void*)GetInteractiveSelectedActive);
@@ -1193,6 +1196,7 @@ void ImportScript::LinkFunctions()
 
 	mono_add_internal_call("CulverinEditor.Audio::ChangeVolume", (const void*)ChangeVolume);
 	mono_add_internal_call("CulverinEditor.Audio::Mute", (const void*)Mute);
+	mono_add_internal_call("CulverinEditor.Audio::IsMuted", (const void*)IsMuted);
 	
 	//COMPONENT PARTICLE FUNCTION ----------------
 	mono_add_internal_call("CulverinEditor.CompParticleSystem::ActivateEmission", (const void*)ActivateEmission);
@@ -1294,7 +1298,7 @@ void ImportScript::LinkFunctions()
 	mono_add_internal_call("CulverinEditor.CompAnimation::IsAnimationStopped", (const void*)IsAnimationStopped);
 	mono_add_internal_call("CulverinEditor.CompAnimation::IsAnimationRunning", (const void*)IsAnimationRunning);
 	mono_add_internal_call("CulverinEditor.CompAnimation::IsAnimOverXTime", (const void*)IsAnimOverXTime);
-	mono_add_internal_call("CulverinEditor.CompAnimation::SetClipsSpeed", (const void*)SetClipsSpeed);
+	mono_add_internal_call("CulverinEditor.CompAnimation::SetClipSpeed", (const void*)SetClipSpeed);
 	mono_add_internal_call("CulverinEditor.CompAnimation::GetClipDuration", (const void*)GetClipDuration);
 	mono_add_internal_call("CulverinEditor.CompAnimation::SetClipDuration", (const void*)SetClipDuration);
 	mono_add_internal_call("CulverinEditor.CompAnimation::SetFirstActiveBlendingClip", (const void*)SetFirstActiveBlendingClip);
@@ -1472,7 +1476,18 @@ void ImportScript::LoadNewWalkableMap(MonoString* walkable_map)
 	{
 		const char* map = mono_string_to_utf8(walkable_map);
 		App->map->imported_map = map;
-		App->map->ImportMap(true);
+		App->map->ImportMap(true, TypeMap::MAP_WALKABLE);
+	}
+}
+
+void ImportScript::LoadNewOclusionMap(MonoString * oclusion_map)
+{
+	if (oclusion_map != nullptr)
+	{
+		const char* map = mono_string_to_utf8(oclusion_map);
+		App->map->imported_map = map;
+		App->map->ImportMap(true, TypeMap::MAP_OCLUSION);
+		App->json_seria->SaveActualOclusionMap(map);
 	}
 }
 
@@ -1515,9 +1530,19 @@ float ImportScript::PopLoadInfo()
 	return  1503.0f;
 }
 
+MonoString* ImportScript::GetNameActualScene()
+{
+	return mono_string_new_wrapper(App->json_seria->GetActualScene().c_str());
+}
+
+MonoString * ImportScript::GetNameActualOclusionMap()
+{
+	return mono_string_new_wrapper(App->json_seria->GetActualOclusionMap().c_str());;
+}
+
 void ImportScript::SendInteractiveSelected(MonoObject * interactive)
 {
-	if (interactive != nullptr)
+	if (interactive != nullptr && App->input->GetActualDeviceCombo() == DeviceCombinationType::CONTROLLER_COMB_DEVICE)
 	{
 		
 		GameObject*  go = App->importer->iScript->GetGameObject(interactive);
@@ -2099,6 +2124,11 @@ void ImportScript::Mute(bool m)
 	App->audio->Mute(m);
 }
 
+bool ImportScript :: IsMuted()
+{
+	return App->audio->IsMuted();
+}
+
 //Component Particle Functions ------------
 
 void ImportScript::ActivateEmission(MonoObject* object, bool a)
@@ -2384,9 +2414,9 @@ mono_bool ImportScript::IsAnimOverXTime(MonoObject * object, float num_between_0
 	return current->IsAnimOverXTime(object, num_between_0_1);
 }
 
-void ImportScript::SetClipsSpeed(MonoObject * object, float speed_value)
+void ImportScript::SetClipSpeed(MonoObject * object, MonoString* string,float speed_value)
 {
-	current->SetClipsSpeed(object, speed_value);
+	current->SetClipSpeed(object, string, speed_value);
 }
 
 float ImportScript::GetClipDuration(MonoObject * object, MonoString * string)

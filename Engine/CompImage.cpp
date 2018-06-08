@@ -175,7 +175,6 @@ void CompImage::ShowInspectorInfo()
 			select_source_image = true;
 	}
 	ImGui::Checkbox("Sprite Swap(Controller)", &device_swap);
-	ImGui::Checkbox("Sprite Swap Active(Controller)", &device_swap_active);
 
 	if (device_swap)
 	{

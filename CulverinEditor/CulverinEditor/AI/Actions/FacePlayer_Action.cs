@@ -31,7 +31,7 @@ public class FacePlayer_Action : Action
         if (move_update != ACTION_RESULT.AR_IN_PROGRESS)
             move.ActionEnd();
 
-        return move.ActionUpdate();
+        return move_update;
     }
 
     public override bool ActionEnd()

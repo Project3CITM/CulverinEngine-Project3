@@ -46,17 +46,19 @@ public class Fountain : CulverinBehaviour
         {
             if (Input.GetInput_KeyDown("Interact", "Player") && current_usage > 0)
             {
-                player.GetComponent<CharactersManager>().HealCharacters(heal_percentage);
-                reducing_water = true;
-                current_usage--;
-                float by = (float)current_usage / (float)number_of_uses;
-                destination_y = Mathf.Lerp(starting_y_bottom, final_y_bottom, by);
-                destination_x = Mathf.Lerp(starting_x_scale_bottom, final_x_scale_bottom, by);
-                destination_z = Mathf.Lerp(starting_z_scale_bottom, final_z_scale_bottom, by);
-                if (current_usage == 0)
+                if (player.GetComponent<CharactersManager>().HealCharacters(heal_percentage) == true)
                 {
-                    on_fountain_range = false;
-                    fountain_interact.GetComponent<CompText>().DeactivateRender();
+                    reducing_water = true;
+                    current_usage--;
+                    float by = (float)current_usage / (float)number_of_uses;
+                    destination_y = Mathf.Lerp(starting_y_bottom, final_y_bottom, by);
+                    destination_x = Mathf.Lerp(starting_x_scale_bottom, final_x_scale_bottom, by);
+                    destination_z = Mathf.Lerp(starting_z_scale_bottom, final_z_scale_bottom, by);
+                    if (current_usage == 0)
+                    {
+                        on_fountain_range = false;
+                        fountain_interact.GetComponent<CompText>().DeactivateRender();
+                    }
                 }
             }
         }

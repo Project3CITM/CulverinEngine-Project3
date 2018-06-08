@@ -1109,34 +1109,49 @@ CompInteractive * CompInteractive::FindInteractive(float3 direction)
 	float closest_point_second_axis = INFINITY;
 	for (std::list<CompInteractive*>::iterator it = iteractive_list.begin(); it != iteractive_list.end(); it++)
 	{
-		if (!(*it)->IsActive())
-			continue;
 		if ((*it) == this || (*it) == nullptr)
+			continue;
+		if (!(*it)->IsActive())
 			continue;
 		if (navigation.current_navigation_mode == Navigation::NavigationMode::NAVIGATION_NONE)
 			continue;
 		float3 position_it = (*it)->parent->GetComponentRectTransform()->GetGlobalPosition();
 		float3 diff_vec = position_it - position;
+
+
 		float diff_x = diff_vec.x * direction.x;
 		float diff_y = diff_vec.y * direction.y;
-		float diff_second_x = diff_vec.x * direction.y;
-		float diff_second_y = diff_vec.y * direction.x;
+
+		float diff_second_x = abs(diff_vec.x);
+		float diff_second_y = abs(diff_vec.y);
 
 		if (diff_x > 0.000001)
 		{
-			if (diff_x < closest_point && diff_second_y < closest_point_second_axis)
+			if (diff_second_y > 0 && closest_point_second_axis > diff_second_y && closest_point >= diff_x)
 			{
-				closest_point_second_axis = diff_second_y;
 				closest_point = diff_x;
+				closest_point_second_axis = diff_second_y;
+				ret = it._Ptr->_Myval;
+			}
+			else if (diff_second_y == 0 && closest_point > diff_x)
+			{
+				closest_point = diff_x;
+				closest_point_second_axis = diff_second_y;
 				ret = it._Ptr->_Myval;
 			}
 		}
 		if (diff_y > 0.000001)
 		{
-			if (diff_y < closest_point && diff_second_x < closest_point_second_axis)
+			if (diff_second_x > 0 && closest_point_second_axis > diff_second_x && closest_point >= diff_y)
 			{
-				closest_point_second_axis = diff_second_x;
 				closest_point = diff_y;
+				closest_point_second_axis = diff_second_x;
+				ret = it._Ptr->_Myval;
+			}
+			else if (diff_second_x == 0 && closest_point > diff_y)
+			{
+				closest_point = diff_y;
+				closest_point_second_axis = diff_second_x;
 				ret = it._Ptr->_Myval;
 			}
 		}
@@ -1318,6 +1333,16 @@ void CompInteractive::OnCancel(Event event_data)
 {
 }
 
+bool CompInteractive::OnList()
+{
+	std::list<CompInteractive*>::iterator item = std::find(iteractive_list.begin(), iteractive_list.end(), this);
+	if (item == iteractive_list.end())
+	{
+		return false;
+	}
+	return true;
+}
+
 void CompInteractive::PrepareHandleTransition()
 {
 	SelectionStates selection_state = current_selection_state;
@@ -1388,14 +1413,9 @@ void CompInteractive::ShowInspectorColorTransition()
 	ImGui::Text("Fade duration"); ImGui::SameLine(op + 30);
 	if (ImGui::DragFloat("##fade_duration", &fade_duration, 0.1f, 0.0f, 2.0f))
 	{
-		if (fade_duration < 0.0001)
-		{
+		
 			no_fade = true;
-		}
-		else
-		{
-			no_fade = false;
-		}
+	
 	}
 }
 

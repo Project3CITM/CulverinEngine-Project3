@@ -152,7 +152,7 @@ public class TheonController : CharacterController
 
     public override void ControlCharacter()
     {
-        Debug.Log(state, Department.PLAYER, Color.BLUE);
+        //Debug.Log(state, Department.PLAYER, Color.BLUE);
         curr_hp = health.GetCurrentHealth();
         
         // First check if you are alive

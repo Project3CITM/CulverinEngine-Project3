@@ -275,7 +275,7 @@ void Application::FinishUpdate()
 			{
 				actual_scene = json_seria->SaveScene();
 			}
-			else if (want_to_save_binary)
+			if (want_to_save_binary)
 			{
 				actual_scene = json_seria->SaveSceneBinary();
 			}
@@ -285,9 +285,8 @@ void Application::FinishUpdate()
 	}
 	if (remove_secondary_scene)
 	{
-		render_gui->focus = nullptr;
-		render_gui->selected = nullptr;
-		render_gui->ClearInteractiveVector();
+		render_gui->ClearInteractive();
+
 
 		scene->DeleteAllGameObjects(scene->secondary_root, false);
 
@@ -302,7 +301,10 @@ void Application::FinishUpdate()
 	if (want_to_load == true || want_to_load_binary == true || want_to_load_json == true)
 	{
 		//Before Delete GameObjects Del Variables Scripts GameObject 
-		scene->octree.Clear(false);
+		//scene->octree.Clear(false);
+		render_gui->ClearInteractive();
+
+		scene->oclusion_culling->Clear();
 		scene->static_objects.clear();
 		scene->dynamic_objects.clear();
 
@@ -315,9 +317,7 @@ void Application::FinishUpdate()
 		scene->ClearAllTags();
 		App->particles->CleanUp();
 
-		render_gui->focus = nullptr;
-		render_gui->selected = nullptr;
-		render_gui->ClearInteractiveVector();
+
 
 		if (want_to_load)
 		{
@@ -367,7 +367,8 @@ void Application::FinishUpdate()
 	if (dont_destroy_on_load)
 	{
 		//Before Delete GameObjects Del Variables Scripts GameObject 
-		scene->octree.Clear(false);
+		//scene->octree.Clear(false);
+		scene->oclusion_culling->Clear();
 		scene->static_objects.clear();
 
 		//App->scene->DeleteAllGameObjects(App->scene->root);
@@ -405,9 +406,8 @@ void Application::FinishUpdate()
 
 	if (remove_dont_destroy_on_load)
 	{
-		render_gui->focus = nullptr;
-		render_gui->selected = nullptr;
-		render_gui->ClearInteractiveVector();
+		render_gui->ClearInteractive();
+
 
 		scene->DeleteAllGameObjects(App->scene->dontdestroyonload);
 
@@ -433,7 +433,8 @@ void Application::FinishUpdate()
 	{
 		/**/
 		//Before Delete GameObjects Del Variables Scripts GameObject 
-		scene->octree.Clear(false);
+		//scene->octree.Clear(false);
+		scene->oclusion_culling->Clear();
 		scene->static_objects.clear();
 
 		scene->ChangeRoot(scene->dontdestroyonload, scene->root);
@@ -501,9 +502,8 @@ void Application::FinishUpdate()
 		if (scene->secondary_root->GetChildsVec().size() > 0)
 		{
 			// Reset gui inputs?
-			render_gui->focus = nullptr;
-			render_gui->selected = nullptr;
-			render_gui->ClearInteractiveVector();
+			render_gui->ClearInteractive();
+			
 
 			//First swap main camera
 			//GameObject* camera = scene->root->FindGameObjectWithTag("camera");
@@ -819,14 +819,14 @@ void Application::Config()
 			}
 			else
 			{
-				ImGui::BulletText("ACCUMULATED");
+				/*ImGui::BulletText("ACCUMULATED");
 				ImGui::Text("- Actual Memory:"); ImGui::SameLine();
 				ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.08f, 1.0f), "%i", stats.accumulatedActualMemory);
 				ImGui::Text("- Allocated memory:"); ImGui::SameLine();
 				ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.08f, 1.0f), "%i", stats.accumulatedAllocUnitCount);
 				ImGui::Text("- Reported memory:"); ImGui::SameLine();
 				ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.08f, 1.0f), "%i", stats.accumulatedReportedMemory);
-				ImGui::Spacing();
+				ImGui::Spacing();*/
 
 				ImGui::BulletText("PEAK");
 				ImGui::Text("- Actual Memory:"); ImGui::SameLine();
@@ -1466,6 +1466,11 @@ bool Application::InitBuild()
 
 void Application::SetFullScreen()
 {
+	if (GetBordeless())
+	{
+		SDL_SetWindowBordered(App->window->window, SDL_TRUE);
+
+	}
 	LOG("Setting to Fullscreen");
 	SDL_SetWindowFullscreen(App->window->window, SDL_WINDOW_FULLSCREEN);
 }
@@ -1473,40 +1478,41 @@ void Application::SetFullScreen()
 bool Application::GetFullScreen()
 {
 	Uint32 flag = SDL_GetWindowFlags(App->window->window);
-	if (flag == SDL_WINDOW_FULLSCREEN)
-		return true;
-	else
-		return false;
+
+	return (flag & SDL_WINDOW_FULLSCREEN)?true:false;
 }
 
 void Application::SetWindowed()
 {
+	
+	if (GetBordeless())
+	{
+		SDL_SetWindowBordered(App->window->window, SDL_TRUE);
+
+	}
 	LOG("Setting to Windowed");
-	SDL_SetWindowFullscreen(App->window->window, SDL_WINDOW_RESIZABLE);
+	SDL_SetWindowFullscreen(App->window->window, 0);
 }
 
 bool Application::GetWindowed()
 {
 	Uint32 flag = SDL_GetWindowFlags(App->window->window);
-	if (flag == SDL_WINDOW_RESIZABLE)
-		return true;
-	else
-		return false;
+
+		return (flag & SDL_WINDOW_SHOWN) ? true : false;
 }
 
 void Application::SetBordeless()
 {
 	LOG("Setting to Bordeless");
-	SDL_SetWindowFullscreen(App->window->window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+	SDL_SetWindowBordered(App->window->window,	SDL_FALSE);
 }
 
 bool Application::GetBordeless()
 {
 	Uint32 flag = SDL_GetWindowFlags(App->window->window);
-	if (flag == SDL_WINDOW_FULLSCREEN_DESKTOP)
-		return true;
-	else
-		return false;
+
+	return (flag & SDL_WINDOW_BORDERLESS) ? true : false;
+
 }
 
 void Application::SetVSync()

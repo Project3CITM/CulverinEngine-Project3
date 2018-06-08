@@ -73,7 +73,7 @@ public class Arrow : CulverinBehaviour
                 {
 
                     arrow_blood_particles.GetComponent<Transform>().SetUpVector(normal);
-                    arrow_blood_particles.GetComponent<Transform>().SetPosition(point);
+                    arrow_blood_particles.GetComponent<Transform>().SetPosition(point + normal * 2);
 
                     CompParticleSystem arrow_particles_script = arrow_blood_particles.GetComponent<CompParticleSystem>();
                     arrow_particles_script.ActivateEmission(true);
@@ -90,7 +90,7 @@ public class Arrow : CulverinBehaviour
                 {
 
                     arrow_sparks_particles.GetComponent<Transform>().SetUpVector(normal);
-                    arrow_sparks_particles.GetComponent<Transform>().SetPosition(point);
+                    arrow_sparks_particles.GetComponent<Transform>().SetPosition(point + normal * 2);
 
                     CompParticleSystem wall_particles_script = arrow_sparks_particles.GetComponent<CompParticleSystem>();
                     wall_particles_script.ActivateEmission(true);

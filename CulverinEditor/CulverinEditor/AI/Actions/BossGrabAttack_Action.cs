@@ -151,6 +151,7 @@ public class BossGrabAttack_Action : Action
 
     public override bool ActionEnd()
     {
+        GetComponent<CompAnimation>().PlayAnimationNode("IdleAttack");
         interupt = false;
         return false;
     }

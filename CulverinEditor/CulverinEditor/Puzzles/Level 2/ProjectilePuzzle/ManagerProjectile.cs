@@ -43,6 +43,8 @@ public class ManagerProjectile : CulverinBehaviour
     private int last_shoot = 0;
     // --------------------------------------
 
+    private PuzzleCountdown countdown;
+
     void Start()
     {
         projectileOut_1 = GetLinkedObject("projectileOut_1");
@@ -56,6 +58,7 @@ public class ManagerProjectile : CulverinBehaviour
 
         door_puzzle_level2 = GetLinkedObject("door_puzzle_level2");
         door_puzzle_level2_exit = GetLinkedObject("door_puzzle_level2_exit");
+        countdown = GetComponent<PuzzleCountdown>();
 
     }
 
@@ -68,6 +71,7 @@ public class ManagerProjectile : CulverinBehaviour
                 if (door_puzzle_level2.GetComponent<DoorLevel2>().door_closed && phase_active == 0)
                 {
                     phase_active = 1;
+                    countdown.StartCountdown();
                 }
             }
 
@@ -97,6 +101,7 @@ public class ManagerProjectile : CulverinBehaviour
                     door_puzzle_level2_exit.GetComponent<DoorLevel2>().OpenDoor();
                 }
                 active_puzzle = false;
+                countdown.StopCountdown();
                 phase_active = -1;
             }
 

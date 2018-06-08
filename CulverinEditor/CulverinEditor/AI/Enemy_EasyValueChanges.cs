@@ -39,7 +39,6 @@ public class Enemy_EasyValueChanges : CulverinBehaviour
             bt.total_hp = total_hp;
             bt.attack_damage = attack_damage;
             bt.attack_cooldown = attack_cooldown;
-            Debug.Log("attack cooldown: " + bt.attack_cooldown, Department.IA, Color.PINK);
         }
     }
 
@@ -71,8 +70,6 @@ public class Enemy_EasyValueChanges : CulverinBehaviour
             bt.total_hp = total_hp;
             bt.attack_damage = attack_damage;
             bt.attack_cooldown = attack_cooldown;
-            Debug.Log("attack cooldown: " + bt.attack_cooldown, Department.IA,Color.PINK);
-
         }
         else
         {

@@ -5,36 +5,34 @@ using CulverinEditor.Debug;
 static public class StatsScore
 {
     static public bool boss_dead = false;
-    static public uint enem_killed = 0; // enemies player has killed
-    static public uint puzzle_tries = 0; // tries used to solve the puzzle
+
+    static public uint enemies_killed = 0; // enemies player has killed
     static public uint characters_alive = 3; //counter for tracking how many characters you have used (1,2 or 3)
     static public float time = 0.0f; //counter for tracking how many characters you have used (1,2 or 3)
 
-    static public uint fountain_times = 0;
-    static public float combat_points = 0;
-    static public uint puzzle_hits = 0;
     static public float boss_time = 0.0f;
+
+
+    //Temp variables - For checkpoints softreset
+    static public uint temp_enemies_killed = 0;
 
     static public void BossDead()
     {
         boss_dead = true;
-        combat_points += 100;
     }
  
     static public void KillEnemy()
     {
-        enem_killed++;
-        combat_points += 50;
+        temp_enemies_killed++;
     }
 
-    static public void PuzzleTry()
-    {
-        puzzle_tries++;
-    }
 
     static public void CharacterDead()
     {
-        characters_alive--;
+        if (characters_alive > 0)
+        {
+            characters_alive--;
+        }
     }
 
     static public void GetTime()
@@ -46,24 +44,19 @@ static public class StatsScore
     {
         boss_dead = false;
         time = 0.0f;
-        enem_killed = 0;
-        puzzle_tries = 0;
+        enemies_killed = 0;
+        temp_enemies_killed = 0;
         characters_alive = 3;
         Time.StartTimePlay();
-
-        combat_points = 0;
-        fountain_times = 0;
-        puzzle_hits = 0;
     }
 
-    static public void Heal()
+    static public void SetDefinitiveScore()
     {
-        fountain_times++;
+        enemies_killed += temp_enemies_killed;
     }
 
-    static public void PuzzleDamage()
+    static public void SoftReset()
     {
-        puzzle_hits++;
+        temp_enemies_killed = 0;
     }
-
 }

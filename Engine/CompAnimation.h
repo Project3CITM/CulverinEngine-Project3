@@ -154,7 +154,7 @@ public:
 	void CreateAnimationNode();
 	void CheckNodesConditions(AnimationNode* node);
 
-	void SetClipsSpeed(float speed_value);
+	void SetClipSpeed(std::string name,float speed_value);
 
 	void SetActiveAnimationNode(AnimationNode * active);
 

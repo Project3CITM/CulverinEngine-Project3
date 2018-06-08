@@ -11,7 +11,8 @@ enum TypeMap
 	MAP_NON = 0,
 	MAP_WALKABLE,
 	MAP_3D,
-	MAP_NAVIGATION
+	MAP_NAVIGATION,
+	MAP_OCLUSION
 };
 
 class ModuleMap : public Module
@@ -34,7 +35,7 @@ public:
 	void OptionsTile(int x, int y);
 	void GetSizePrefab(GameObject* obj, float& min_size, float& max_size);
 	void ShowNavigationMap();
-
+	void ShowOclusionMap();
 	void ShowTextWithColor(ImGuiCol_ type, int id);
 
 	void DeleteMap();
@@ -42,7 +43,7 @@ public:
 	void CompletNoWalk();
 	void ShowEditableStyle();
 
-	void ImportMap(bool used_in_mono = false);
+	void ImportMap(bool used_in_mono = false, TypeMap type_map = TypeMap::MAP_NON);
 	TypeMap CheckTypeMap(const char* map);
 
 	int GetHeightMap();
@@ -75,6 +76,7 @@ private:
 	bool map_created = false;
 	bool show_numeration = false;
 	bool show_editable_style = false;
+	bool show_oclusion = false;
 
 	uint icon_arrow_north = 0;
 	uint icon_arrow_east = 0;
